@@ -138,9 +138,8 @@ class TeacherListScreen extends StatelessWidget {
                       ),
                       child: const Row(
                         children: [
-                          Expanded(flex: 2, child: _TableHeader(text: 'Name')),
-                          Expanded(flex: 2, child: _TableHeader(text: 'Email')),
-                          Expanded(child: _TableHeader(text: 'Subject')),
+                          Expanded(flex: 1, child: _TableHeader(text: 'Name')),
+                          Expanded(flex: 2, child: _TableHeader(text: 'Subject')),
                           Expanded(child: _TableHeader(text: 'Class')),
                           Expanded(child: _TableHeader(text: 'RFID')),
                           Expanded(child: _TableHeader(text: 'Fingerprint')),
@@ -219,7 +218,7 @@ class TeacherListScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Column(
@@ -403,7 +402,7 @@ class _TableHeader extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: Colors.grey,
         fontSize: 13,
       ),

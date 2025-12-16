@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/attendance/attendance_screen.dart';
+import 'package:frontend_ui/features/classes/timetable_form_screen.dart';
+import 'package:frontend_ui/features/classes/timetable_screen.dart';
+import 'package:frontend_ui/features/devices/devices_screen.dart';
+import 'package:frontend_ui/features/reports/report_screen.dart';
+import 'package:frontend_ui/features/students/student_form_screen.dart';
+import 'package:frontend_ui/features/students/student_list_screen.dart';
+import 'package:frontend_ui/features/teachers/teacher_list_screen.dart';
 import '../../core/widgets/app_scaffold.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -83,36 +91,72 @@ class DashboardScreen extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               childAspectRatio: 1.2,
-              children: const [
+              children: [
                 _StatCard(
                   title: 'Students',
                   value: '1,200',
                   icon: Icons.school,
                   color: Colors.blue,
                   gradientColors: [Colors.blue, Colors.lightBlue],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => StudentListScreen(),
+                      ),
+                    );
+                  },
                 ),
+
                 _StatCard(
                   title: 'Teachers',
                   value: '75',
                   icon: Icons.people,
                   color: Colors.green,
                   gradientColors: [Colors.green, Colors.lightGreen],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TeacherListScreen(),
+                      ),
+                    );
+                  },
                 ),
+
                 _StatCard(
                   title: 'Today Attendance',
                   value: '92%',
                   icon: Icons.calendar_today,
                   color: Colors.orange,
                   gradientColors: [Colors.orange, Colors.amber],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AttendanceScreen(),
+                      ),
+                    );
+                  },
                 ),
+
                 _StatCard(
                   title: 'Active Devices',
                   value: '14',
                   icon: Icons.devices,
                   color: Colors.purple,
                   gradientColors: [Colors.purple, Colors.purpleAccent],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DevicesScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
+
             ),
 
             const SizedBox(height: 40),
@@ -287,27 +331,59 @@ class DashboardScreen extends StatelessWidget {
             icon: Icons.add_circle,
             label: 'Add Student',
             color: Colors.blue,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => StudentListScreen(),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 16),
           _buildActionItem(
-            context,
-            icon: Icons.download,
-            label: 'Export Report',
-            color: Colors.green,
+              context,
+              icon: Icons.download,
+              label: 'Export Report',
+              color: Colors.green,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ReportsScreen(),
+                  ),
+                );
+              }
           ),
           const SizedBox(height: 16),
           _buildActionItem(
-            context,
-            icon: Icons.notifications,
-            label: 'Send Notifications',
-            color: Colors.orange,
+              context,
+              icon: Icons.notifications,
+              label: 'Send Notifications',
+              color: Colors.orange,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TimetableScreen(),
+                  ),
+                );
+              }
           ),
           const SizedBox(height: 16),
           _buildActionItem(
-            context,
-            icon: Icons.settings,
-            label: 'Settings',
-            color: Colors.purple,
+              context,
+              icon: Icons.settings,
+              label: 'Settings',
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DevicesScreen(),
+                  ),
+                );
+              }
           ),
         ],
       ),
@@ -319,47 +395,53 @@ class DashboardScreen extends StatelessWidget {
         required IconData icon,
         required String label,
         required Color color,
+        required VoidCallback onTap,
       }) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.1)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 20,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
+            const Spacer(),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey.shade400,
             ),
-          ),
-          const Spacer(),
-          Icon(
-            Icons.chevron_right,
-            color: Colors.grey.shade400,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildRecentActivity(BuildContext context) {
     final theme = Theme.of(context);
@@ -500,6 +582,7 @@ class _StatCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final List<Color> gradientColors;
+  final VoidCallback onTap;
 
   const _StatCard({
     required this.title,
@@ -507,81 +590,88 @@ class _StatCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.gradientColors,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradientColors,
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradientColors,
             ),
-            const SizedBox(height: 16),
-            Column(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white.withOpacity(0.9),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 24,
                   ),
                 ),
+                const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      value,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 8),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                Container(
+                  height: 4,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Container(
-              height: 4,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

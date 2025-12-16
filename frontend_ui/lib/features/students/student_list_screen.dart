@@ -192,6 +192,7 @@ class StudentListScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Expanded(
+                                    flex:2,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       decoration: BoxDecoration(
@@ -210,7 +211,7 @@ class StudentListScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Column(

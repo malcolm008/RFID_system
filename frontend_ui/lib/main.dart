@@ -39,7 +39,7 @@ class AttendanceApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const SubjectsScreen(),
+        home: const LoginScreen(),
         routes: AppRoutes.routes,
       ),
     );
