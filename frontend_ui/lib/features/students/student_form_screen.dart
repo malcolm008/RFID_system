@@ -14,13 +14,20 @@ class StudentFormDialog extends StatefulWidget {
 class _StudentFormDialogState extends State<StudentFormDialog> {
   late TextEditingController nameCtrl;
   late TextEditingController regCtrl;
-  late TextEditingController classCtrl;
+  late TextEditingController progCtrl;
+  late int selectedYear;
+  late bool hasRfid;
+  late bool hasFingerprint;
 
   @override
   void initState() {
     nameCtrl = TextEditingController(text: widget.student?.name);
     regCtrl = TextEditingController(text: widget.student?.regNumber);
-    classCtrl = TextEditingController(text: widget.student?.className);
+    progCtrl = TextEditingController(text: widget.student?.program);
+
+    selectedYear = widget.student?.year ?? 1;
+    hasRfid = widget.student?.hasRfid ?? false;
+    hasFingerprint = widget.student?.hasFingerprint ?? false;
     super.initState();
   }
 
@@ -31,9 +38,10 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
       id: widget.student?.id ?? DateTime.now().toString(),
       name: nameCtrl.text,
       regNumber: regCtrl.text,
-      className: classCtrl.text,
-      hasRfid: widget.student?.hasRfid ?? false,
-      hasFingerprint: widget.student?.hasFingerprint ?? false,
+      program: progCtrl.text,
+      year: selectedYear,
+      hasRfid: hasRfid,
+      hasFingerprint: hasFingerprint,
     );
 
     widget.student == null
@@ -90,7 +98,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 1),
                       Text(
                         isEditing
                             ? 'Update student information'
@@ -118,7 +126,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                   icon: Icons.numbers,
                   isFirst: true,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 _buildTextField(
                   context: context,
                   controller: nameCtrl,
@@ -126,14 +134,33 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                   hintText: 'Enter student full name',
                   icon: Icons.person,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 _buildTextField(
                   context: context,
-                  controller: classCtrl,
-                  label: 'Class',
-                  hintText: 'Enter class/grade',
+                  controller: progCtrl,
+                  label: 'Program',
+                  hintText: 'Enter Program',
                   icon: Icons.school,
                 ),
+                const SizedBox(height: 15),
+                _buildYearDropdown(context),
+
+                const SizedBox(height: 24),
+                _buildCheckbox(
+                  title: 'Has RFID Card',
+                  value: hasRfid,
+                  onChanged: (val) {
+                    setState(() => hasRfid = val);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildCheckbox(
+                    title: 'Has Fingerprint',
+                    value: hasFingerprint,
+                    onChanged: (val) {
+                      setState(() => hasFingerprint = val);
+                    }
+                )
               ],
             ),
 
@@ -250,4 +277,85 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
       ],
     );
   }
+
+  Widget _buildYearDropdown(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Year of Study',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade700,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+            color: Colors.white,
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: selectedYear,
+              isExpanded: true,
+              items: List.generate(
+                4,
+                    (index) => DropdownMenuItem(
+                  value: index + 1,
+                  child: Text('Year ${index + 1}'),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  selectedYear = value!;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCheckbox({
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.white,
+      ),
+      child: CheckboxListTile(
+        value: value,
+        onChanged: (val) {
+          if (val != null) {
+            onChanged(val);
+          }
+        },
+        title: Text(
+          title,
+          style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500
+          ),
+        ),
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
 }

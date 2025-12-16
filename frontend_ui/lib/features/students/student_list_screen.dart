@@ -237,7 +237,7 @@ class StudentListScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        s.className,
+                                        s.program,
                                         style: theme.textTheme.bodyMedium,
                                         textAlign: TextAlign.center,
                                       ),
