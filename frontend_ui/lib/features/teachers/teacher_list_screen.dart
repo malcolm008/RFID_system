@@ -225,7 +225,7 @@ class TeacherListScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            t.subject,
+                                            t.course,
                                             style: theme.textTheme.bodyMedium?.copyWith(
                                               fontWeight: FontWeight.w500,
                                               color: Colors.blue,
@@ -244,7 +244,7 @@ class TeacherListScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        t.className,
+                                        t.department,
                                         style: theme.textTheme.bodyMedium,
                                         textAlign: TextAlign.center,
                                       ),

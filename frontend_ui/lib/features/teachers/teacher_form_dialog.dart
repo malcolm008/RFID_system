@@ -14,15 +14,15 @@ class TeacherFormDialog extends StatefulWidget {
 class _TeacherFormDialogState extends State<TeacherFormDialog> {
   late TextEditingController nameCtrl;
   late TextEditingController emailCtrl;
-  late TextEditingController subjectCtrl;
-  late TextEditingController classCtrl;
+  late TextEditingController courseCtrl;
+  late TextEditingController depCtrl;
 
   @override
   void initState() {
     nameCtrl = TextEditingController(text: widget.teacher?.name);
     emailCtrl = TextEditingController(text: widget.teacher?.email);
-    subjectCtrl = TextEditingController(text: widget.teacher?.subject);
-    classCtrl = TextEditingController(text: widget.teacher?.className);
+    courseCtrl = TextEditingController(text: widget.teacher?.course);
+    depCtrl = TextEditingController(text: widget.teacher?.department);
     super.initState();
   }
 
@@ -33,8 +33,8 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
       id: widget.teacher?.id ?? DateTime.now().toString(),
       name: nameCtrl.text,
       email: emailCtrl.text,
-      subject: subjectCtrl.text,
-      className: classCtrl.text,
+      course: courseCtrl.text,
+      department: depCtrl.text,
       hasRfid: widget.teacher?.hasRfid ?? false,
       hasFingerprint: widget.teacher?.hasFingerprint ?? false,
     );
@@ -133,17 +133,17 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                 const SizedBox(height: 20),
                 _buildTextField(
                   context: context,
-                  controller: subjectCtrl,
-                  label: 'Subject',
-                  hintText: 'Enter teaching subject',
+                  controller: courseCtrl,
+                  label: 'Course',
+                  hintText: 'Enter teaching course',
                   icon: Icons.subject,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   context: context,
-                  controller: classCtrl,
-                  label: 'Class',
-                  hintText: 'Enter assigned class/grade',
+                  controller: depCtrl,
+                  label: 'Department',
+                  hintText: 'Enter assigned department',
                   icon: Icons.school,
                 ),
               ],
