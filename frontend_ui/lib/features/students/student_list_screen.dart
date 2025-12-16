@@ -140,7 +140,8 @@ class StudentListScreen extends StatelessWidget {
                         children: [
                           Expanded(child: _TableHeader(text: 'Reg No')),
                           Expanded(flex: 2, child: _TableHeader(text: 'Name')),
-                          Expanded(child: _TableHeader(text: 'Class')),
+                          Expanded(child: _TableHeader(text: 'Program')),
+                          Expanded(child: _TableHeader(text: 'Year')),
                           Expanded(child: _TableHeader(text: 'RFID')),
                           Expanded(child: _TableHeader(text: 'Fingerprint')),
                           Expanded(child: _TableHeader(text: 'Actions')),
@@ -192,7 +193,7 @@ class StudentListScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    flex:2,
+                                    flex:1,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       decoration: BoxDecoration(
@@ -211,11 +212,11 @@ class StudentListScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    flex: 1,
+                                    flex: 2,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           Text(
                                             s.name,
@@ -223,12 +224,12 @@ class StudentListScreen extends StatelessWidget {
                                               fontWeight: FontWeight.w500,
                                               color: isDarkMode ? Colors.white : Colors.grey.shade800,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ],
                                       ),
                                     ),
                                   ),
-
                                   Expanded(
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -243,7 +244,19 @@ class StudentListScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                                      child: Text(
+                                        "Y${s.year}",
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                            color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
                                   Expanded(
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(vertical: 8),

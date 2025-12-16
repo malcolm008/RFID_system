@@ -16,15 +16,15 @@ class TimetableFormScreen extends StatefulWidget {
 class _TimetableFormScreenState extends State<TimetableFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  String? _class;
-  String? _subject;
+  String? _prog;
+  String? _course;
   String? _teacher;
   String? _day;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
 
-  final classes = ['CS Year 1', 'CS Year 2'];
-  final subjects = ['Data Structures', 'Operating Systems'];
+  final programs = ['Bsc in Computer Engineering and Information Technology', 'Bsc in Business Information and technology'];
+  final courses = ['Data Structures', 'Operating Systems'];
   final teachers = ['Mr. John', 'Ms. Jane'];
   final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -46,8 +46,8 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
     if (widget.existingEntry != null) {
       final e = widget.existingEntry!;
-      _class = e.className;
-      _subject = e.subjectName;
+      _prog = e.program;
+      _course = e.course;
       _teacher = e.teacherName;
       _day = e.day;
 
@@ -132,15 +132,15 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                   children: [
                     _buildDropdownField(
                       context: context,
-                      value: _class,
-                      label: 'Class',
-                      hintText: 'Select class',
+                      value: _prog,
+                      label: 'Program',
+                      hintText: 'Select program',
                       icon: Icons.class_,
-                      items: classes,
-                      onChanged: (value) => setState(() => _class = value),
+                      items: programs,
+                      onChanged: (value) => setState(() => _prog = value),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please select a class';
+                          return 'Please select a program';
                         }
                         return null;
                       },
@@ -148,15 +148,15 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                     const SizedBox(height: 20),
                     _buildDropdownField(
                       context: context,
-                      value: _subject,
-                      label: 'Subject',
-                      hintText: 'Select subject',
+                      value: _course,
+                      label: 'Course',
+                      hintText: 'Select course',
                       icon: Icons.subject,
-                      items: subjects,
-                      onChanged: (value) => setState(() => _subject = value),
+                      items: courses,
+                      onChanged: (value) => setState(() => _course = value),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please select a subject';
+                          return 'Please select a course';
                         }
                         return null;
                       },
@@ -476,16 +476,16 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
   }
 
   Color _getDropdownColor(String item) {
-    if (classes.contains(item)) return Colors.blue;
-    if (subjects.contains(item)) return Colors.purple;
+    if (programs.contains(item)) return Colors.blue;
+    if (courses.contains(item)) return Colors.purple;
     if (teachers.contains(item)) return Colors.orange;
     if (days.contains(item)) return Colors.green;
     return Colors.grey;
   }
 
   IconData _getDropdownIcon(String item) {
-    if (classes.contains(item)) return Icons.class_;
-    if (subjects.contains(item)) return Icons.subject;
+    if (programs.contains(item)) return Icons.class_;
+    if (courses.contains(item)) return Icons.subject;
     if (teachers.contains(item)) return Icons.person;
     if (days.contains(item)) return Icons.calendar_today;
     return Icons.help;

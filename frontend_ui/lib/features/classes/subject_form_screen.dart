@@ -15,6 +15,7 @@ class _SubjectFormScreenState extends State<SubjectFormScreen> {
 
   late TextEditingController _nameController;
   late TextEditingController _codeController;
+  late TextEditingController _progController;
   String? _teacher;
 
   bool get isEditing => widget.existingSubject != null;

@@ -94,7 +94,7 @@ class TimetableScreen extends StatelessWidget {
                   child: _buildStatCard(
                     context: context,
                     label: 'Unique Classes',
-                    value: '${timetable.map((t) => t.className).toSet().length}',
+                    value: '${timetable.map((t) => t.program).toSet().length}',
                     color: Colors.green,
                     icon: Icons.class_,
                   ),
@@ -305,7 +305,7 @@ class TimetableScreen extends StatelessWidget {
                                               borderRadius: BorderRadius.circular(4),
                                             ),
                                             child: Text(
-                                              t.className,
+                                              t.program,
                                               style: theme.textTheme.bodyMedium?.copyWith(
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.green,
@@ -332,7 +332,7 @@ class TimetableScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            t.subjectName,
+                                            t.course,
                                             style: theme.textTheme.bodyMedium?.copyWith(
                                               fontWeight: FontWeight.w600,
                                               color: isDarkMode ? Colors.white : Colors.grey.shade800,
