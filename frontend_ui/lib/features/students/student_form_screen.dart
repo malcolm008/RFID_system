@@ -155,12 +155,12 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                 ),
                 const SizedBox(height: 12),
                 _buildCheckbox(
-                    title: 'Has Fingerprint',
-                    value: hasFingerprint,
-                    onChanged: (val) {
-                      setState(() => hasFingerprint = val);
-                    }
-                )
+                  title: 'Has Fingerprint',
+                  value: hasFingerprint,
+                  onChanged: (val) {
+                    setState(() => hasFingerprint = val);
+                  },
+                ),
               ],
             ),
 

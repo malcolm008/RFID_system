@@ -6,7 +6,6 @@ class Device {
   final String name;
   final DeviceType type;
   final String location;
-  final String assignedClass;
   final DateTime lastSeen;
   final DeviceStatus status;
 
@@ -15,7 +14,6 @@ class Device {
     required this.name,
     required this.type,
     required this.location,
-    required this.assignedClass,
     required this.lastSeen,
     required this.status,
   });

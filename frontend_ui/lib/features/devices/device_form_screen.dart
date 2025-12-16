@@ -32,7 +32,6 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
       final d = widget.existingDevice!;
       _nameController.text = d.name;
       _locationController.text = d.location;
-      _assignedClassController.text = d.assignedClass;
       _deviceType = d.type;
       _deviceStatus = d.status;
     }
@@ -42,7 +41,6 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
   void dispose() {
     _nameController.dispose();
     _locationController.dispose();
-    _assignedClassController.dispose();
     super.dispose();
   }
 
@@ -189,24 +187,6 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
                         return null;
                       },
                     ),
-
-                    const SizedBox(height: 20),
-
-                    // Assigned Class
-                    _buildTextField(
-                      context: context,
-                      controller: _assignedClassController,
-                      label: 'Assigned Class',
-                      hintText: 'CS Year 2',
-                      icon: Icons.class_,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Assigned class is required';
-                        }
-                        return null;
-                      },
-                    ),
-
                     const SizedBox(height: 20),
 
                     // Device Status
@@ -544,7 +524,6 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
         name: _nameController.text.trim(),
         type: _deviceType,
         location: _locationController.text.trim(),
-        assignedClass: _assignedClassController.text.trim(),
         lastSeen: widget.existingDevice?.lastSeen ?? DateTime.now(),
         status: _deviceStatus,
       );

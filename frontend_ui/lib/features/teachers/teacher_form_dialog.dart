@@ -16,6 +16,8 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
   late TextEditingController emailCtrl;
   late TextEditingController courseCtrl;
   late TextEditingController depCtrl;
+  late bool hasRfid;
+  late bool hasFingerprint;
 
   @override
   void initState() {
@@ -23,6 +25,8 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
     emailCtrl = TextEditingController(text: widget.teacher?.email);
     courseCtrl = TextEditingController(text: widget.teacher?.course);
     depCtrl = TextEditingController(text: widget.teacher?.department);
+    hasRfid = widget.teacher?.hasRfid ?? false;
+    hasFingerprint = widget.teacher?.hasFingerprint ?? false;
     super.initState();
   }
 
@@ -35,8 +39,8 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
       email: emailCtrl.text,
       course: courseCtrl.text,
       department: depCtrl.text,
-      hasRfid: widget.teacher?.hasRfid ?? false,
-      hasFingerprint: widget.teacher?.hasFingerprint ?? false,
+      hasRfid: hasRfid,
+      hasFingerprint: hasFingerprint,
     );
 
     widget.teacher == null
@@ -121,7 +125,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                   icon: Icons.person,
                   isFirst: true,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 _buildTextField(
                   context: context,
                   controller: emailCtrl,
@@ -130,7 +134,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                   icon: Icons.email,
                   keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 _buildTextField(
                   context: context,
                   controller: courseCtrl,
@@ -138,13 +142,29 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                   hintText: 'Enter teaching course',
                   icon: Icons.subject,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 _buildTextField(
                   context: context,
                   controller: depCtrl,
                   label: 'Department',
                   hintText: 'Enter assigned department',
                   icon: Icons.school,
+                ),
+                const SizedBox(height: 20),
+                _buildCheckbox(
+                  title: 'Has RFID Card',
+                  value: hasRfid,
+                  onChanged: (val) {
+                    setState(() => hasRfid = val);
+                  },
+                ),
+                const SizedBox(height: 20),
+                _buildCheckbox(
+                  title: 'Has Fingerprint',
+                  value: hasFingerprint,
+                  onChanged: (val) {
+                    setState(() => hasFingerprint = val);
+                  },
                 ),
               ],
             ),
@@ -262,6 +282,41 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCheckbox({
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.white,
+      ),
+      child: CheckboxListTile(
+        value: value,
+        onChanged: (val) {
+          if (val != null) {
+            onChanged(val);
+          }
+        },
+        title: Text(
+          title,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500
+          ),
+        ),
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
     );
   }
 }

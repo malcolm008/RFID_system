@@ -9,7 +9,6 @@ class DeviceProvider extends ChangeNotifier {
       name: 'Room A Scanner',
       type: DeviceType.hybrid,
       location: 'Room A',
-      assignedClass: 'CS Year 1',
       lastSeen: DateTime.now(),
       status: DeviceStatus.online,
     ),
@@ -18,7 +17,6 @@ class DeviceProvider extends ChangeNotifier {
       name: 'Room B RFID',
       type: DeviceType.rfid,
       location: 'Room B',
-      assignedClass: 'CS Year 2',
       lastSeen: DateTime.now().subtract(const Duration(minutes: 12)),
       status: DeviceStatus.offline,
     ),
@@ -39,7 +37,6 @@ class DeviceProvider extends ChangeNotifier {
             name: _devices[i].name,
             type: _devices[i].type,
             location: _devices[i].location,
-            assignedClass: _devices[i].assignedClass,
             lastSeen: DateTime.now(),
             status: DeviceStatus.online,
           );

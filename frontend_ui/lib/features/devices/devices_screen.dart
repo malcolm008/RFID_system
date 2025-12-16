@@ -140,7 +140,6 @@ class DevicesScreen extends StatelessWidget {
                           Expanded(flex: 2, child: _TableHeader(text: 'Device')),
                           Expanded(child: _TableHeader(text: 'Type')),
                           Expanded(child: _TableHeader(text: 'Location')),
-                          Expanded(child: _TableHeader(text: 'Class')),
                           Expanded(child: _TableHeader(text: 'Status')),
                           Expanded(child: _TableHeader(text: 'Last Seen')),
                         ],
@@ -227,24 +226,34 @@ class DevicesScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: _getDeviceTypeColor(d.type).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: _getDeviceTypeColor(d.type).withOpacity(0.3),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: _getDeviceTypeColor(d.type).withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: _getDeviceTypeColor(d.type).withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  d.type.name.toUpperCase(),
+                                                  style: theme.textTheme.bodySmall?.copyWith(
+                                                    color: _getDeviceTypeColor(d.type),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            )
                                         ),
-                                      ),
-                                      child: Text(
-                                        d.type.name.toUpperCase(),
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: _getDeviceTypeColor(d.type),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
+                                      ],
+                                    )
                                   ),
 
                                   Expanded(
@@ -266,28 +275,9 @@ class DevicesScreen extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        d.assignedClass,
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-
                                   Expanded(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         Container(
                                           width: 12,
