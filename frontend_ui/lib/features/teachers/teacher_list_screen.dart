@@ -139,8 +139,8 @@ class TeacherListScreen extends StatelessWidget {
                       child: const Row(
                         children: [
                           Expanded(flex: 1, child: _TableHeader(text: 'Name')),
-                          Expanded(flex: 2, child: _TableHeader(text: 'Subject')),
-                          Expanded(child: _TableHeader(text: 'Class')),
+                          Expanded(flex: 2, child: _TableHeader(text: 'Course')),
+                          Expanded(child: _TableHeader(text: 'Program')),
                           Expanded(child: _TableHeader(text: 'RFID')),
                           Expanded(child: _TableHeader(text: 'Fingerprint')),
                           Expanded(child: _TableHeader(text: 'Actions')),
@@ -192,7 +192,7 @@ class TeacherListScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Column(
@@ -218,21 +218,26 @@ class TeacherListScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    flex: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            t.course,
-                                            style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.blue,
-                                            ),
+                                    flex: 2,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                t.course,
+                                                style: theme.textTheme.bodyMedium?.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 

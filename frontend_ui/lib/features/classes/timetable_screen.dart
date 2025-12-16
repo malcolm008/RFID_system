@@ -197,8 +197,8 @@ class TimetableScreen extends StatelessWidget {
                       child: const Row(
                         children: [
                           Expanded(flex: 2, child: _TableHeader(text: 'Time')),
-                          Expanded(flex: 2, child: _TableHeader(text: 'Class')),
-                          Expanded(flex: 2, child: _TableHeader(text: 'Subject')),
+                          Expanded(flex: 2, child: _TableHeader(text: 'Program')),
+                          Expanded(flex: 2, child: _TableHeader(text: 'Course')),
                           Expanded(flex: 2, child: _TableHeader(text: 'Teacher')),
                           Expanded(child: _TableHeader(text: 'Duration')),
                           Expanded(child: _TableHeader(text: 'Actions')),
