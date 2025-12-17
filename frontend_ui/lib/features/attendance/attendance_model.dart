@@ -4,7 +4,9 @@ class AttendanceRecord {
   final String id;
   final String personName;
   final String role;
-  final String className;
+  final String program;
+  final String course;
+  final int year;
   final DateTime time;
   final AttendanceStatus status;
   final String device;
@@ -13,7 +15,9 @@ class AttendanceRecord {
     required this.id,
     required this.personName,
     required this.role,
-    required this.className,
+    required this.program,
+    required this.course,
+    required this.year,
     required this.time,
     required this.status,
     required this.device,

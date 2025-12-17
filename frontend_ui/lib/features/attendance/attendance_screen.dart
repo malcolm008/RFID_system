@@ -143,7 +143,13 @@ class AttendanceScreen extends StatelessWidget {
                             child: _TableHeader(text: 'Role'),
                           ),
                           Expanded(
-                            child: _TableHeader(text: 'Class'),
+                            child: _TableHeader(text: 'Program'),
+                          ),
+                          Expanded(
+                            child: _TableHeader(text: 'Year'),
+                          ),
+                          Expanded(
+                            child: _TableHeader(text: 'Course'),
                           ),
                           Expanded(
                             child: _TableHeader(text: 'Time'),
@@ -182,6 +188,7 @@ class AttendanceScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         color: isDarkMode ? Colors.white : Colors.grey.shade800,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
 
@@ -196,28 +203,70 @@ class AttendanceScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    child: Text(
-                                      r.className,
-                                      style: theme.textTheme.bodyMedium,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-
-                                  Expanded(
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(0.1),
+                                        color: Colors.grey.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        '${r.time.hour.toString().padLeft(2, '0')}:${r.time.minute.toString().padLeft(2, '0')}',
+                                        r.program,
+                                        style: theme.textTheme.bodyMedium,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                      child: Text(
+                                        "Y${r.year}",
                                         style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: Colors.blue,
                                           fontWeight: FontWeight.w500,
+                                          color: isDarkMode ? Colors.white : Colors.grey.shade800,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            r.course,
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            '${r.time.hour.toString().padLeft(2, '0')}:${r.time.minute.toString().padLeft(2, '0')}',
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 
