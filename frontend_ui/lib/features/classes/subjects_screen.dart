@@ -141,6 +141,12 @@ class SubjectsScreen extends StatelessWidget {
                             child: _TableHeader(text: 'Code'),
                           ),
                           const Expanded(
+                            child: _TableHeader(text: 'Program'),
+                          ),
+                          const Expanded(
+                            child: _TableHeader(text: 'Year'),
+                          ),
+                          const Expanded(
                             flex: 2,
                             child: _TableHeader(text: 'Teacher'),
                           ),
@@ -260,7 +266,33 @@ class SubjectsScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      subject.program,
+                                      style: theme.textTheme.bodyMedium,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                    child: Text(
+                                      "Year ${subject.year}",
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
                                 Expanded(
                                   flex: 2,
                                   child: Row(
@@ -456,6 +488,7 @@ class _TableHeader extends StatelessWidget {
         color: Colors.grey,
         fontSize: 13,
       ),
+      textAlign: TextAlign.center,
     );
   }
 }

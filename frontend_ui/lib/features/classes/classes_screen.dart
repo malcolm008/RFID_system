@@ -28,7 +28,7 @@ class ClassesScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Classes',
+                      'Programs',
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -36,7 +36,7 @@ class ClassesScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Manage classes and academic levels',
+                      'Manage programs and academic levels',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -45,7 +45,7 @@ class ClassesScreen extends StatelessWidget {
                 ),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
-                  label: const Text('Add Class'),
+                  label: const Text('Add Program'),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -70,7 +70,7 @@ class ClassesScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Total Classes',
+                    label: 'Total Programs',
                     value: '${classes.length}',
                     color: Colors.blue,
                     icon: Icons.class_,
@@ -80,8 +80,8 @@ class ClassesScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Primary Level',
-                    value: '${classes.where((c) => c.level.toLowerCase().contains('primary')).length}',
+                    label: 'Undergraduate Level',
+                    value: '${classes.where((c) => c.level.toLowerCase().contains('undergraduate')).length}',
                     color: Colors.green,
                     icon: Icons.school,
                   ),
@@ -90,8 +90,8 @@ class ClassesScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Secondary Level',
-                    value: '${classes.where((c) => c.level.toLowerCase().contains('secondary')).length}',
+                    label: 'Postgraduate Level',
+                    value: '${classes.where((c) => c.level.toLowerCase().contains('postgraduate')).length}',
                     color: Colors.orange,
                     icon: Icons.school_outlined,
                   ),
@@ -138,10 +138,16 @@ class ClassesScreen extends StatelessWidget {
                         children: [
                           const Expanded(
                             flex: 2,
-                            child: _TableHeader(text: 'Class Name'),
+                            child: _TableHeader(text: 'Program Name'),
                           ),
                           const Expanded(
                             child: _TableHeader(text: 'Level'),
+                          ),
+                          const Expanded(
+                            child: _TableHeader(text: 'Department'),
+                          ),
+                          const Expanded(
+                            child: _TableHeader(text: 'Duration'),
                           ),
                           Container(
                             width: 80,
@@ -166,14 +172,14 @@ class ClassesScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No classes found',
+                              'No programs found',
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 color: Colors.grey.shade500,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Add your first class to get started',
+                              'Add your first program to get started',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: Colors.grey.shade400,
                               ),
@@ -227,7 +233,7 @@ class ClassesScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Class ID: ${classItem.id ?? 'N/A'}',
+                                              'Program ID: ${classItem.id ?? 'N/A'}',
                                               style: theme.textTheme.bodySmall?.copyWith(
                                                 color: Colors.grey.shade500,
                                               ),
@@ -238,7 +244,6 @@ class ClassesScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
                                 Expanded(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -258,6 +263,20 @@ class ClassesScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        classItem.department,
+                                        style: theme.textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: isDarkMode ? Colors.white : _getLevelColor(classItem.level),
+                                        ),
+                                      )
+                                    ],
+                                  )
                                 ),
 
                                 Container(
@@ -365,13 +384,13 @@ class ClassesScreen extends StatelessWidget {
 
   Color _getLevelColor(String level) {
     final levelLower = level.toLowerCase();
-    if (levelLower.contains('primary')) {
+    if (levelLower.contains('undergraduate')) {
       return Colors.green;
-    } else if (levelLower.contains('secondary')) {
+    } else if (levelLower.contains('postgraduate')) {
       return Colors.orange;
-    } else if (levelLower.contains('kindergarten') || levelLower.contains('prep')) {
+    } else if (levelLower.contains('primary') || levelLower.contains('kindergarten')) {
       return Colors.purple;
-    } else if (levelLower.contains('middle')) {
+    } else if (levelLower.contains('secondary')) {
       return Colors.blue;
     } else if (levelLower.contains('high')) {
       return Colors.red;

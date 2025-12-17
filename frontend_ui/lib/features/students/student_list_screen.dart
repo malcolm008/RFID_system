@@ -3,13 +3,55 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'student_provider.dart';
 import 'student_form_screen.dart';
+import 'student_model.dart';
 
-class StudentListScreen extends StatelessWidget {
+class StudentListScreen extends StatefulWidget {
   const StudentListScreen({super.key});
 
   @override
+  State<StudentListScreen> createState() => _StudentListScreenState();
+
+}
+
+class _StudentListScreenState extends State<StudentListScreen> {
+  String searchQuery = '';
+  int? selectedYear;
+  String? selectedProgram;
+  bool? filterRfid;
+  bool? filterFingerprint;
+
+  List<Student> _filteredStudents(List<Student> students) {
+    return students.where((s) {
+      final matchesSearch =
+          s.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              s.regNumber.toLowerCase().contains(searchQuery.toLowerCase());
+
+      final matchesYear =
+          selectedYear == null || s.year == selectedYear;
+
+      final matchesProgram =
+          selectedProgram == null || s.program == selectedProgram;
+
+      final matchesRfid =
+          filterRfid == null || s.hasRfid == filterRfid;
+
+      final matchesFingerprint =
+          filterFingerprint == null ||
+              s.hasFingerprint == filterFingerprint;
+
+      return matchesSearch &&
+          matchesYear &&
+          matchesProgram &&
+          matchesRfid &&
+          matchesFingerprint;
+    }).toList();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    final students = context.watch<StudentProvider>().students;
+    final allStudents = context.watch<StudentProvider>().students;
+    final students = _filteredStudents(allStudents);
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -59,6 +101,109 @@ class StudentListScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? Colors.grey.shade900
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade200,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  SizedBox(
+                    width: 260,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: 'Search name or reg no',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() => searchQuery = value);
+                      },
+                    ),
+                  ),
+                  DropdownButton<int?>(
+                    value: selectedYear,
+                    hint: const Text('Year'),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('All Years')),
+                      ...{...allStudents.map((s) => s.year)}.map(
+                            (year)=> DropdownMenuItem(
+                          value: year,
+                          child: Text('Year $year'),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => selectedYear = value);
+                    },
+                  ),
+
+                  DropdownButton<String?>(
+                    value: selectedProgram,
+                    hint: const Text('Program'),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('All Programs')),
+                      ...{...allStudents.map((s) => s.program)}.map(
+                            (program) => DropdownMenuItem(
+                          value: program,
+                          child: Text(program),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => selectedProgram = value);
+                    },
+                  ),
+
+                  DropdownButton<bool?>(
+                    value: filterRfid,
+                    hint: const Text('RFID'),
+                    items: const[
+                      DropdownMenuItem(value: null, child: Text('All RFID')),
+                      DropdownMenuItem(value: true, child: Text('With RFID')),
+                      DropdownMenuItem(value: false, child: Text('Without RFID')),
+                    ],
+                    onChanged: (value) {
+                      setState(() => filterRfid = value);
+                    },
+                  ),
+
+                  DropdownButton<bool?>(
+                    value: filterFingerprint,
+                    hint: const Text('Fingerprint'),
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('All Fingerprint')),
+                      DropdownMenuItem(value: true, child: Text('With Fingerprint')),
+                      DropdownMenuItem(value: false, child: Text('Without Fingerprint')),
+                    ],
+                    onChanged: (value) {
+                      setState(() => filterFingerprint = value);
+                    },
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 24),
@@ -248,10 +393,10 @@ class StudentListScreen extends StatelessWidget {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 6),
                                       child: Text(
-                                        "Y${s.year}",
+                                        "Year ${s.year}",
                                         style: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.w500,
-                                            color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                          color: isDarkMode ? Colors.white : Colors.grey.shade800,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),

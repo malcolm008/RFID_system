@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/attendance/attendance_screen.dart';
+import 'package:frontend_ui/features/classes/classes_screen.dart';
+import 'package:frontend_ui/features/classes/subjects_screen.dart';
 import 'package:frontend_ui/features/classes/timetable_form_screen.dart';
 import 'package:frontend_ui/features/classes/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
@@ -329,13 +331,13 @@ class DashboardScreen extends StatelessWidget {
           _buildActionItem(
             context,
             icon: Icons.add_circle,
-            label: 'Add Student',
+            label: 'Add Program',
             color: Colors.blue,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => StudentListScreen(),
+                  builder: (_) => ClassesScreen(),
                 ),
               );
             },
@@ -343,14 +345,14 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _buildActionItem(
               context,
-              icon: Icons.download,
-              label: 'Export Report',
+              icon: Icons.add_circle_outline,
+              label: 'Add Course',
               color: Colors.green,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ReportsScreen(),
+                    builder: (_) => SubjectsScreen(),
                   ),
                 );
               }
@@ -358,8 +360,8 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _buildActionItem(
               context,
-              icon: Icons.notifications,
-              label: 'Send Notifications',
+              icon: Icons.calendar_month,
+              label: 'Modify Timetable',
               color: Colors.orange,
               onTap: () {
                 Navigator.push(
