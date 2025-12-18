@@ -4,7 +4,7 @@ import 'student_model.dart';
 
 class StudentApi {
   static const String baseUrl =
-      "http://192.168.1.100/attendance_api/students"; // CHANGE IP
+      "http://192.168.11.186/attendance_api/students"; // CHANGE IP
 
   static Future<List<Student>> fetchStudents() async {
     final response =

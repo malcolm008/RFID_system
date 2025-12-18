@@ -56,6 +56,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
     });
   }
 
+
   Widget build(BuildContext context) {
     final allStudents = context.watch<StudentProvider>().students;
     final students = _filteredStudents(allStudents);

@@ -31,7 +31,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
     super.initState();
   }
 
-  void _save() {
+  void _save() async {
     final provider = context.read<StudentProvider>();
 
     final student = Student(
@@ -44,12 +44,20 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
       hasFingerprint: hasFingerprint,
     );
 
-    widget.student == null
-        ? provider.addStudent(student)
-        : provider.updateStudent(student);
-
-    Navigator.pop(context);
+    try {
+      if (widget.student == null) {
+        await provider.addStudent(student);
+      } else {
+        await provider.updateStudent(student);
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
