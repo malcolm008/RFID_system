@@ -49,6 +49,13 @@ class _StudentListScreenState extends State<StudentListScreen> {
 
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<StudentProvider>().loadStudents();
+    });
+  }
+
   Widget build(BuildContext context) {
     final allStudents = context.watch<StudentProvider>().students;
     final students = _filteredStudents(allStudents);
