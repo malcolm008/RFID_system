@@ -1,15 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/teachers/teacher_model.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'teacher_provider.dart';
 import 'teacher_form_dialog.dart';
+import 'teacher_model.dart';
 
-class TeacherListScreen extends StatelessWidget {
+class TeacherListScreen extends StatefulWidget {
   const TeacherListScreen({super.key});
 
   @override
+  State<TeacherListScreen> createState() => _TeacherListScreenState();
+
+}
+
+class _TeacherListScreenState extends State<TeacherListScreen> {
+  String searchQuery= '';
+  String? selectedDepartment;
+  String? selectedCourse;
+  bool? filterRfid;
+  bool? filterFingerprint;
+
+  List<Teacher> _filteredTeachers(List<Teacher> teachers) {
+    return teachers.where((t) {
+      final matchesSearch =
+        t.name.toLowerCase().contains(searchQuery.toLowerCase());
+
+      final matchesDepartment =
+          selectedDepartment == null || t.department == selectedDepartment;
+
+      final matchesCourse =
+          selectedCourse == null || t.course == selectedCourse;
+
+      final matchesRfid =
+          filterRfid == null || t.hasRfid == filterRfid;
+
+      final matchesFingerprint =
+          filterFingerprint == null ||
+              t.hasFingerprint == filterFingerprint;
+
+      return matchesSearch &&
+          matchesDepartment &&
+          matchesCourse &&
+          matchesRfid &&
+          matchesFingerprint;
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final teachers = context.watch<TeacherProvider>().teachers;
+    final allTeachers = context.watch<TeacherProvider>().teachers;
+    final teachers = _filteredTeachers(allTeachers);
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -59,6 +100,127 @@ class TeacherListScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color:  isDarkMode
+                    ? Colors.grey.shade900
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade200,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  SizedBox(
+                    width: 260,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: 'Search name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() => searchQuery = value);
+                      },
+                    ),
+                  ),
+                  DropdownButton<String?>(
+                    value: selectedDepartment,
+                    hint: const Text('Department'),
+                    items: [
+                      const DropdownMenuItem(value:null, child: Text('All Departments')),
+                      ...{...allTeachers.map((t) => t.department)}.map(
+                          (department) => DropdownMenuItem(
+                            value: department,
+                            child: Text(department),
+                          ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => selectedDepartment = value);
+                    },
+                  ),
+
+                  DropdownButton<String?>(
+                    value: selectedCourse,
+                    hint: const Text('Course'),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('All Courses')),
+                      ...{...allTeachers.map((t) => t.course)}.map(
+                          (course) => DropdownMenuItem(
+                            value: course,
+                            child: Text(course),
+                          ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => selectedCourse = value);
+                    },
+                  ),
+
+                  DropdownButton<bool?>(
+                    value: filterRfid,
+                    hint: const Text('RFID'),
+                    items: const [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text('All RFID'),
+                      ),
+                      DropdownMenuItem(
+                        value: true,
+                        child: Text('With RFID'),
+                      ),
+                      DropdownMenuItem(
+                        value: false,
+                        child: Text('Without RFID'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => filterRfid = value);
+                    },
+                  ),
+
+                  DropdownButton<bool?>(
+                    value: filterFingerprint,
+                    hint: const Text('Fingerprint'),
+                    items: const [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text('All Fingerprint'),
+                      ),
+                      DropdownMenuItem(
+                        value: true,
+                        child: Text('With Fingerprint'),
+                      ),
+                      DropdownMenuItem(
+                        value: false,
+                        child: Text('Without Fingerprint'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() => filterFingerprint = value);
+                    },
+                  )
+                ],
+              ),
             ),
 
             const SizedBox(height: 24),

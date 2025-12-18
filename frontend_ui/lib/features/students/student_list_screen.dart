@@ -57,7 +57,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
 
     return AppScaffold(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -181,8 +181,14 @@ class _StudentListScreenState extends State<StudentListScreen> {
                     value: filterRfid,
                     hint: const Text('RFID'),
                     items: const[
-                      DropdownMenuItem(value: null, child: Text('All RFID')),
-                      DropdownMenuItem(value: true, child: Text('With RFID')),
+                      DropdownMenuItem(
+                          value: null,
+                          child: Text('All RFID'),
+                      ),
+                      DropdownMenuItem(
+                          value: true,
+                          child: Text('With RFID'),
+                      ),
                       DropdownMenuItem(value: false, child: Text('Without RFID')),
                     ],
                     onChanged: (value) {
@@ -194,9 +200,18 @@ class _StudentListScreenState extends State<StudentListScreen> {
                     value: filterFingerprint,
                     hint: const Text('Fingerprint'),
                     items: const [
-                      DropdownMenuItem(value: null, child: Text('All Fingerprint')),
-                      DropdownMenuItem(value: true, child: Text('With Fingerprint')),
-                      DropdownMenuItem(value: false, child: Text('Without Fingerprint')),
+                      DropdownMenuItem(
+                          value: null,
+                          child: Text('All Fingerprint'),
+                      ),
+                      DropdownMenuItem(
+                          value: true,
+                          child: Text('With FIngerprint'),
+                      ),
+                      DropdownMenuItem(
+                          value: false,
+                          child: Text('Without FIngerprint'),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() => filterFingerprint = value);
@@ -206,11 +221,11 @@ class _StudentListScreenState extends State<StudentListScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // Stats Summary
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.grey.shade800 : Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -246,7 +261,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
 
             // Students Table
             Expanded(
@@ -511,8 +526,8 @@ class _StudentListScreenState extends State<StudentListScreen> {
     return Column(
       children: [
         Container(
-          width: 60,
-          height: 60,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
@@ -520,13 +535,14 @@ class _StudentListScreenState extends State<StudentListScreen> {
           child: Icon(
             icon,
             color: color,
-            size: 28,
+            size: 24,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           value,
           style: theme.textTheme.headlineSmall?.copyWith(
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             color: color,
           ),
@@ -535,6 +551,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
+            fontSize: 10,
             color: Colors.grey.shade600,
           ),
         ),
