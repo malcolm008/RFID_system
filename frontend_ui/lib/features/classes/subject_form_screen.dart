@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'subject_model.dart';
 
 class SubjectFormScreen extends StatefulWidget {
-  final Subject? existingSubject;
+  final Course? existingSubject;
 
   const SubjectFormScreen({super.key, this.existingSubject});
 

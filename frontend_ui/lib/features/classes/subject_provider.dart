@@ -1,94 +1,96 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'teacher_model.dart';
+import 'subject_model.dart';
 
-class TeacherProvider extends ChangeNotifier {
-  final String baseUrl = "http://192.168.100.239/attendance_api/teachers";
-  final List<Teacher> _teachers = [];
 
-  List<Teacher> get teachers => _teachers;
+class CourseProvider extends ChangeNotifier {
+  final String baseUrl = "http://192.168.100.239/attendance_api/course";
+  final List<Course> _courses = [];
 
-  Future<void> loadTeachers() async {
+  List<Course> get courses => _courses;
+
+  Future<void> loadCourses() async {
     try {
       final res = await http.get(Uri.parse("$baseUrl/list.php"));
-      if (res.statusCode == 200) {
+      if(res.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(res.body);
 
         if(jsonResponse["status"] == "success") {
           final List<dynamic> dataList = jsonResponse["data"];
-          _teachers.clear();
-          _teachers.addAll(dataList.map((json) => Teacher(
+          _courses.clear();
+          _courses.addAll(dataList.map((json) => Course(
             id: json["id"].toString(),
             name: json["name"],
-            email: json["email"],
-            course: json["course"],
+            code: json["code"],
             department: json["department"],
-            hasRfid: json["hasRfid"] == 1,
-            hasFingerprint: json["hasFingerprint"] == 1,
+            year: int.parse(json["year"].toString()),
+            semester: int.parse(json["semester"].toString()),
+            teacherName: json["teacherName"],
           )));
           notifyListeners();
         } else {
           throw Exception(jsonResponse["message"]);
         }
       } else {
-        throw Exception("Failed to load teachers");
+        throw Exception("Failed to load courses");
       }
     } catch (e) {
-      debugPrint("Error loading teachers: $e");
+      debugPrint("Error loading courses: $e");
     }
   }
 
-  Future<void> addTeacher(Teacher teacher) async {
+  Future<void> addCourse(Course course) async {
     try {
       final res = await http.post(
         Uri.parse("$baseUrl/create.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "name": teacher.name,
-          "email": teacher.email,
-          "course": teacher.course,
-          "department": teacher.department,
-          "hasRfid": teacher.hasRfid,
-          "hasFingerprint": teacher.hasFingerprint,
+          "name": course.name,
+          "code": course.code,
+          "department": course.department,
+          "year": course.year,
+          "semester": course.semester,
+          "teacherName": course.teacherName,
         }),
       );
 
       final response = jsonDecode(res.body);
       if (res.statusCode == 200 && response["status"] == "success") {
-        await loadTeachers();
+        await loadCourses();
       } else {
         throw Exception(response["message"]);
       }
     } catch (e) {
-      debugPrint("Error adding teacher: $e");
+      debugPrint("Error adding course: $e");
       rethrow;
     }
   }
 
-  Future<void> updateTeacher(Teacher teacher) async {
+  Future<void> updateCourse(Course course) async {
     try {
       final res = await http.post(
         Uri.parse("$baseUrl/update.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "id": teacher.id,
-          "name": teacher.name,
-          "email": teacher.email,
-          "course": teacher.course,
-          "department": teacher.department,
-          "hasRfid": teacher.hasRfid,
-          "hasFingerprint": teacher.hasFingerprint,
+          "id": course.id,
+          "name": course.name,
+          "code": course.code,
+          "department": course.department,
+          "semester": course.semester,
+          "year": course.year,
+          "teacherName": course.teacherName,
         }),
       );
+
       final response = jsonDecode(res.body);
       if (res.statusCode == 200 && response["status"] == "success") {
-        await loadTeachers();
+        await loadCourses();
       } else {
         throw Exception(response["message"]);
       }
     } catch (e) {
-      debugPrint("Error updating teacher: $e");
+      debugPrint("Error updating course: $e");
       rethrow;
     }
   }

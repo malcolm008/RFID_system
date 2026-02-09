@@ -30,7 +30,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
     super.initState();
   }
 
-  void _save() {
+  void _save() async {
     final provider = context.read<TeacherProvider>();
 
     final teacher = Teacher(
@@ -43,11 +43,18 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
       hasFingerprint: hasFingerprint,
     );
 
-    widget.teacher == null
-        ? provider.addTeacher(teacher)
-        : provider.updateTeacher(teacher);
-
-    Navigator.pop(context);
+    try {
+      if (widget.teacher == null) {
+        await provider.addTeacher(teacher);
+      } else {
+        await provider.updateTeacher(teacher);
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
   }
 
   @override

@@ -9,25 +9,6 @@ class ClassProvider extends ChangeNotifier {
     SchoolClass(id: '2', name: 'Bsc in Business Information and Technology', level: 'Undergraduate', duration: '3 Years', department: 'Department in Business Administration'),
   ];
 
-  final List<Subject> subjects = [
-    Subject(
-      id: '1',
-      name: 'Data Structures',
-      code: 'CS201',
-      program: 'Bsc in Computer Engineering',
-      year: 2,
-      teacherName: 'Mr. John',
-    ),
-    Subject(
-      id: '2',
-      name: 'Operating Systems',
-      code: 'CS301',
-      program: 'Bsc in Computer Engineering',
-      year: 1,
-      teacherName: 'Ms. Jane',
-    ),
-  ];
-
   final List<TimetableEntry> timetable = [
     TimetableEntry(
       id: '1',

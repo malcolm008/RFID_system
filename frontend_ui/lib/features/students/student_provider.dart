@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'student_model.dart';
 
 class StudentProvider extends ChangeNotifier {
-  final String baseUrl = "http://192.168.11.186/attendance_api/students";
+  final String baseUrl = "http://192.168.100.239/attendance_api/students";
   final List<Student> _students = [];
 
   List<Student> get students => _students;

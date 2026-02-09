@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/classes/subject_form_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
-import 'class_provider.dart';
+import 'subject_provider.dart';
+import 'subject_model.dart';
+
 
 class SubjectsScreen extends StatelessWidget {
   const SubjectsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ClassProvider>();
-    final subjects = provider.subjects;
+    final provider = context.watch<CourseProvider>();
+    final subjects = provider.courses;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -247,23 +249,28 @@ class SubjectsScreen extends StatelessWidget {
                                 ),
 
                                 Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.blue.withOpacity(0.3),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: Colors.blue.withOpacity(0.3),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          subject.code,
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      subject.code,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                    ],
                                   ),
                                 ),
                                 Expanded(
@@ -274,7 +281,7 @@ class SubjectsScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
-                                      subject.program,
+                                      subject.department,
                                       style: theme.textTheme.bodyMedium,
                                       textAlign: TextAlign.center,
                                     ),
@@ -283,57 +290,74 @@ class SubjectsScreen extends StatelessWidget {
                                 Expanded(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                    child: Text(
-                                      "Year ${subject.year}",
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                        color: isDarkMode ? Colors.white : Colors.grey.shade800,
-                                      ),
-                                      textAlign: TextAlign.center,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Year ${subject.year}",
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "semester: ${subject.semester}",
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: Colors.grey.shade500,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                                 Expanded(
                                   flex: 2,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          color: subject.teacherName.isNotEmpty
-                                              ? Colors.green.withOpacity(0.1)
-                                              : Colors.grey.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(18),
-                                        ),
-                                        child: Icon(
-                                          subject.teacherName.isNotEmpty
-                                              ? Icons.person
-                                              : Icons.person_outline,
-                                          size: 18,
-                                          color: subject.teacherName.isNotEmpty
-                                              ? Colors.green
-                                              : Colors.grey,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Text(
-                                          subject.teacherName.isNotEmpty
-                                              ? subject.teacherName
-                                              : 'Not Assigned',
-                                          style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: subject.teacherName.isNotEmpty
-                                                ? isDarkMode ? Colors.white : Colors.grey.shade800
-                                                : Colors.grey.shade500,
-                                            fontStyle: subject.teacherName.isEmpty
-                                                ? FontStyle.italic
-                                                : FontStyle.normal,
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 36,
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              color: subject.teacherName.isNotEmpty
+                                                  ? Colors.green.withOpacity(0.1)
+                                                  : Colors.grey.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(18),
+                                            ),
+                                            child: Icon(
+                                              subject.teacherName.isNotEmpty
+                                                  ? Icons.person
+                                                  : Icons.person_outline,
+                                              size: 18,
+                                              color: subject.teacherName.isNotEmpty
+                                                  ? Colors.green
+                                                  : Colors.grey,
+                                            ),
                                           ),
-                                        ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              subject.teacherName.isNotEmpty
+                                                  ? subject.teacherName
+                                                  : 'Not Assigned',
+                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                color: subject.teacherName.isNotEmpty
+                                                    ? isDarkMode ? Colors.white : Colors.grey.shade800
+                                                    : Colors.grey.shade500,
+                                                fontStyle: subject.teacherName.isEmpty
+                                                    ? FontStyle.italic
+                                                    : FontStyle.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  ),
+                                  )
                                 ),
 
                                 Container(

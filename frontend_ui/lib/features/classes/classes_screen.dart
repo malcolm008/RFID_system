@@ -207,8 +207,8 @@ class ClassesScreen extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 48,
-                                        height: 48,
+                                        width: 30,
+                                        height: 30,
                                         decoration: BoxDecoration(
                                           color: _getLevelColor(classItem.level).withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(12),
@@ -216,7 +216,7 @@ class ClassesScreen extends StatelessWidget {
                                         child: Icon(
                                           Icons.class_,
                                           color: _getLevelColor(classItem.level),
-                                          size: 24,
+                                          size: 16,
                                         ),
                                       ),
                                       const SizedBox(width: 16),
@@ -245,40 +245,64 @@ class ClassesScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: _getLevelColor(classItem.level).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: _getLevelColor(classItem.level).withOpacity(0.3),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: _getLevelColor(classItem.level).withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: _getLevelColor(classItem.level).withOpacity(0.3),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          classItem.level,
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: _getLevelColor(classItem.level),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      classItem.level,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: _getLevelColor(classItem.level),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                    ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        classItem.department,
-                                        style: theme.textTheme.bodyLarge?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          color: isDarkMode ? Colors.white : _getLevelColor(classItem.level),
-                                        ),
-                                      )
-                                    ],
-                                  )
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            classItem.department,
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                 ),
-
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            classItem.duration,
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: isDarkMode ? Colors.white : _getLevelColor(classItem.level),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Container(
                                   width: 80,
                                   child: Row(
@@ -414,6 +438,7 @@ class _TableHeader extends StatelessWidget {
         color: Colors.grey,
         fontSize: 13,
       ),
+      textAlign: TextAlign.center,
     );
   }
 }

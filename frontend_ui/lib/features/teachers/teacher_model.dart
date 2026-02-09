@@ -16,4 +16,29 @@ class Teacher {
     this.hasRfid = false,
     this.hasFingerprint = false,
   });
+
+  factory Teacher.fromJson(Map<String, dynamic> json) {
+    return Teacher(
+      id: json['id'].toString(),
+      name: json['name'],
+      email: json['email'],
+      course: json['course'],
+      department: json['department'],
+      hasRfid: json['hasRfid'] == 1 || json['hasFingerprint'] == true,
+      hasFingerprint: json['hasFingerprint'] == 1 || json['hasFingerprint'] == true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "email": email,
+      "course": course,
+      "department": department,
+      "hasRfid": hasRfid,
+      "hasFingerprint": hasFingerprint,
+    };
+  }
 }
+

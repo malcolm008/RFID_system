@@ -48,6 +48,13 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<TeacherProvider>().loadTeachers();
+    });
+  }
+
   Widget build(BuildContext context) {
     final allTeachers = context.watch<TeacherProvider>().teachers;
     final teachers = _filteredTeachers(allTeachers);
