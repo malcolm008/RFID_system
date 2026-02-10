@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
-import 'class_provider.dart';
+import 'program_provider.dart';
 import 'class_form_screen.dart';
 
 class ClassesScreen extends StatelessWidget {

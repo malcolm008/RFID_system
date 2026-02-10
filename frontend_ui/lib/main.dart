@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_ui/features/classes/class_provider.dart';
+import 'package:frontend_ui/features/classes/program_provider.dart';
 import 'package:frontend_ui/features/classes/classes_screen.dart';
 import 'package:frontend_ui/features/classes/subjects_screen.dart';
 import 'package:frontend_ui/features/classes/timetable_screen.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'class_model.dart';
+import 'program_model.dart';
 
 class ClassFormScreen extends StatefulWidget {
   final SchoolClass? existingClass;

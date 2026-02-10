@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     StudentListView, CreateStudentView, UpdateStudentView,
     TeacherListView, CreateTeacherView, UpdateTeacherView,
-    DeviceListView, CreateDeviceView, UpdateDeviceView
+    DeviceListView, CreateDeviceView, UpdateDeviceView,
+    CreateProgramView, UpdateProgramView, ProgramListView
 )
 
 urlpatterns = [
@@ -22,7 +23,7 @@ urlpatterns = [
     path('devices/update', UpdateDeviceView.as_view()),
 
     #PROGRAM
-    path('classes/list/', views.list_programs),
-    path('classes/create/', views.create_program),
-    path('classes/update/', views.update_program),
+    path('programs/list/', ProgramListView.as_view()),
+    path('programs/create/', CreateProgramView.as_view()),
+    path('programs/update/', UpdateProgramView.as_view()),
 ]
