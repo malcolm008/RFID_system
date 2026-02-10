@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import Student, Teacher
-from .serializers import StudentSerializer, TeacherSerializer
+from .models import Student, Teacher, Device
+from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer
 
 
 # Create a base class that explicitly disables CSRF
@@ -190,3 +190,60 @@ class UpdateTeacherView(CsrfExemptAPIView):
                 'status': 'error',
                 'message': f'Student not found'
             }, status=400)
+
+class DeviceListView(CsrfExemptAPIView):
+    def get(self, request):
+        devices = Device.objects.all().order_by('-lastSeen')
+        serializer = DeviceSerializer(devices, many=True)
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
+
+class CreateDeviceView(CsrfExemptAPIView):
+    def post(self, request):
+        serializer = DeviceSerializer(data=request.data)
+
+        if serializer.is_valid():
+            device = serializer.save()
+            return Response({
+                'status': 'success',
+                'data': DeviceSerializer(device).data
+            }, status=201)
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class UpdateDeviceView(CsrfExemptAPIView):
+    def post(self, request):
+        device_id = request.data.get('id')
+
+        if not device_id:
+            return Response({
+                'status': 'error',
+                'message': 'Device ID is required'
+            }, status=400)
+
+        try:
+            device = Device.objects.get(id=device_id)
+        except Device.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Device not found'
+            }, status=404)
+
+        serializer = DeviceSerializer(device, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
