@@ -42,19 +42,43 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_ORIGINS = [
+    "http://localhost:59068",
+    "http://127.0.0.1:59068",
+    "http://192.168.11.82:59068",
+    "http://localhost:57922",
+    "http://127.0.0.1:57922",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:59068",
+    "http://127.0.0.1:59068",
+    "http://192.168.11.82:59068",
+    "http://localhost:57922",
+    "http://127.0.0.1:57922",
+]
 
 ROOT_URLCONF = 'backend.urls'
 

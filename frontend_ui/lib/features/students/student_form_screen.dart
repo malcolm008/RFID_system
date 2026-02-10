@@ -34,27 +34,65 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
   void _save() async {
     final provider = context.read<StudentProvider>();
 
-    final student = Student(
-      id: widget.student?.id ?? DateTime.now().toString(),
-      name: nameCtrl.text,
-      regNumber: regCtrl.text,
-      program: progCtrl.text,
-      year: selectedYear,
-      hasRfid: hasRfid,
-      hasFingerprint: hasFingerprint,
-    );
+    if (nameCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter student name")),
+      );
+      return;
+    }
+
+    if (regCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter registration number")),
+      );
+      return;
+    }
+
+    if (progCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter program")),
+      );
+      return;
+    }
 
     try {
+      final student = Student(
+        id: widget.student?.id ?? '',
+        name: nameCtrl.text.trim(),
+        regNumber: regCtrl.text.trim(),
+        program: progCtrl.text.trim(),
+        year: selectedYear,
+        hasRfid: hasRfid,
+        hasFingerprint: hasFingerprint,
+      );
+
       if (widget.student == null) {
         await provider.addStudent(student);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Student added successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
       } else {
         await provider.updateStudent(student);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Student updated successfully"),
+            backgroundColor: Colors.orange,
+          ),
+        );
       }
-      Navigator.pop(context);
+
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
+        SnackBar(
+            content: Text("Error: ${e.toString()}"),
+            backgroundColor: Colors.red,
+        ),
       );
+      print("Error saving student: $e");
     }
   }
 
@@ -239,6 +277,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
     required String hintText,
     required IconData icon,
     bool isFirst = false,
+    String? errorText,
   }) {
     final theme = Theme.of(context);
 
@@ -257,7 +296,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: errorText != null ? Colors.red : Colors.grey.shade300),
             color: Colors.white,
           ),
           child: TextField(
@@ -270,7 +309,7 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                 margin: const EdgeInsets.only(left: 12, right: 8),
                 child: Icon(
                   icon,
-                  color: Colors.grey.shade600,
+                  color: errorText != null ? Colors.red : Colors.grey.shade600,
                   size: 20,
                 ),
               ),
@@ -279,9 +318,17 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                 vertical: 16,
                 horizontal: 16,
               ),
+              errorText: errorText,
             ),
           ),
         ),
+        if(errorText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            errorText,
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+        ],
       ],
     );
   }
