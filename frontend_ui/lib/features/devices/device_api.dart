@@ -24,4 +24,42 @@ class DeviceApi {
       throw Exception('Failed to load devices');
     }
   }
+
+  static Future<Device> addDevice(Device device) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/create"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(device.toJson()),
+    );
+
+    print("Add Device Status: ${response.statusCode}");
+    print("Add Device Body: ${response.body}");
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 201 && body['status'] == 'success') {
+      return Device.fromJson(body['data']);
+    } else {
+      throw Exception(body['message'] ?? 'Failed to add device');
+    }
+  }
+
+  static Future<Device> updateDevice(Device device) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/update/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(device.toJson()),
+    );
+
+    print("Update Device Status: ${response.statusCode}");
+    print("Update Device Body: ${response.body}");
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      return Device.fromJson(body['data']);
+    } else {
+      throw Exception(body['message'] ?? 'Failed to update device');
+    }
+  }
 }
