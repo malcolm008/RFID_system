@@ -127,6 +127,23 @@ class DashboardScreen extends StatelessWidget {
                 ),
 
                 _StatCard(
+                  title: 'Programs',
+                  value: '75',
+                  icon: Icons.people,
+                  color: Colors.teal,
+                  gradientColors: [Colors.teal, Colors.tealAccent],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ClassesScreen(),
+                      ),
+                    );
+                  },
+                ),
+
+
+                _StatCard(
                   title: 'Today Attendance',
                   value: '92%',
                   icon: Icons.calendar_today,

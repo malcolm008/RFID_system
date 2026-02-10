@@ -1,48 +1,62 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'device_api.dart';
 import 'device_model.dart';
 
-class DeviceProvider extends ChangeNotifier {
-  final List<Device> _devices = [
-    Device(
-      id: 'DEV-001',
-      name: 'Room A Scanner',
-      type: DeviceType.hybrid,
-      location: 'Room A',
-      lastSeen: DateTime.now(),
-      status: DeviceStatus.online,
-    ),
-    Device(
-      id: 'DEV-002',
-      name: 'Room B RFID',
-      type: DeviceType.rfid,
-      location: 'Room B',
-      lastSeen: DateTime.now().subtract(const Duration(minutes: 12)),
-      status: DeviceStatus.offline,
-    ),
-  ];
+class DeviceProvider extends ChangeNotifier{
+  final List<Device> _devices = [];
+  bool _loading = false;
 
   List<Device> get devices => _devices;
+  bool get isLoading => _loading;
 
-  DeviceProviderk() {
-    _simulateHeartbeat();
+  Future<void> loadDevices() async {
+    try {
+      _loading = true;
+      notifyListeners();
+
+      final data = await DeviceApi.fetchDevices();
+      _devices
+        ..clear()
+        ..addAll(data);
+    } catch (e) {
+      debugPrint("Error loading devices: $e");
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
-  void _simulateHeartbeat() {
-    Timer.periodic(const Duration(seconds: 10), (_) {
-      for (var i = 0; i< _devices.length; i++) {
-        if (_devices[i].status == DeviceStatus.online) {
-          _devices[i] = Device(
-            id: _devices[i].id,
-            name: _devices[i].name,
-            type: _devices[i].type,
-            location: _devices[i].location,
-            lastSeen: DateTime.now(),
-            status: DeviceStatus.online,
-          );
-        }
-      }
+  Future<void> addDevice(Device device) async {
+    try{
+      final newDevice = await DeviceApi.addDevice(device);
+      _devices.add(newDevice);
       notifyListeners();
-    });
+    } catch (e) {
+      debugPrint("Error adding device: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateDevice(Device device) async {
+    try {
+      final updated = await DeviceApi.updateDevice(device);
+      final index = _devices.indexWhere((d) => d.id == updated.id);
+      if(index != -1) {
+        _devices[index] = updated;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error updatind device: $e");
+      rethrow;
+    }
+  }
+
+  Device? getById(String id) {
+    try {
+      return _devices.firstWhere((d) => d.id == id);
+    } catch (_) {
+      return null;
+    }
   }
 }

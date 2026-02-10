@@ -54,3 +54,34 @@ class Device(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.type})"
+
+class Program(models.Model):
+    QUALIFICATION_CHOICES = [
+        ('Certificate', 'Certificate'),
+        ('Diploma', 'Diploma'),
+        ('Degree', 'Degree'),
+        ('Masters', 'Masters'),
+        ('PhD', 'PhD'),
+    ]
+
+    LEVEL_CHOICES = [
+        ('undergraduate', 'Undergraduate'),
+        ('postgraduate', 'Postgraduate'),
+    ]
+
+    name = models.CharField(max_length=100)
+    qualification = models.CharField(
+        max_length=20,
+        choices=QUALIFICATION_CHOICES
+    )
+    level = models.CharField(
+        max_length=20,
+        choices=LEVEL_CHOICES,
+        null=True,
+        blank=True
+    )
+    duration = models.CharField(max_lengt=20)
+    department = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name} ({self.qualification})"

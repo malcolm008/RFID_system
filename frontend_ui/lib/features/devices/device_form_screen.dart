@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'device_provider.dart';
 import 'device_model.dart';
 
 class DeviceFormScreen extends StatefulWidget {
@@ -516,22 +519,48 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
     }
   }
 
-  void _saveDevice() {
-    if (_formKey.currentState!.validate()) {
-      final device = Device(
-        id: widget.existingDevice?.id ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        type: _deviceType,
-        location: _locationController.text.trim(),
-        lastSeen: widget.existingDevice?.lastSeen ?? DateTime.now(),
-        status: _deviceStatus,
+  Future<void> _saveDevice() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final isEditing = widget.existingDevice != null;
+
+    final device = Device(
+      id: widget.existingDevice?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      name: _nameController.text.trim(),
+      type: _deviceType,
+      location: _locationController.text.trim(),
+      lastSeen: widget.existingDevice?.lastSeen ?? DateTime.now(),
+      status: _deviceStatus,
+    );
+
+    final provider = context.read<DeviceProvider>();
+
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
       );
 
-      // TODO: connect to provider / backend
-      // deviceProvider.addOrUpdate(device);
+      if (isEditing) {
+        await provider.updateDevice(device);
+      } else {
+        await provider.addDevice(device);
+      }
 
-      Navigator.pop(context, device);
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isEditing ? 'Failed to update device' : 'Failed to register device',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }
