@@ -9,33 +9,33 @@ class TeacherProvider extends ChangeNotifier {
 
   List<Teacher> get teachers => _teachers;
 
-  Future<void> loadTeachers() async
-
-  Future<void> addTeacher(Teacher teacher) async {
+  Future<void> loadTeachers() async {
     try {
-      final res = await http.post(
-        Uri.parse("$baseUrl/create.php"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "name": teacher.name,
-          "email": teacher.email,
-          "course": teacher.course,
-          "department": teacher.department,
-          "hasRfid": teacher.hasRfid,
-          "hasFingerprint": teacher.hasFingerprint,
-        }),
-      );
+      final res = await http.get(Uri.parse("$baseUrl/list/"));
+      print("Load Teachers Response: ${res.statusCode} - ${res.body}");
 
-      final response = jsonDecode(res.body);
-      if (res.statusCode == 200 && response["status"] == "success") {
-        await loadTeachers();
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(res.body);
+
+        if (jsonResponse["status"] == "success") {
+          final List<dynamic> dataList = jsonResponse["data"];
+          _teachers.clear();
+          _teachers.addAll(dataList.map((json) => Teacher.fromJson(json)).toList());
+          notifyListeners();
+        } else {
+          throw Exception(jsonResponse["message"] ?? "Unknown error");
+        }
       } else {
-        throw Exception(response["message"]);
+        throw Exception("Failed to load teachers: ${res.statusCode}");
       }
     } catch (e) {
-      debugPrint("Error adding teacher: $e");
+      debugPrint("Error loading teachers: $e");
       rethrow;
     }
+  }
+
+  Future<void> addTeacher(Teacher teacher) async {
+
   }
 
   Future<void> updateTeacher(Teacher teacher) async {
