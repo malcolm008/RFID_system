@@ -4,7 +4,8 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .models import Student, Teacher
-from .serializers import StudentSerializer
+from .serializers import StudentSerializer, TeacherSerializer
+
 
 # Create a base class that explicitly disables CSRF
 class CsrfExemptAPIView(APIView):
@@ -106,4 +107,14 @@ class TeacherListView(CsrfExemptAPIView):
     def get(self, request):
         try:
             teachers = Teacher.objects.all()
+            serializer = TeacherSerializer(teachers, many=True)
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
 
