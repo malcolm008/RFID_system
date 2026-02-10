@@ -4,40 +4,12 @@ import 'package:flutter/material.dart';
 import 'teacher_model.dart';
 
 class TeacherProvider extends ChangeNotifier {
-  final String baseUrl = "http://192.168.100.239/attendance_api/teachers";
+  final String baseUrl = "http://127.0.0.1:8000/attendance_api/teachers";
   final List<Teacher> _teachers = [];
 
   List<Teacher> get teachers => _teachers;
 
-  Future<void> loadTeachers() async {
-    try {
-      final res = await http.get(Uri.parse("$baseUrl/list.php"));
-      if (res.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(res.body);
-
-        if(jsonResponse["status"] == "success") {
-          final List<dynamic> dataList = jsonResponse["data"];
-          _teachers.clear();
-          _teachers.addAll(dataList.map((json) => Teacher(
-            id: json["id"].toString(),
-            name: json["name"],
-            email: json["email"],
-            course: json["course"],
-            department: json["department"],
-            hasRfid: json["hasRfid"] == 1,
-            hasFingerprint: json["hasFingerprint"] == 1,
-          )));
-          notifyListeners();
-        } else {
-          throw Exception(jsonResponse["message"]);
-        }
-      } else {
-        throw Exception("Failed to load teachers");
-      }
-    } catch (e) {
-      debugPrint("Error loading teachers: $e");
-    }
-  }
+  Future<void> loadTeachers() async
 
   Future<void> addTeacher(Teacher teacher) async {
     try {
