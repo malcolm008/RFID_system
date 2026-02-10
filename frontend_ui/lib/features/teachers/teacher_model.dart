@@ -18,12 +18,14 @@ class Teacher {
   });
 
   factory Teacher.fromJson(Map<String, dynamic> json) {
+    print("Parsing JSON: $json");
+
     return Teacher(
-      id: json['id'].toString(),
-      name: json['name'],
-      email: json['email'],
-      course: json['course'],
-      department: json['department'],
+      id: json['id'].toString() ?? '0',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      course: json['course']?.toString() ?? '',
+      department: json['department']?.toString() ?? '',
       hasRfid: json['hasRfid'] == 1 || json['hasFingerprint'] == true,
       hasFingerprint: json['hasFingerprint'] == 1 || json['hasFingerprint'] == true,
     );
@@ -31,14 +33,34 @@ class Teacher {
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "id": id.isNotEmpty ? int.tryParse(id) ?? 0: 0,
       "name": name,
       "email": email,
       "course": course,
       "department": department,
-      "hasRfid": hasRfid,
-      "hasFingerprint": hasFingerprint,
+      "hasRfid": hasRfid ? 1 : 0,
+      "hasFingerprint": hasFingerprint ? 1 : 0,
     };
+  }
+
+  Teacher copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? course,
+    String? department,
+    bool? hasRfid,
+    bool? hasFingerprint,
+}) {
+    return Teacher(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      course: course ?? this.course,
+      department: department ?? this.department,
+      hasRfid: hasRfid ?? this.hasRfid,
+      hasFingerprint: hasFingerprint ?? this.hasFingerprint,
+    );
   }
 }
 
