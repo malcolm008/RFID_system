@@ -25,3 +25,32 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.email})"
+
+class Device(models.Model):
+    class DeviceType(models.TextChoices):
+        RFID = 'rfid', 'RFID'
+        FINGERPRINT = 'fingerprint', 'Fingerprint'
+        HYBRID = 'hybrid', 'Hybrid'
+
+    class DeviceStatus(models.TextChoices):
+        ONLINE = 'online', 'Online'
+        OFFLINE = 'offline', 'Offline'
+
+    name = models.CharField(max_length=100)
+    type = models.CharField(
+        max_length=20,
+        choices=DeviceType.choices
+    )
+    location = models.CharField(max_length=150)
+    lastSeen = models.DateTimeField()
+    status = models.CharField(
+        max_length=20,
+        choices=DeviceStatus.choices,
+        default=DeviceStatus.OFFLINE
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.type})"

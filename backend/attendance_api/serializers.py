@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Teacher
+from .models import Student, Teacher, Device
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  # To match your Dart model's string id
@@ -41,10 +41,22 @@ class TeacherSerializer(serializers.ModelSerializer):
         representation['hasFingerprint'] = 1 if representation['hasFingerprint'] else 0
         return representation
 
-    def to_interval_value(self, data):
+    def to_internal_value(self, data):
         if 'hasRfid' in data:
             data['hasRfid'] = bool(data['hasRfid']) if isinstance(data['hasRfid'], (int, str)) else data['hasRfid']
         if 'hasFingerprint' in data:
             data['hasFingerprint'] = bool(data['hasFingerprint']) if isinstance(data['hasFingerprint'], (int, str)) else data['hasFingerprint']
-        return super().to_interval_value(data)
+        return super().to_internal_value(data)
 
+
+class DeviceSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Device
+        fields = ['id', 'name', 'type', 'location', 'lastSeen', 'status',]
+
+        def to_representation(self, instance):
+            rep = super().to_representation(instance)
+            rep['id'] = str(rep['id'])
+            return rep
