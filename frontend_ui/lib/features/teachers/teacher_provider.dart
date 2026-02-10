@@ -35,32 +35,68 @@ class TeacherProvider extends ChangeNotifier {
   }
 
   Future<void> addTeacher(Teacher teacher) async {
+    try {
+      final Map<String, dynamic> teacherData = {
+        "name": teacher.name,
+        "email": teacher.email,
+        "course": teacher.course,
+        "department": teacher.department,
+        "hasRfid": teacher.hasRfid ? 1 : 0,
+        "hasFingerprint": teacher.hasFingerprint ? 1 : 0,
+      };
 
+      print("Sending teacher data: $teacherData");
+
+      final res = await http.post(
+        Uri.parse("$baseUrl/create/"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(teacherData),
+      );
+
+      print("Add Teacher Response: ${res.statusCode} - ${res.body}");
+
+      final Map<String, dynamic> response = jsonDecode(res.body);
+      if (res.statusCode == 201 && response["status"] == "success") {
+        await loadTeachers();
+      } else {
+        throw Exception(response["message"] ?? "Failed to add teacher");
+      }
+    } catch(e) {
+      debugPrint("Error adding teacher: $e");
+      rethrow;
+    }
   }
 
   Future<void> updateTeacher(Teacher teacher) async {
     try {
+      final Map<String, dynamic> teacherData = {
+        "id": int.parse(teacher.id),
+        "name": teacher.name,
+        "email": teacher.email,
+        "course": teacher.course,
+        "department": teacher.department,
+        "hasRfid": teacher.hasRfid ? 1 : 0,
+        "hasFingerprint": teacher.hasFingerprint ? 1 : 0,
+      };
+
+      print("Updating teacher data: $teacherData");
+
       final res = await http.post(
-        Uri.parse("$baseUrl/update.php"),
+        Uri.parse("$baseUrl/update/"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "id": teacher.id,
-          "name": teacher.name,
-          "email": teacher.email,
-          "course": teacher.course,
-          "department": teacher.department,
-          "hasRfid": teacher.hasRfid,
-          "hasFingerprint": teacher.hasFingerprint,
-        }),
+        body: jsonEncode(teacherData),
       );
-      final response = jsonDecode(res.body);
-      if (res.statusCode == 200 && response["status"] == "success") {
+
+      print("Update Teacher Response: ${res.statusCode} - ${res.body}");
+
+      final Map<String, dynamic> response = jsonDecode(res.body);
+      if(res.statusCode == 200 && response["status"] == "success") {
         await loadTeachers();
       } else {
-        throw Exception(response["message"]);
+        throw Exception(response["message"] ?? "Failed to update teacher")
       }
     } catch (e) {
-      debugPrint("Error updating teacher: $e");
+      debugPrint("Error updating student: $e");
       rethrow;
     }
   }
