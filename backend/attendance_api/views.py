@@ -130,7 +130,7 @@ class CreateTeacherView(CsrfExemptAPIView):
             import json
             try:
                 data = json.loads(request.data)
-            except json.JSONDecoderError:
+            except json.JSONDecodeError:
                 return Response({
                     'status': 'error',
                     'message': 'Invalid JSON format'
@@ -161,3 +161,32 @@ class CreateTeacherView(CsrfExemptAPIView):
             'message': serializer.errors
         }, status=400)
 
+class UpdateTeacherView(CsrfExemptAPIView):
+    def post(self, request):
+        if 'id' not in request.data:
+            return Response({
+                'status': 'error',
+                'message': 'Missing teacher ID'
+            }, status=400)
+
+        try:
+            teacher = Teacher.objects.get(id=request.data['id'])
+            serializer = TeacherSerializer(teacher, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'status': 'success',
+                    'data': serializer.data
+                })
+
+            return Response({
+                'status': 'error',
+                'message': serializer.errors
+            }, status=400)
+
+        except Teacher.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': f'Student not found'
+            }, status=400)
