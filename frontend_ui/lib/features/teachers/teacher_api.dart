@@ -6,7 +6,7 @@ class TeacherApi {
   static const String baseUrl = "http://127.0.0.1:8000/attendance_api/teachers";
 
   static Future<List<Teacher>> fetchTeachers() async {
-    final response = await http.get(Uri.parse("$baseUrl/list/"));
+    final response = await http.get(Uri.parse("$baseUrl/list_teachers/"));
 
     print("Status Code: ${response.statusCode}");
     print("Response Body: ${response.body}");
@@ -38,7 +38,7 @@ class TeacherApi {
 
   static Future<void> addTeacher(Teacher teacher) async {
     final response = await http.post(
-      Uri.parse("$baseUrl/create/"),
+      Uri.parse("$baseUrl/create_teachers/"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(teacher.toJson()),
     );
@@ -51,7 +51,7 @@ class TeacherApi {
 
   static Future<void> updateTeacher(Teacher teacher) async {
     final response = await http.post(
-      Uri.parse("$baseUrl/update/"),
+      Uri.parse("$baseUrl/update_teachers/"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(teacher.toJson()),
     );

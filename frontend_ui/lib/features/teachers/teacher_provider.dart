@@ -11,7 +11,7 @@ class TeacherProvider extends ChangeNotifier {
 
   Future<void> loadTeachers() async {
     try {
-      final res = await http.get(Uri.parse("$baseUrl/list/"));
+      final res = await http.get(Uri.parse("$baseUrl/list_teachers/"));
       print("Load Teachers Response: ${res.statusCode} - ${res.body}");
 
       if (res.statusCode == 200) {
@@ -48,7 +48,7 @@ class TeacherProvider extends ChangeNotifier {
       print("Sending teacher data: $teacherData");
 
       final res = await http.post(
-        Uri.parse("$baseUrl/create/"),
+        Uri.parse("$baseUrl/create_teachers/"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(teacherData),
       );
@@ -82,7 +82,7 @@ class TeacherProvider extends ChangeNotifier {
       print("Updating teacher data: $teacherData");
 
       final res = await http.post(
-        Uri.parse("$baseUrl/update/"),
+        Uri.parse("$baseUrl/update_teachers/"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(teacherData),
       );
@@ -93,7 +93,7 @@ class TeacherProvider extends ChangeNotifier {
       if(res.statusCode == 200 && response["status"] == "success") {
         await loadTeachers();
       } else {
-        throw Exception(response["message"] ?? "Failed to update teacher")
+        throw Exception(response["message"] ?? "Failed to update teacher");
       }
     } catch (e) {
       debugPrint("Error updating student: $e");

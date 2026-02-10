@@ -33,27 +33,72 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
   void _save() async {
     final provider = context.read<TeacherProvider>();
 
-    final teacher = Teacher(
-      id: widget.teacher?.id ?? DateTime.now().toString(),
-      name: nameCtrl.text,
-      email: emailCtrl.text,
-      course: courseCtrl.text,
-      department: depCtrl.text,
-      hasRfid: hasRfid,
-      hasFingerprint: hasFingerprint,
-    );
+    if (nameCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter teacher name")),
+      );
+      return;
+    }
+
+    if (emailCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter teacher's email")),
+      );
+      return;
+    }
+
+    if (courseCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter teacher's course")),
+      );
+      return;
+    }
+
+    if (depCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter teacher's department")),
+      );
+      return;
+    }
 
     try {
+      final teacher = Teacher(
+        id: widget.teacher?.id ?? '',
+        name: nameCtrl.text.trim(),
+        email: emailCtrl.text.trim(),
+        course: courseCtrl.text.trim(),
+        department: depCtrl.text.trim(),
+        hasRfid: hasRfid,
+        hasFingerprint: hasFingerprint,
+      );
+
       if (widget.teacher == null) {
         await provider.addTeacher(teacher);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Teacher added successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
       } else {
         await provider.updateTeacher(teacher);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Teacher updated successfully"),
+            backgroundColor: Colors.orange,
+          ),
+        );
       }
-      Navigator.pop(context);
+
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
       );
+      print("Error saving teacher: $e");
     }
   }
 
@@ -244,6 +289,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
     required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     bool isFirst = false,
+    String? errorText,
   }) {
     final theme = Theme.of(context);
 
@@ -262,7 +308,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: errorText != null ? Colors.red : Colors.grey.shade300),
             color: Colors.white,
           ),
           child: TextField(
@@ -276,7 +322,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                 margin: const EdgeInsets.only(left: 12, right: 8),
                 child: Icon(
                   icon,
-                  color: Colors.grey.shade600,
+                  color: errorText != null ? Colors.red : Colors.grey.shade600,
                   size: 20,
                 ),
               ),
@@ -285,9 +331,17 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
                 vertical: 16,
                 horizontal: 16,
               ),
+              errorText: errorText,
             ),
           ),
         ),
+        if(errorText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            errorText,
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+        ],
       ],
     );
   }
