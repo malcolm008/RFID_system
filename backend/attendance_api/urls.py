@@ -20,4 +20,9 @@ urlpatterns = [
     path('devices/list/', DeviceListView.as_view()),
     path('devices/create', CreateDeviceView.as_view()),
     path('devices/update', UpdateDeviceView.as_view()),
+
+    #PROGRAM
+    path('classes/list/', views.list_programs),
+    path('classes/create/', views.create_program),
+    path('classes/update/', views.update_program),
 ]

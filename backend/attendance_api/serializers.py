@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Device
+from .models import Student, Teacher, Device, Program
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  # To match your Dart model's string id
@@ -60,3 +60,24 @@ class DeviceSerializer(serializers.ModelSerializer):
             rep = super().to_representation(instance)
             rep['id'] = str(rep['id'])
             return rep
+
+class ProgramSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Program
+        fields = '__all__'
+
+        def validate(self, data):
+            qualification = data.get('qualification')
+            level = data.get('level')
+
+            if qualification == 'Degree' and not level:
+                raise serializers.ValidationError(
+                    {"level": "Degree programs require a level"}
+                )
+
+            if qualification in ['Certificate', 'Diploma'] and level:
+                raise serializers.ValidationError(
+                    {"level": "This qualification does not support levels"}
+                )
+
+            return data

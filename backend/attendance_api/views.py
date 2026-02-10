@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import Student, Teacher, Device
-from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer
+from .models import Student, Teacher, Device, Program
+from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer, ProgramSerializer
 
 
 # Create a base class that explicitly disables CSRF
@@ -235,6 +235,69 @@ class UpdateDeviceView(CsrfExemptAPIView):
             }, status=404)
 
         serializer = DeviceSerializer(device, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class CreateProgramView(CsrfExemptAPIView):
+    def post(self, request):
+        serializer = ProgramSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            }, status=201)
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class ProgramListView(CsrfExemptAPIView):
+    def get(self, request):
+        programs = Program.objects.all()
+        serializer = ProgramSerializer(programs, many=True)
+
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
+
+
+class UpdateProgramView(CsrfExemptAPIView):
+    def post(self, request):
+        program_id = request.data.get('id')
+
+        if not program_id:
+            return Response({
+                'status': 'error',
+                'message': 'Class ID is required'
+            }, status=400)
+
+        try:
+            program = Program.objects.get(id=program_id)
+        except Program.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Class not found'
+            }, status=400)
+
+        serializer = ProgramSerializer(
+            program,
+            data=request.data,
+            partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()
