@@ -55,19 +55,19 @@ class CreateStudentView(CsrfExemptAPIView):
         if serializer.is_valid():
             try:
                 student = serializer.save()
-                print(f"✅ Student saved: ID={student.id}")
+                print(f"Student saved: ID={student.id}")
                 return Response({
                     'status': 'success',
                     'data': StudentSerializer(student).data
                 }, status=201)
             except Exception as e:
-                print(f"❌ Database error: {e}")
+                print(f"Database error: {e}")
                 return Response({
                     'status': 'error',
                     'message': f'Database error: {str(e)}'
                 }, status=500)
 
-        print(f"❌ Validation errors: {serializer.errors}")
+        print(f"Validation errors: {serializer.errors}")
         return Response({
             'status': 'error',
             'message': serializer.errors
@@ -117,4 +117,47 @@ class TeacherListView(CsrfExemptAPIView):
                 'status': 'error',
                 'message': str(e)
             }, status=500)
+
+class CreateTeacherView(CsrfExemptAPIView):
+    def post(self, request):
+        print("=== CREATE TEACHER REQUEST ===")
+        print(f"Headers: {dict(request.headers)}")
+        print(f"Data: {request.data}")
+        print(f"Method: {request.method}")
+        print("===============================")
+
+        if isinstance(request.data, str):
+            import json
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecoderError:
+                return Response({
+                    'status': 'error',
+                    'message': 'Invalid JSON format'
+                }, status=400)
+        else:
+            data = request.data
+
+        serializer = TeacherSerializer(data=data)
+
+        if serializer.is_valid():
+            try:
+                teacher = serializer.save()
+                print(f"Teacher saved: ID={teacher.id}")
+                return Response({
+                    'status': 'success',
+                    'data': TeacherSerializer(teacher).data
+                }, status=201)
+            except Exception as e:
+                print(f"Database error: {e}")
+                return Response({
+                    'status': 'error',
+                    'message': f'Database error: {str(e)}'
+                }, status=500)
+
+        print(f"Validation errors: {serializer.errors}")
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
 
