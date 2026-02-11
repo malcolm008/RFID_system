@@ -4,7 +4,7 @@ class Course {
   final String code;
 
   final String programId;
-  final String departmentId;
+  final String department;
   final String teacherId;
 
   final int semester;
@@ -15,7 +15,7 @@ class Course {
     required this.name,
     required this.code,
     required this.programId,
-    required this.departmentId,
+    required this.department,
     required this.teacherId,
     required this.semester,
     required this.year,
@@ -27,7 +27,7 @@ class Course {
       name: json['name'],
       code: json['code'],
       programId: json['program'].toString(),
-      departmentId: json['department'].toString(),
+      department: json['department'].toString(),
       teacherId: json['teacher'].toString(),
       semester: int.parse(json['semester'].toString()),
       year: int.parse(json['year'].toString()),
@@ -39,7 +39,7 @@ class Course {
       "name": name,
       "code": code,
       "program": programId,
-      "department": departmentId,
+      "department": department,
       "teacher": teacherId,
       "semester": semester,
       "year": year,
