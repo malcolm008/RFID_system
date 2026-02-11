@@ -5,8 +5,23 @@ import '../../core/widgets/app_scaffold.dart';
 import 'program_provider.dart';
 import 'program_form_screen.dart';
 
-class ClassesScreen extends StatelessWidget {
-  const ClassesScreen({super.key});
+class ProgramsScreen extends StatefulWidget {
+  const ProgramsScreen({super.key});
+
+  @override
+  State<ProgramsScreen> createState() => _ProgramsScreenState();
+}
+
+class _ProgramsScreenState extends State<ProgramsScreen> {
+
+  @override
+  void initState(){
+    super.initState();
+
+    Future.microtask(() {
+      context.read<ProgramProvider>().loadPrograms();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -331,17 +346,17 @@ class ClassesScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            programItem.department,
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: isDarkMode ? Colors.white : Colors.grey.shade800,
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        programItem.department,
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                                 Expanded(
                                   child: Row(

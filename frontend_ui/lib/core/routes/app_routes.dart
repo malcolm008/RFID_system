@@ -27,7 +27,7 @@ class AppRoutes {
     attendance: (context) => const AttendanceScreen(),
     reports: (context) => const ReportsScreen(),
     devices: (context) => const DevicesScreen(),
-    classes: (context) => const ClassesScreen(),
+    classes: (context) => const ProgramsScreen(),
     subjects: (context) => const SubjectsScreen(),
     timetable: (context) => const TimetableScreen(),
   };

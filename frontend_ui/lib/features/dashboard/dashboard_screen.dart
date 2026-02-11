@@ -136,7 +136,7 @@ class DashboardScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ClassesScreen(),
+                        builder: (_) => ProgramsScreen(),
                       ),
                     );
                   },
@@ -354,7 +354,7 @@ class DashboardScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ClassesScreen(),
+                  builder: (_) => ProgramsScreen(),
                 ),
               );
             },
