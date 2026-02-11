@@ -3,32 +3,35 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'course_model.dart';
 
-
 class CourseProvider extends ChangeNotifier {
-  final String baseUrl = "http://192.168.100.239/attendance_api/course";
+  final String baseUrl = "http://127.0.0.1:8000/api/courses/";
+
   final List<Course> _courses = [];
+  bool _loading = false;
 
   List<Course> get courses => _courses;
+  bool get isLoading => _loading;
 
   Future<void> loadCourses() async {
-    try {
-      final res = await http.get(Uri.parse("$baseUrl/list.php"));
-      if(res.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(res.body);
+    _loading = true;
+    notifyListeners();
 
-        if(jsonResponse["status"] == "success") {
-          final List<dynamic> dataList = jsonResponse["data"];
-          _courses.clear();
-          _courses.addAll(dataList.map((json) => Course(
-            id: json["id"].toString(),
-            name: json["name"],
-            code: json["code"],
-            department: json["department"],
-            year: int.parse(json["year"].toString()),
-            semester: int.parse(json["semester"].toString()),
-            teacherName: json["teacherName"],
-          )));
-          notifyListeners();
+    try{
+      final res = await http.get(
+        Uri.parse("${baseUrl}list/"),
+      );
+
+      if (res.statusCode == 200) {
+        final jsonResponse = jsonDecode(res.body);
+
+        if (jsonResponse["status"] == "success") {
+          final List dataList = jsonResponse["data"];
+
+          _courses
+            ..clear()
+            ..addAll(
+              dataList.map((json) => Course.fromJson(json)).toList(),
+            );
         } else {
           throw Exception(jsonResponse["message"]);
         }
@@ -38,26 +41,25 @@ class CourseProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error loading courses: $e");
     }
+
+    _loading = false;
+    notifyListeners();
   }
 
   Future<void> addCourse(Course course) async {
     try {
       final res = await http.post(
-        Uri.parse("$baseUrl/create.php"),
+        Uri.parse("${baseUrl}create/"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "name": course.name,
-          "code": course.code,
-          "department": course.department,
-          "year": course.year,
-          "semester": course.semester,
-          "teacherName": course.teacherName,
-        }),
+        body: jsonEncode(course.toJson()),
       );
 
       final response = jsonDecode(res.body);
-      if (res.statusCode == 200 && response["status"] == "success") {
-        await loadCourses();
+
+      if (res.statusCode == 201 && response["status"] == "success") {
+        final newCourse = Course.fromJson(response["data"]);
+        _courses.add(newCourse);
+        notifyListeners();
       } else {
         throw Exception(response["message"]);
       }
@@ -70,22 +72,22 @@ class CourseProvider extends ChangeNotifier {
   Future<void> updateCourse(Course course) async {
     try {
       final res = await http.post(
-        Uri.parse("$baseUrl/update.php"),
+        Uri.parse("${baseUrl}update/"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "id": course.id,
-          "name": course.name,
-          "code": course.code,
-          "department": course.department,
-          "semester": course.semester,
-          "year": course.year,
-          "teacherName": course.teacherName,
-        }),
+        body: jsonEncode(course.toJson()),
       );
 
       final response = jsonDecode(res.body);
+
       if (res.statusCode == 200 && response["status"] == "success") {
-        await loadCourses();
+        final updatedCourse = Course.fromJson(response["data"]);
+
+        final index = _courses.indexWhere((c) => c.id == updatedCourse.id);
+
+        if (index != -1) {
+          _courses[index] = updatedCourse;
+          notifyListeners();
+        }
       } else {
         throw Exception(response["message"]);
       }
