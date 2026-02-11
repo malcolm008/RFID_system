@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Device, Program
+from .models import Student, Teacher, Device, Program, Course
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  # To match your Dart model's string id
@@ -81,3 +81,10 @@ class ProgramSerializer(serializers.ModelSerializer):
                 )
 
             return data
+
+class CourseSerializer(serializers.ModelSerializer):
+    program_name = serializers.CharField(source= 'program.name', read_only = True)
+
+    class Meta:
+        model = Course
+        fields = '__all__'
