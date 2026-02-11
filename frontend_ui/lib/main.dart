@@ -33,7 +33,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TeacherProvider()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
-        ChangeNotifierProvider(create: (_) => ClassProvider()),
+        ChangeNotifierProvider(create: (_) => ProgramProvider()),
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
       ],
       child: MaterialApp(

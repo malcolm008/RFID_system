@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'program_model.dart';
+import 'package:provider/provider.dart';
+import 'program_provider.dart';
+import 'package:http/http.dart' as http;
 
 class ProgramFormScreen extends StatefulWidget {
   final Program? existingProgram;
@@ -13,20 +16,30 @@ class ProgramFormScreen extends StatefulWidget {
 class _ProgramFormScreenState extends State<ProgramFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
+  late TextEditingController _departmentController;
 
   ProgramLevel? _selectedLevel;
   Qualification? _selectedQualification;
+  String? _selectedDuration;
 
   bool get isEditing => widget.existingProgram != null;
 
   @override
   void initState() {
     super.initState();
-    _nameController =
-        TextEditingController(text: widget.existingProgram?.name ?? '');
+    _nameController = TextEditingController(text: widget.existingProgram?.name ?? '');
+    _departmentController = TextEditingController(text: widget.existingProgram?.department ?? '');
 
     _selectedLevel = widget.existingProgram?.level;
     _selectedQualification = widget.existingProgram?.qualification;
+    _selectedDuration = widget.existingProgram?.duration;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _departmentController.dispose();
+    super.dispose();
   }
 
   final Map<Qualification, List<ProgramLevel>> qualificationLevels = {
@@ -42,6 +55,30 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
     Qualification.PhD: [
       ProgramLevel.postgraduate,
     ]
+  };
+
+  final Map<Qualification, List<String>> qualificationDurations = {
+    Qualification.Certificate: [
+      '6 months',
+      '1 year',
+    ],
+    Qualification.Diploma: [
+      '1 year',
+      '2 years',
+    ],
+    Qualification.Degree: [
+      '3 years',
+      '4 years',
+    ],
+    Qualification.Masters: [
+      '1 year',
+      '2 years',
+    ],
+    Qualification.PhD: [
+      '3 years',
+      '4 years',
+      '5 years',
+    ],
   };
 
   @override
@@ -115,8 +152,8 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                   _buildTextField(
                     context: context,
                     controller: _nameController,
-                    label: 'Class Name',
-                    hintText: 'Enter class name (e.g., Grade 10A)',
+                    label: 'Program',
+                    hintText: 'Enter program name (e.g. Bsc.Computer Science)',
                     icon: Icons.class_,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -139,12 +176,12 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                       setState(() {
                         _selectedQualification = value;
                         _selectedLevel = null;
+                        _selectedDuration = null;
                       });
                     },
                     validator: (value) => value == null ? 'Please select qualification' : null,
                   ),
                   const SizedBox(height: 16),
-
                   if (qualificationLevels.containsKey(_selectedQualification))
                     DropdownButtonFormField<ProgramLevel>(
                       value: _selectedLevel,
@@ -158,10 +195,36 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                       onChanged: (value) {
                         setState(() => _selectedLevel = value);
                       },
-                      validator: (value) =>
-                      value == null ? 'Please select level' : null,
                     ),
-
+                  const SizedBox(height: 16),
+                  if (_selectedQualification != null)
+                    DropdownButtonFormField<String>(
+                      value: _selectedDuration,
+                      decoration: const InputDecoration(labelText: 'Duration'),
+                      items: qualificationDurations[_selectedQualification]!
+                        .map((duration) => DropdownMenuItem(
+                        value: duration,
+                        child: Text(duration),
+                      )).toList(),
+                      onChanged: (value) {
+                        setState(() => _selectedDuration = value);
+                      },
+                      validator: (value) => value == null ? 'Please select duration': null,
+                    ),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                    context: context,
+                    controller: _departmentController,
+                    label: 'Department',
+                    hintText: 'Enter the department',
+                    icon: Icons.corporate_fare,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Department name is required';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
 
@@ -190,14 +253,36 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                    onPressed: ()  async {
+                      if (!_formKey.currentState!.validate()) return;
+
+                      if(_selectedQualification == null) return;
+                      if(_selectedDuration == null) return;
+
+                      final provider = context.read<ProgramProvider>();
+
+                      final program = Program(
+                        id: isEditing
+                            ? widget.existingProgram!.id
+                            : DateTime.now().millisecondsSinceEpoch.toString(),
+                        name: _nameController.text.trim(),
+                        qualification: _selectedQualification!,
+                        level: _selectedLevel,
+                        duration: _selectedDuration!,
+                        department: _departmentController.text.trim(),
+                      );
+
+                      try {
                         if (isEditing) {
-                          // provider.updateClass(...)
+                          await provider.updateProgram(program);
                         } else {
-                          // provider.addClass(...)
+                          await provider.addProgram(program);
                         }
                         Navigator.pop(context);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

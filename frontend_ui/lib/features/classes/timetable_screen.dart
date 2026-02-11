@@ -13,7 +13,7 @@ class TimetableScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ClassProvider>();
+    final provider = context.watch<ProgramProvider>();
     final timetable = provider.timetable;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;

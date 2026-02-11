@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/classes/program_model.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'program_provider.dart';
@@ -10,9 +11,10 @@ class ClassesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ProgramProvider>();
-    final classes = provider.programs;
+    final programs = provider.programs;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+
 
     return AppScaffold(
       child: Padding(
@@ -71,29 +73,59 @@ class ClassesScreen extends StatelessWidget {
                   child: _buildStatCard(
                     context: context,
                     label: 'Total Programs',
-                    value: '${classes.length}',
+                    value: '${programs.length}',
                     color: Colors.blue,
                     icon: Icons.class_,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 10),
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Undergraduate Level',
-                    value: '${classes.where((c) => c.level.toLowerCase().contains('undergraduate')).length}',
-                    color: Colors.green,
+                    label: 'Certificate',
+                    value: '${programs.where((c) => c.qualification == Qualification.Certificate).length}',
+                    color: Colors.deepPurpleAccent,
                     icon: Icons.school,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 10),
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Postgraduate Level',
-                    value: '${classes.where((c) => c.level.toLowerCase().contains('postgraduate')).length}',
-                    color: Colors.orange,
+                    label: 'Diploma',
+                    value: '${programs.where((c) => c.qualification == Qualification.Diploma).length}',
+                    color: Colors.pinkAccent,
                     icon: Icons.school_outlined,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildStatCard(
+                    context: context,
+                    label: 'Degree',
+                    value: '${programs.where((c) => c.qualification == Qualification.Degree).length}',
+                    color: Colors.teal,
+                    icon: Icons.school,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildStatCard(
+                    context: context,
+                    label: 'Masters',
+                    value: '${programs.where((c) => c.qualification == Qualification.Masters).length}',
+                    color: Colors.cyanAccent,
+                    icon: Icons.school_outlined,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildStatCard(
+                    context: context,
+                    label: 'PhD',
+                    value: '${programs.where((c) => c.qualification == Qualification.PhD).length}',
+                    color: Colors.brown,
+                    icon: Icons.school,
                   ),
                 ),
               ],
@@ -138,7 +170,10 @@ class ClassesScreen extends StatelessWidget {
                         children: [
                           const Expanded(
                             flex: 2,
-                            child: _TableHeader(text: 'Program Name'),
+                            child: _TableHeader(text: 'Program'),
+                          ),
+                          const Expanded(
+                            child: _TableHeader(text: 'Qualification'),
                           ),
                           const Expanded(
                             child: _TableHeader(text: 'Level'),
@@ -160,7 +195,7 @@ class ClassesScreen extends StatelessWidget {
 
                     // Table Content
                     Expanded(
-                      child: classes.isEmpty
+                      child: programs.isEmpty
                           ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -188,9 +223,9 @@ class ClassesScreen extends StatelessWidget {
                         ),
                       )
                           : ListView.builder(
-                        itemCount: classes.length,
+                        itemCount: programs.length,
                         itemBuilder: (context, index) {
-                          final classItem = classes[index];
+                          final programItem = programs[index];
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             decoration: BoxDecoration(
@@ -210,12 +245,12 @@ class ClassesScreen extends StatelessWidget {
                                         width: 30,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: _getLevelColor(classItem.level).withOpacity(0.1),
+                                          color: _getQualificationColor(programItem.qualification.name).withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Icon(
                                           Icons.class_,
-                                          color: _getLevelColor(classItem.level),
+                                          color: _getQualificationColor(programItem.qualification.name),
                                           size: 16,
                                         ),
                                       ),
@@ -225,7 +260,7 @@ class ClassesScreen extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              classItem.name,
+                                              programItem.name,
                                               style: theme.textTheme.bodyLarge?.copyWith(
                                                 fontWeight: FontWeight.w600,
                                                 color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -233,7 +268,7 @@ class ClassesScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Program ID: ${classItem.id ?? 'N/A'}',
+                                              'Program ID: ${programItem.id ?? 'N/A'}',
                                               style: theme.textTheme.bodySmall?.copyWith(
                                                 color: Colors.grey.shade500,
                                               ),
@@ -251,16 +286,41 @@ class ClassesScreen extends StatelessWidget {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                         decoration: BoxDecoration(
-                                          color: _getLevelColor(classItem.level).withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(20),
+                                          color: _getQualificationColor(programItem.qualification.name).withOpacity(0.1),
+                                          borderRadius:  BorderRadius.circular(20),
                                           border: Border.all(
-                                            color: _getLevelColor(classItem.level).withOpacity(0.3),
+                                            color: _getQualificationColor(programItem.qualification.name).withOpacity(0.3),
                                           ),
                                         ),
                                         child: Text(
-                                          classItem.level,
+                                          programItem.qualification.name,
                                           style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: _getLevelColor(classItem.level),
+                                            color: _getQualificationColor(programItem.qualification.name),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: _getLevelColor(programItem.level?.name ?? 'N/A').withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: _getLevelColor(programItem.level?.name ?? 'N/A').withOpacity(0.3),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          programItem.level?.name ?? 'N/A',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: _getLevelColor(programItem.level?.name ?? 'N/A'),
                                             fontWeight: FontWeight.w600,
                                           ),
                                           textAlign: TextAlign.center,
@@ -274,7 +334,7 @@ class ClassesScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            classItem.department,
+                                            programItem.department,
                                             style: theme.textTheme.bodySmall?.copyWith(
                                               fontWeight: FontWeight.w600,
                                               color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -291,10 +351,10 @@ class ClassesScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            classItem.duration,
+                                            programItem.duration,
                                             style: theme.textTheme.bodySmall?.copyWith(
                                               fontWeight: FontWeight.w600,
-                                              color: isDarkMode ? Colors.white : _getLevelColor(classItem.level),
+                                              color: isDarkMode ? Colors.white : _getQualificationColor(programItem.qualification.name),
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
@@ -321,7 +381,7 @@ class ClassesScreen extends StatelessWidget {
                                           onPressed: () {
                                             showDialog(
                                               context: context,
-                                              builder: (_) => ClassFormScreen(existingClass: classItem),
+                                              builder: (_) => ProgramFormScreen(existingProgram: programItem),
                                             );
                                           },
                                         ),
@@ -412,12 +472,23 @@ class ClassesScreen extends StatelessWidget {
       return Colors.green;
     } else if (levelLower.contains('postgraduate')) {
       return Colors.orange;
-    } else if (levelLower.contains('primary') || levelLower.contains('kindergarten')) {
-      return Colors.purple;
-    } else if (levelLower.contains('secondary')) {
-      return Colors.blue;
-    } else if (levelLower.contains('high')) {
-      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
+  }
+
+  Color _getQualificationColor(String qualification) {
+    final qualificationLower = qualification.toLowerCase();
+    if (qualificationLower.contains('certificate')) {
+      return Colors.deepPurpleAccent;
+    } else if (qualificationLower.contains('diploma')) {
+      return Colors.pinkAccent;
+    } else if (qualificationLower.contains('degree')) {
+      return Colors.teal;
+    } else if (qualificationLower.contains('masters')) {
+      return Colors.cyanAccent;
+    } else if (qualificationLower.contains('phd')) {
+      return Colors.brown;
     } else {
       return Colors.grey;
     }
