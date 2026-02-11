@@ -5,8 +5,23 @@ import '../../core/widgets/app_scaffold.dart';
 import 'device_provider.dart';
 import 'device_model.dart';
 
-class DevicesScreen extends StatelessWidget {
+class DevicesScreen extends StatefulWidget {
   const DevicesScreen({super.key});
+
+  @override
+  State<DevicesScreen> createState() => _DevicesScreenState();
+}
+
+class _DevicesScreenState extends State<DevicesScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<DeviceProvider>().loadDevices();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -226,34 +241,34 @@ class DevicesScreen extends StatelessWidget {
                                   ),
 
                                   Expanded(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                            decoration: BoxDecoration(
-                                              color: _getDeviceTypeColor(d.type).withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(20),
-                                              border: Border.all(
-                                                color: _getDeviceTypeColor(d.type).withOpacity(0.3),
-                                              ),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  d.type.name.toUpperCase(),
-                                                  style: theme.textTheme.bodySmall?.copyWith(
-                                                    color: _getDeviceTypeColor(d.type),
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  textAlign: TextAlign.center,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: _getDeviceTypeColor(d.type).withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: _getDeviceTypeColor(d.type).withOpacity(0.3),
                                                 ),
-                                              ],
-                                            )
-                                        ),
-                                      ],
-                                    )
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    d.type.name.toUpperCase(),
+                                                    style: theme.textTheme.bodySmall?.copyWith(
+                                                      color: _getDeviceTypeColor(d.type),
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              )
+                                          ),
+                                        ],
+                                      )
                                   ),
 
                                   Expanded(
