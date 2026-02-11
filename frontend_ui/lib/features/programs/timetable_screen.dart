@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_ui/features/classes/timetable_form_screen.dart';
+import 'package:frontend_ui/features/programs/timetable_form_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'program_provider.dart';

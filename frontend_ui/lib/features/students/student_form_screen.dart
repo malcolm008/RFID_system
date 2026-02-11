@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'student_model.dart';
 import 'student_provider.dart';
+import '../programs/program_provider.dart';
+import '../programs/program_model.dart';
 
 class StudentFormDialog extends StatefulWidget {
   final Student? student;
@@ -14,21 +16,25 @@ class StudentFormDialog extends StatefulWidget {
 class _StudentFormDialogState extends State<StudentFormDialog> {
   late TextEditingController nameCtrl;
   late TextEditingController regCtrl;
-  late TextEditingController progCtrl;
   late int selectedYear;
   late bool hasRfid;
   late bool hasFingerprint;
+  Program? _selectedProgram;
+
 
   @override
   void initState() {
     nameCtrl = TextEditingController(text: widget.student?.name);
     regCtrl = TextEditingController(text: widget.student?.regNumber);
-    progCtrl = TextEditingController(text: widget.student?.program);
 
     selectedYear = widget.student?.year ?? 1;
     hasRfid = widget.student?.hasRfid ?? false;
     hasFingerprint = widget.student?.hasFingerprint ?? false;
     super.initState();
+
+    Future.microtask(() {
+      context.read<ProgramProvider>().loadPrograms();
+    });
   }
 
   void _save() async {
@@ -48,19 +54,20 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
       return;
     }
 
-    if (progCtrl.text.isEmpty) {
+    if (_selectedProgram == null || _selectedProgram == '') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter program")),
+        SnackBar(content: Text("Please select a program")),
       );
       return;
     }
+
 
     try {
       final student = Student(
         id: widget.student?.id ?? '',
         name: nameCtrl.text.trim(),
         regNumber: regCtrl.text.trim(),
-        program: progCtrl.text.trim(),
+        program: _selectedProgram!.name,
         year: selectedYear,
         hasRfid: hasRfid,
         hasFingerprint: hasFingerprint,
@@ -101,6 +108,8 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isEditing = widget.student != null;
+    final programProvider = context.watch<ProgramProvider>();
+    final programs = programProvider.programs;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -181,12 +190,24 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                   icon: Icons.person,
                 ),
                 const SizedBox(height: 15),
-                _buildTextField(
-                  context: context,
-                  controller: progCtrl,
-                  label: 'Program',
-                  hintText: 'Enter Program',
-                  icon: Icons.school,
+                DropdownButtonFormField<Program>(
+                  value: _selectedProgram,
+                  items: programs.map((program) {
+                    return DropdownMenuItem<Program>(
+                      value: program,
+                      child: Text(program.name),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedProgram = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Program',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null ? 'Please select a program' : null,
                 ),
                 const SizedBox(height: 15),
                 _buildYearDropdown(context),

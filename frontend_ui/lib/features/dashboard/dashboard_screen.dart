@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/attendance/attendance_screen.dart';
-import 'package:frontend_ui/features/classes/program_screen.dart';
-import 'package:frontend_ui/features/classes/subjects_screen.dart';
-import 'package:frontend_ui/features/classes/timetable_form_screen.dart';
-import 'package:frontend_ui/features/classes/timetable_screen.dart';
+import 'package:frontend_ui/features/programs/program_screen.dart';
+import 'package:frontend_ui/features/programs/subjects_screen.dart';
+import 'package:frontend_ui/features/programs/timetable_form_screen.dart';
+import 'package:frontend_ui/features/programs/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
 import 'package:frontend_ui/features/reports/report_screen.dart';
 import 'package:frontend_ui/features/students/student_form_screen.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_ui/features/classes/program_provider.dart';
-import 'package:frontend_ui/features/classes/program_screen.dart';
-import 'package:frontend_ui/features/classes/subjects_screen.dart';
-import 'package:frontend_ui/features/classes/timetable_screen.dart';
+import 'package:frontend_ui/features/programs/program_provider.dart';
+import 'package:frontend_ui/features/programs/program_screen.dart';
+import 'package:frontend_ui/features/programs/subjects_screen.dart';
+import 'package:frontend_ui/features/programs/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/device_provider.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
 import 'package:frontend_ui/features/students/student_list_screen.dart';

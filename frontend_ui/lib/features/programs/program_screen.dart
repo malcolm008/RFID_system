@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_ui/features/classes/program_model.dart';
+import 'package:frontend_ui/features/programs/program_model.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'program_provider.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_ui/features/classes/subject_form_screen.dart';
+import 'package:frontend_ui/features/programs/subject_form_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'subject_provider.dart';
