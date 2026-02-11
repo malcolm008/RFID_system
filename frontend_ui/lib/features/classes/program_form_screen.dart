@@ -1,30 +1,48 @@
 import 'package:flutter/material.dart';
 import 'program_model.dart';
 
-class ClassFormScreen extends StatefulWidget {
-  final SchoolClass? existingClass;
+class ProgramFormScreen extends StatefulWidget {
+  final Program? existingProgram;
 
-  const ClassFormScreen({super.key, this.existingClass});
+  const ProgramFormScreen({super.key, this.existingProgram});
 
   @override
-  State<ClassFormScreen> createState() => _ClassFormScreenState();
+  State<ProgramFormScreen> createState() => _ProgramFormScreenState();
 }
 
-class _ClassFormScreenState extends State<ClassFormScreen> {
+class _ProgramFormScreenState extends State<ProgramFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _levelController;
 
-  bool get isEditing => widget.existingClass != null;
+  ProgramLevel? _selectedLevel;
+  Qualification? _selectedQualification;
+
+  bool get isEditing => widget.existingProgram != null;
 
   @override
   void initState() {
     super.initState();
     _nameController =
-        TextEditingController(text: widget.existingClass?.name ?? '');
-    _levelController =
-        TextEditingController(text: widget.existingClass?.level ?? '');
+        TextEditingController(text: widget.existingProgram?.name ?? '');
+
+    _selectedLevel = widget.existingProgram?.level;
+    _selectedQualification = widget.existingProgram?.qualification;
   }
+
+  final Map<Qualification, List<ProgramLevel>> qualificationLevels = {
+    Qualification.Certificate: [],
+    Qualification.Diploma: [],
+    Qualification.Degree: [
+      ProgramLevel.undergraduate,
+      ProgramLevel.postgraduate,
+    ],
+    Qualification.Masters: [
+      ProgramLevel.postgraduate,
+    ],
+    Qualification.PhD: [
+      ProgramLevel.postgraduate,
+    ]
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -108,19 +126,42 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField(
-                    context: context,
-                    controller: _levelController,
-                    label: 'Level',
-                    hintText: 'Enter academic level (e.g., Primary, Secondary)',
-                    icon: Icons.school,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Level is required';
-                      }
-                      return null;
+                  DropdownButtonFormField<Qualification>(
+                    value: _selectedQualification,
+                    decoration: const InputDecoration(labelText: 'Qualification'),
+                    items: Qualification.values.map((q) {
+                      return DropdownMenuItem(
+                        value: q,
+                        child: Text(q.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedQualification = value;
+                        _selectedLevel = null;
+                      });
                     },
+                    validator: (value) => value == null ? 'Please select qualification' : null,
                   ),
+                  const SizedBox(height: 16),
+
+                  if (qualificationLevels.containsKey(_selectedQualification))
+                    DropdownButtonFormField<ProgramLevel>(
+                      value: _selectedLevel,
+                      decoration: const InputDecoration(labelText: 'Program Level'),
+                      items: qualificationLevels[_selectedQualification]!
+                          .map((level) => DropdownMenuItem(
+                        value: level,
+                        child: Text(level.name),
+                      ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => _selectedLevel = value);
+                      },
+                      validator: (value) =>
+                      value == null ? 'Please select level' : null,
+                    ),
+
                 ],
               ),
 

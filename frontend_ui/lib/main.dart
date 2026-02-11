@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/classes/program_provider.dart';
-import 'package:frontend_ui/features/classes/classes_screen.dart';
+import 'package:frontend_ui/features/classes/program_screen.dart';
 import 'package:frontend_ui/features/classes/subjects_screen.dart';
 import 'package:frontend_ui/features/classes/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/device_provider.dart';

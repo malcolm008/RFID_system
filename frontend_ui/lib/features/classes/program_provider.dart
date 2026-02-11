@@ -4,7 +4,7 @@ import 'program_api.dart';
 import 'subject_model.dart';
 import 'timetable_model.dart';
 
-class programProvider extends ChangeNotifier {
+class ProgramProvider extends ChangeNotifier {
   final List<TimetableEntry> timetable = [
     TimetableEntry(
       id: '1',

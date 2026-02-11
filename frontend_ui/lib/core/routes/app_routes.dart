@@ -4,7 +4,7 @@ import 'package:frontend_ui/features/reports/report_screen.dart';
 import 'package:frontend_ui/features/students/student_list_screen.dart';
 import 'package:frontend_ui/features/teachers/teacher_list_screen.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
-import 'package:frontend_ui/features/classes/classes_screen.dart';
+import 'package:frontend_ui/features/classes/program_screen.dart';
 import 'package:frontend_ui/features/classes/subjects_screen.dart';
 import 'package:frontend_ui/features/classes/timetable_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';

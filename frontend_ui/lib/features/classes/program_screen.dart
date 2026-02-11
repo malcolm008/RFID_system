@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'program_provider.dart';
-import 'class_form_screen.dart';
+import 'program_form_screen.dart';
 
 class ClassesScreen extends StatelessWidget {
   const ClassesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ClassProvider>();
-    final classes = provider.classes;
+    final provider = context.watch<ProgramProvider>();
+    final classes = provider.programs;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -49,7 +49,7 @@ class ClassesScreen extends StatelessWidget {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => const ClassFormScreen(),
+                      builder: (_) => const ProgramFormScreen(),
                     );
                   },
                   style: ElevatedButton.styleFrom(
