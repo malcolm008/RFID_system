@@ -3,7 +3,8 @@ from .views import (
     StudentListView, CreateStudentView, UpdateStudentView,
     TeacherListView, CreateTeacherView, UpdateTeacherView,
     DeviceListView, CreateDeviceView, UpdateDeviceView,
-    CreateProgramView, UpdateProgramView, ProgramListView
+    CreateProgramView, UpdateProgramView, ProgramListView,
+    CourseListView, CreateCourseView, UpdateCourseView
 )
 
 urlpatterns = [
@@ -26,4 +27,9 @@ urlpatterns = [
     path('programs/list/', ProgramListView.as_view()),
     path('programs/create/', CreateProgramView.as_view()),
     path('programs/update/', UpdateProgramView.as_view()),
+
+    #COURSE
+    path('courses/list/', CourseListView.as_view(), name='course_list'),
+    path('courses/create/', CreateCourseView.as_view(), name='create_course'),
+    path('courses/update/', UpdateCourseView.as_view(), name='update_course'),
 ]
