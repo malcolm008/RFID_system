@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'subject_model.dart';
+import 'course_model.dart';
 
 class SubjectFormScreen extends StatefulWidget {
   final Course? existingSubject;

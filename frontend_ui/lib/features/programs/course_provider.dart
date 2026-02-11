@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'subject_model.dart';
+import 'course_model.dart';
 
 
 class CourseProvider extends ChangeNotifier {

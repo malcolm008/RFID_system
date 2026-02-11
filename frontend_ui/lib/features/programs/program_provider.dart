@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'program_model.dart';
 import 'program_api.dart';
-import 'subject_model.dart';
+import 'course_model.dart';
 import 'timetable_model.dart';
 
 class ProgramProvider extends ChangeNotifier {

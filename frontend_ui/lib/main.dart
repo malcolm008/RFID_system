@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/programs/program_provider.dart';
 import 'package:frontend_ui/features/programs/program_screen.dart';
-import 'package:frontend_ui/features/programs/subjects_screen.dart';
+import 'package:frontend_ui/features/programs/course_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/device_provider.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
