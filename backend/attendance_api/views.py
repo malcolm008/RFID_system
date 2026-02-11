@@ -1,10 +1,12 @@
+from django.core.serializers import serialize
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import Student, Teacher, Device, Program
-from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer, ProgramSerializer
+from .models import Student, Teacher, Device, Program, Course
+from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer, ProgramSerializer, \
+    CourseSerializer
 
 
 # Create a base class that explicitly disables CSRF
@@ -295,6 +297,68 @@ class UpdateProgramView(CsrfExemptAPIView):
 
         serializer = ProgramSerializer(
             program,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class CourseListView(CsrfExemptAPIView):
+    def get(self, request):
+        courses = Course.objects.select_related('Program').all()
+        serializer = CourseSerializer(courses, many=True)
+
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
+
+class CreateCourseView(CsrfExemptAPIView):
+    def post(self, request):
+        serializer = CourseSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class UpdateCourseView(CsrfExemptAPIView):
+    def post(self, request):
+        course_id = request.data.get('id')
+
+        if not course_id:
+            return Response({
+                'status': 'error',
+                'message': 'Course ID is required'
+            }, status=400)
+
+        try:
+            course = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Course not found'
+            }, status=400)
+
+        serializer = CourseSerializer(
+            course,
             data=request.data,
             partial=True
         )
