@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'course_model.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'program_provider.dart';
+import 'course_provider.dart';
 
 class CourseFormScreen extends StatefulWidget {
   final Course? existingSubject;
@@ -18,11 +22,23 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
   late TextEditingController _departmentController;
 
   String? _selectedProgramId;
-  int? _year;
-  int? _semester;
+  String? _selectedQualification;
+  int? _selectedYear;
+  int? _selectedSemester;
+
+  List<int> _availableYears = [];
+
+  final semesters = [1, 2];
+
+  final qualifications = [
+    'Certificate',
+    'Diploma',
+    'Degree',
+    'Masters',
+    'PhD',
+  ];
 
   bool get isEditing => widget.existingSubject != null;
-  final years = [1, 2, 3, 4]
 
   @override
   void initState() {
@@ -31,12 +47,27 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
         TextEditingController(text: widget.existingSubject?.name ?? '');
     _codeController =
         TextEditingController(text: widget.existingSubject?.code ?? '');
-    _teacher = widget.existingSubject?.teacherName;
+    _departmentController =
+        TextEditingController(text: widget.existingSubject?.department ?? '');
+    _selectedQualification =
+        widget.existingSubject?.qualification;
+    _selectedProgramId =
+        widget.existingSubject?.programId;
+    _selectedYear =
+        widget.existingSubject?.year;
+    _selectedSemester =
+        widget.existingSubject?.semester;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final programProvider = Provider.of<ProgramProvider>(context);
+    final allPrograms = programProvider.programs;
+
+    final filteredPrograms = allPrograms
+      .where((p) => p.qualification == _selectedQualification)
+      .toList();
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -130,20 +161,91 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _buildDropdownField(
-                    context: context,
-                    value: _teacher,
-                    label: 'Assign Teacher',
-                    hintText: 'Select a teacher',
-                    icon: Icons.person,
-                    items: teachers,
-                    onChanged: (value) => setState(() => _teacher = value),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a teacher';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectedQualification,
+                    decoration: const InputDecoration(
+                      labelText: 'Qualification',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: qualifications
+                      .map((q) => DropdownMenuItem(
+                      value: q,
+                      child: Text(q),
+                    )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedQualification = value;
+
+                        _selectedProgramId = null;
+                        _selectedYear = null;
+                        _availableYears = [];
+                      });
                     },
+                    validator: (value) => value == null ? 'Select qualification' : null,
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    value: _selectedProgramId,
+                    decoration: const InputDecoration(
+                      labelText: 'Program',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: filteredPrograms
+                      .map((program) => DropdownMenuItem(
+                      value: program.id,
+                      child: Text(program.name),
+                    )).toList(),
+                    onChanged: (value) {
+                      final selectedProgram = filteredPrograms.firstWhere((p) => p.id == value);
+
+                      setState(() {
+                        _selectedProgramId = value;
+
+                        _availableYears = List.generate(
+                            int.parse(selectedProgram.duration),
+                                (index) => index + 1);
+                        _selectedYear = null;
+                      });
+                    },
+                    validator: (value) => value == null ? 'Select program' : null,
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<int>(
+                    value: _selectedYear,
+                    decoration: const InputDecoration(
+                      labelText: 'Year',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _availableYears
+                      .map((year) => DropdownMenuItem(
+                      value: year,
+                      child: Text("Year $year"),
+                    )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedYear = value;
+                      });
+                    },
+                    validator: (value) => value == null ? 'Select year': null,
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField(
+                    value: _selectedYear,
+                    decoration: const InputDecoration(
+                      labelText: 'Year',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _availableYears
+                      .map((year) => DropdownMenuItem(
+                      value: year,
+                      child: Text("Year $year"),
+                    )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedYear = value;
+                      });
+                    },
+                    validator: (value) => value == null ? 'Select year': null,
                   ),
                 ],
               ),
@@ -173,14 +275,33 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (isEditing) {
-                          // provider.updateSubject(...)
-                        } else {
-                          // provider.addSubject(...)
+                        final provider = Provider.of<CourseProvider>(context, listen: false);
+                        final course = Course(
+                          id: widget.existingSubject?.id ?? '',
+                          name: _nameController.text,
+                          code: _codeController.text,
+                          qualification: _selectedQualification!,
+                          programId: _selectedProgramId!,
+                          department: _departmentController.text,
+                          semester: _selectedSemester!,
+                          year: _selectedYear!,
+                        );
+
+                        try {
+                          if (isEditing) {
+                            await provider.updateCourse(course);
+                          } else {
+                            await provider.addCourse(course);
+                          }
+
+                          Navigator.pop(context);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Error: $e")),
+                          );
                         }
-                        Navigator.pop(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(
