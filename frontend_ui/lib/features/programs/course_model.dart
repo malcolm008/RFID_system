@@ -3,8 +3,7 @@ class Course {
   final String name;
   final String code;
 
-  final String qualificationId;
-  final String? qualificationName;
+  final String qualification;
 
   final String programId;
   final String? programName;
@@ -18,8 +17,7 @@ class Course {
     required this.id,
     required this.name,
     required this.code,
-    required this.qualificationId,
-    this.qualificationName,
+    required this.qualification,
     required this.programId,
     this.programName,
     required this.department,
@@ -33,8 +31,7 @@ class Course {
       name: json['name'],
       code: json['code'],
 
-      qualificationId: json['qualification'].toString(),
-      qualificationName: json['qualification_name'],
+      qualification: json['qualification'],
 
       programId: json['program'].toString(),
       programName: json['program_name'],
@@ -50,7 +47,7 @@ class Course {
     return {
       "name": name,
       "code": code,
-      "qualification": qualificationId,
+      "qualification": qualification,
       "program": programId,
       "department": department,
       "semester": semester,
