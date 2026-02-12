@@ -83,8 +83,28 @@ class ProgramSerializer(serializers.ModelSerializer):
             return data
 
 class CourseSerializer(serializers.ModelSerializer):
-    program_name = serializers.CharField(source= 'program.name', read_only = True)
+    program_name = serializers.CharField(
+        source='program.name',
+        read_only=True
+    )
 
     class Meta:
         model = Course
         fields = '__all__'
+
+    def validate(self, data):
+        program = data.get('program')
+        qualification = data.get('qualification')
+        year = data.get('year')
+
+        if program.qualification != qualification:
+            raise serializers.ValidationError(
+                "Selected program does not belong to selected qualification."
+            )
+
+        if year > program.duration:
+            raise serializers.ValidationError(
+                f"Year cannot exceed program duration ({program.duration})."
+            )
+
+        return data
