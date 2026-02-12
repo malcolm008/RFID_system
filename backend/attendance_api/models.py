@@ -88,15 +88,25 @@ class Program(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField(max_length=20)
-    department = models.CharField(max_length=100)
+    code = models.CharField(max_length=50)
 
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    qualification = models.CharField(
+        max_length=20,
+        choices=Program.QUALIFICATION_CHOICES
+    )
+
+    program = models.ForeignKey(
+        Program,
+        on_delete=models.CASCADE,
+        related_name="courses"
+    )
+
+    department = models.CharField(max_length=100)
 
     semester = models.IntegerField()
     year = models.IntegerField()
 
     def __str__(self):
-        return f"{self.name} ({self.code})"
+        return self.name
 
 
