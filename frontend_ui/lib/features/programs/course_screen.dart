@@ -49,7 +49,7 @@ class SubjectsScreen extends StatelessWidget {
                   icon: const Icon(Icons.add_circle_outline),
                   label: const Text('Add Subject'),
                   onPressed: () {
-                    showDialog(context: context, builder: (_) => SubjectFormScreen(),);
+                    showDialog(context: context, builder: (_) => CourseFormScreen(),);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

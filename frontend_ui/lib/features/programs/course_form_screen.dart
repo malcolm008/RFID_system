@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'course_model.dart';
 
-class SubjectFormScreen extends StatefulWidget {
+class CourseFormScreen extends StatefulWidget {
   final Course? existingSubject;
 
-  const SubjectFormScreen({super.key, this.existingSubject});
+  const CourseFormScreen({super.key, this.existingSubject});
 
   @override
-  State<SubjectFormScreen> createState() => _SubjectFormScreenState();
+  State<CourseFormScreen> createState() => _SubjectFormScreenState();
 }
 
-class _SubjectFormScreenState extends State<SubjectFormScreen> {
+class _SubjectFormScreenState extends State<CourseFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _nameController;
   late TextEditingController _codeController;
-  late TextEditingController _progController;
-  String? _teacher;
+  late TextEditingController _departmentController;
+
+  String? _selectedProgramId;
+  int? _year;
+  int? _semester;
 
   bool get isEditing => widget.existingSubject != null;
-
-  final teachers = ['Mr. John', 'Ms. Jane'];
+  final years = [1, 2, 3, 4]
 
   @override
   void initState() {

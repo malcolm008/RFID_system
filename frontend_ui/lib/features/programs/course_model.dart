@@ -3,8 +3,12 @@ class Course {
   final String name;
   final String code;
 
+  final String qualificationId;
+  final String? qualificationName;
+
   final String programId;
   final String? programName;
+
   final String department;
 
   final int semester;
@@ -14,9 +18,11 @@ class Course {
     required this.id,
     required this.name,
     required this.code,
+    required this.qualificationId,
+    this.qualificationName,
     required this.programId,
-    required this.department,
     this.programName,
+    required this.department,
     required this.semester,
     required this.year,
 });
@@ -26,9 +32,15 @@ class Course {
       id: json['id'].toString(),
       name: json['name'],
       code: json['code'],
+
+      qualificationId: json['qualification'].toString(),
+      qualificationName: json['qualification_name'],
+
       programId: json['program'].toString(),
-      department: json['department'].toString(),
       programName: json['program_name'],
+
+      department: json['department'].toString(),
+
       semester: int.parse(json['semester'].toString()),
       year: int.parse(json['year'].toString()),
     );
@@ -38,6 +50,7 @@ class Course {
     return {
       "name": name,
       "code": code,
+      "qualification": qualificationId,
       "program": programId,
       "department": department,
       "semester": semester,
