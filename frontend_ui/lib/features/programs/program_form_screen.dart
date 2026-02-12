@@ -20,7 +20,7 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
 
   ProgramLevel? _selectedLevel;
   Qualification? _selectedQualification;
-  String? _selectedDuration;
+  int? _selectedDuration;
 
   bool get isEditing => widget.existingProgram != null;
 
@@ -57,29 +57,14 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
     ]
   };
 
-  final Map<Qualification, List<String>> qualificationDurations = {
-    Qualification.Certificate: [
-      '6 months',
-      '1 year',
-    ],
-    Qualification.Diploma: [
-      '1 year',
-      '2 years',
-    ],
-    Qualification.Degree: [
-      '3 years',
-      '4 years',
-    ],
-    Qualification.Masters: [
-      '1 year',
-      '2 years',
-    ],
-    Qualification.PhD: [
-      '3 years',
-      '4 years',
-      '5 years',
-    ],
+  final Map<Qualification, List<int>> qualificationDurations = {
+    Qualification.Certificate: [1],
+    Qualification.Diploma: [1, 2],
+    Qualification.Degree: [3, 4],
+    Qualification.Masters: [1, 2],
+    Qualification.PhD: [3, 4, 5],
   };
+
 
   @override
   Widget build(BuildContext context) {
@@ -198,18 +183,29 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                     ),
                   const SizedBox(height: 16),
                   if (_selectedQualification != null)
-                    DropdownButtonFormField<String>(
+                    DropdownButtonFormField<int>(
                       value: _selectedDuration,
-                      decoration: const InputDecoration(labelText: 'Duration'),
+                      decoration: const InputDecoration(
+                        labelText: 'Duration',
+                        border: OutlineInputBorder(),
+                      ),
                       items: qualificationDurations[_selectedQualification]!
-                        .map((duration) => DropdownMenuItem(
+                          .map((duration) => DropdownMenuItem(
                         value: duration,
-                        child: Text(duration),
-                      )).toList(),
+                        child: Text(
+                          duration == 1
+                              ? "$duration year"
+                              : "$duration years",
+                        ),
+                      ))
+                          .toList(),
                       onChanged: (value) {
-                        setState(() => _selectedDuration = value);
+                        setState(() {
+                          _selectedDuration = value;
+                        });
                       },
-                      validator: (value) => value == null ? 'Please select duration': null,
+                      validator: (value) =>
+                      value == null ? 'Select duration' : null,
                     ),
                   const SizedBox(height: 20),
                   _buildTextField(

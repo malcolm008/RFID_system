@@ -366,10 +366,16 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            programItem.duration,
+                                            programItem.duration == 1
+                                                ? "${programItem.duration} year"
+                                                : "${programItem.duration} years",
                                             style: theme.textTheme.bodySmall?.copyWith(
                                               fontWeight: FontWeight.w600,
-                                              color: isDarkMode ? Colors.white : _getQualificationColor(programItem.qualification.name),
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : _getQualificationColor(
+                                                programItem.qualification.name,
+                                              ),
                                             ),
                                             textAlign: TextAlign.center,
                                           ),

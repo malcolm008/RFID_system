@@ -6,7 +6,7 @@ class Program {
   final String name;
   final Qualification qualification;
   final ProgramLevel? level;
-  final String duration;
+  final int duration;
   final String department;
 
   Program({
@@ -29,7 +29,7 @@ class Program {
         ? ProgramLevel.values.firstWhere(
           (e) => e.name == json['level'],
       ) : null,
-      duration: json['duration'],
+      duration: int.parse(json['duration'].toString()),
       department: json['department'],
     );
   }
