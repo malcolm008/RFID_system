@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/programs/program_model.dart';
 import 'course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,13 +31,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
 
   final semesters = [1, 2];
 
-  final qualifications = [
-    'Certificate',
-    'Diploma',
-    'Degree',
-    'Masters',
-    'PhD',
-  ];
+
 
   bool get isEditing => widget.existingCourse != null;
 
@@ -81,6 +76,11 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
     final theme = Theme.of(context);
     final programProvider = Provider.of<ProgramProvider>(context);
     final allPrograms = programProvider.programs;
+
+    final List<String> qualifications = allPrograms
+        .map((p) => p.qualification.name) // 👈 convert enum to String
+        .toSet()
+        .toList();
 
     final filteredPrograms = allPrograms
       .where((p) => p.qualification == _selectedQualification)
@@ -185,20 +185,21 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                       border: OutlineInputBorder(),
                     ),
                     items: qualifications
-                      .map((q) => DropdownMenuItem(
+                        .map((q) => DropdownMenuItem<String>(
                       value: q,
                       child: Text(q),
-                    )).toList(),
+                    ))
+                        .toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedQualification = value;
-
                         _selectedProgramId = null;
                         _selectedYear = null;
                         _availableYears = [];
                       });
                     },
-                    validator: (value) => value == null ? 'Select qualification' : null,
+                    validator: (value) =>
+                    value == null ? 'Select qualification' : null,
                   ),
                   const SizedBox(height: 20),
                   DropdownButtonFormField<String>(
