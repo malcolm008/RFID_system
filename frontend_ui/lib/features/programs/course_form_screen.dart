@@ -11,10 +11,10 @@ class CourseFormScreen extends StatefulWidget {
   const CourseFormScreen({super.key, this.existingCourse});
 
   @override
-  State<CourseFormScreen> createState() => _SubjectFormScreenState();
+  State<CourseFormScreen> createState() => _CourseFormScreenState();
 }
 
-class _SubjectFormScreenState extends State<CourseFormScreen> {
+class _CourseFormScreenState extends State<CourseFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _nameController;
@@ -107,7 +107,7 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isEditing ? 'Edit Subject' : 'Add New Subject',
+                          isEditing ? 'Edit Course' : 'Add New Course',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: theme.colorScheme.onSurface,
@@ -116,8 +116,8 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                         const SizedBox(height: 4),
                         Text(
                           isEditing
-                              ? 'Update subject information'
-                              : 'Fill in the subject details below',
+                              ? 'Update course information'
+                              : 'Fill in the course details below',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: Colors.grey.shade600,
                           ),
@@ -136,12 +136,12 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                   _buildTextField(
                     context: context,
                     controller: _nameController,
-                    label: 'Subject Name',
-                    hintText: 'Enter subject name (e.g., Mathematics)',
+                    label: 'Course Name',
+                    hintText: 'Enter Course name (e.g., Mathematics)',
                     icon: Icons.subject,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Subject name is required';
+                        return 'Course name is required';
                       }
                       return null;
                     },
@@ -150,12 +150,12 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                   _buildTextField(
                     context: context,
                     controller: _codeController,
-                    label: 'Subject Code',
-                    hintText: 'Enter subject code (e.g., MATH101)',
+                    label: 'Course Code',
+                    hintText: 'Enter Course code (e.g., MATH101)',
                     icon: Icons.code,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Subject code is required';
+                        return 'Course code is required';
                       }
                       return null;
                     },
@@ -229,24 +229,24 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                     validator: (value) => value == null ? 'Select year': null,
                   ),
                   const SizedBox(height: 20),
-                  DropdownButtonFormField(
-                    value: _selectedYear,
+                  DropdownButtonFormField<int>(
+                    value: _selectedSemester,
                     decoration: const InputDecoration(
-                      labelText: 'Year',
+                      labelText: 'Semester',
                       border: OutlineInputBorder(),
                     ),
-                    items: _availableYears
-                      .map((year) => DropdownMenuItem(
-                      value: year,
-                      child: Text("Year $year"),
+                    items: semesters
+                      .map((sem) => DropdownMenuItem(
+                      value: sem,
+                      child: Text("Semester $sem"),
                     )).toList(),
                     onChanged: (value) {
                       setState(() {
-                        _selectedYear = value;
+                        _selectedSemester = value;
                       });
                     },
-                    validator: (value) => value == null ? 'Select year': null,
-                  ),
+                    validator: (value) => value == null ? 'Select semester' : null,
+                  )
                 ],
               ),
 
@@ -321,7 +321,7 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isEditing ? 'Update Subject' : 'Add Subject',
+                          isEditing ? 'Update Course' : 'Add Course',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
