@@ -57,6 +57,23 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         widget.existingCourse?.year;
     _selectedSemester =
         widget.existingCourse?.semester;
+
+    if (widget.existingCourse != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final programProvider = Provider.of<ProgramProvider>(context, listen: false);
+
+        final selectedProgram = programProvider.programs
+            .where((p) => p.id == _selectedProgramId)
+            .toList();
+
+        if (selectedProgram.isNotEmpty) {
+          _availableYears = List.generate(
+            selectedProgram.first.duration,
+                (index) => index + 1,
+          );
+        }
+      });
+    }
   }
 
   @override
