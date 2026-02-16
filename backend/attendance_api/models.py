@@ -102,10 +102,9 @@ class Course(models.Model):
         choices=Program.QUALIFICATION_CHOICES
     )
 
-    program = models.ForeignKey(
+    programs = models.ManyToManyField(
         Program,
-        on_delete=models.CASCADE,
-        related_name="courses"
+        related_name = "courses"
     )
 
     semester = models.IntegerField()
