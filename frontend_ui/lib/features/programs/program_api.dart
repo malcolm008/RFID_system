@@ -5,31 +5,31 @@ import 'program_model.dart';
 class ProgramApi{
   static const baseUrl = "http://127.0.0.1:8000/attendance_api/programs";
 
+
   static Future<List<Program>> fetchPrograms() async {
     final response = await http.get(Uri.parse("$baseUrl/list/"));
-    final body = jsonDecode(response.body);
-
     if (response.statusCode == 200) {
-      final List data = body['data'];
-      return data.map((e) => Program.fromJson(e)).toList();
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      // The actual list is inside json['data']
+      final List<dynamic> programsJson = json['data'];
+      return programsJson.map((e) => Program.fromJson(e)).toList();
     } else {
-      throw Exception("Failed to load programs");
+      throw Exception('Failed to load programs: ${response.statusCode}');
     }
   }
 
   static Future<Program> addProgram(Program program) async {
     final response = await http.post(
       Uri.parse("$baseUrl/create/"),
-      headers: {"Content-Type": "application/json"},
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode(program.toJson()),
     );
-
-    final body = jsonDecode(response.body);
-
     if (response.statusCode == 201) {
-      return Program.fromJson(body['data']);
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      // The created program is inside json['data']
+      return Program.fromJson(json['data']);
     } else {
-      throw Exception(body['errors'] ?? 'Failed to create class');
+      throw Exception('Failed to add program: ${response.statusCode}');
     }
   }
 

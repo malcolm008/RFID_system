@@ -70,6 +70,7 @@ CORS_ALLOW_ORIGINS = [
     "http://192.168.11.82:59068",
     "http://localhost:57922",
     "http://127.0.0.1:57922",
+    "http://localhost:63928/",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -78,6 +79,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.11.82:59068",
     "http://localhost:57922",
     "http://127.0.0.1:57922",
+    "http://localhost:63928/",
 ]
 
 ROOT_URLCONF = 'backend.urls'

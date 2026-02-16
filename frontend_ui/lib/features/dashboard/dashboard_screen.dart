@@ -369,7 +369,7 @@ class DashboardScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => SubjectsScreen(),
+                    builder: (_) => CoursesScreen(),
                   ),
                 );
               }

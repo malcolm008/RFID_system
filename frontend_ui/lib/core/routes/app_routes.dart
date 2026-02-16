@@ -28,7 +28,7 @@ class AppRoutes {
     reports: (context) => const ReportsScreen(),
     devices: (context) => const DevicesScreen(),
     classes: (context) => const ProgramsScreen(),
-    subjects: (context) => const SubjectsScreen(),
+    subjects: (context) => const CoursesScreen(),
     timetable: (context) => const TimetableScreen(),
   };
 }

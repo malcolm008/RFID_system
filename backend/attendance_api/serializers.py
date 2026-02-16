@@ -66,21 +66,21 @@ class ProgramSerializer(serializers.ModelSerializer):
         model = Program
         fields = '__all__'
 
-        def validate(self, data):
-            qualification = data.get('qualification')
-            level = data.get('level')
+    def validate(self, data):
+        qualification = data.get('qualification')
+        level = data.get('level')
 
-            if qualification == 'Degree' and not level:
-                raise serializers.ValidationError(
-                    {"level": "Degree programs require a level"}
-                )
+        if qualification == 'Degree' and not level:
+            raise serializers.ValidationError(
+                {"level": "Degree programs require a level"}
+            )
 
-            if qualification in ['Certificate', 'Diploma'] and level:
-                raise serializers.ValidationError(
-                    {"level": "This qualification does not support levels"}
-                )
+        if qualification in ['Certificate', 'Diploma'] and level:
+            raise serializers.ValidationError(
+                {"level": "This qualification does not support levels"}
+            )
 
-            return data
+        return data
 
 class CourseSerializer(serializers.ModelSerializer):
     program_name = serializers.CharField(

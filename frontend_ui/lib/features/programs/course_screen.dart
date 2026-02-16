@@ -6,15 +6,25 @@ import 'course_provider.dart';
 import 'course_model.dart';
 
 
-class SubjectsScreen extends StatelessWidget {
-  const SubjectsScreen({super.key});
+class CoursesScreen extends StatelessWidget {
+  const CoursesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CourseProvider>();
-    final subjects = provider.courses;
+    final courses = provider.courses;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+
+    final totalSubjects = courses.length;
+    final totalPrograms = courses
+      .map((c) => c.programName ?? c.programId)
+      .where((name) => name != null && name.isNotEmpty)
+      .toSet().length;
+    final totalDepartments = courses
+      .map((c) => c.department)
+      .where((dept) => dept.isNotEmpty)
+      .toSet().length;
 
     return AppScaffold(
       child: Padding(
@@ -70,7 +80,7 @@ class SubjectsScreen extends StatelessWidget {
                   child: _buildStatCard(
                     context: context,
                     label: 'Total Subjects',
-                    value: '${subjects.length}',
+                    value: '$totalSubjects',
                     color: Colors.blue,
                     icon: Icons.subject,
                   ),
@@ -79,8 +89,8 @@ class SubjectsScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Assigned Teachers',
-                    value: '${subjects.where((s) => s.teacherName.isNotEmpty).length}',
+                    label: 'Programs',
+                    value: '$totalPrograms',
                     color: Colors.green,
                     icon: Icons.person,
                   ),
@@ -89,8 +99,8 @@ class SubjectsScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Unassigned',
-                    value: '${subjects.where((s) => s.teacherName.isEmpty).length}',
+                    label: 'Departments',
+                    value: '$totalDepartments',
                     color: Colors.orange,
                     icon: Icons.person_off,
                   ),
@@ -137,7 +147,7 @@ class SubjectsScreen extends StatelessWidget {
                         children: [
                           const Expanded(
                             flex: 2,
-                            child: _TableHeader(text: 'Subject'),
+                            child: _TableHeader(text: 'Course'),
                           ),
                           const Expanded(
                             child: _TableHeader(text: 'Code'),
@@ -146,11 +156,14 @@ class SubjectsScreen extends StatelessWidget {
                             child: _TableHeader(text: 'Program'),
                           ),
                           const Expanded(
-                            child: _TableHeader(text: 'Year'),
+                            child: _TableHeader(text: 'Department')
+                          ),
+                          const Expanded(
+                            child: _TableHeader(text: 'Year / Semester'),
                           ),
                           const Expanded(
                             flex: 2,
-                            child: _TableHeader(text: 'Teacher'),
+                            child: _TableHeader(text: 'Qualification'),
                           ),
                           Container(
                             width: 80,
@@ -163,7 +176,7 @@ class SubjectsScreen extends StatelessWidget {
 
                     // Table Content
                     Expanded(
-                      child: subjects.isEmpty
+                      child: courses.isEmpty
                           ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -191,9 +204,9 @@ class SubjectsScreen extends StatelessWidget {
                         ),
                       )
                           : ListView.builder(
-                        itemCount: subjects.length,
+                        itemCount: courses.length,
                         itemBuilder: (context, index) {
-                          final subject = subjects[index];
+                          final course = courses[index];
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             decoration: BoxDecoration(
@@ -217,7 +230,7 @@ class SubjectsScreen extends StatelessWidget {
                                           borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Icon(
-                                          _getSubjectIcon(subject.name),
+                                          _getSubjectIcon(course.name),
                                           color: _getSubjectColor(index),
                                           size: 24,
                                         ),
@@ -228,7 +241,7 @@ class SubjectsScreen extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              subject.name,
+                                              course.name,
                                               style: theme.textTheme.bodyLarge?.copyWith(
                                                 fontWeight: FontWeight.w600,
                                                 color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -236,7 +249,7 @@ class SubjectsScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Subject ID: ${subject.id ?? 'N/A'}',
+                                              'Course ID: ${course.id ?? 'N/A'}',
                                               style: theme.textTheme.bodySmall?.copyWith(
                                                 color: Colors.grey.shade500,
                                               ),
@@ -262,7 +275,7 @@ class SubjectsScreen extends StatelessWidget {
                                           ),
                                         ),
                                         child: Text(
-                                          subject.code,
+                                          course.code,
                                           style: theme.textTheme.bodyMedium?.copyWith(
                                             color: Colors.blue,
                                             fontWeight: FontWeight.w600,
@@ -274,6 +287,16 @@ class SubjectsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Expanded(
+                                  flex: 1,
+                                  child: Center(
+                                    child: Text(
+                                      course.programName ?? course.programId,
+                                      style: theme.textTheme.bodyMedium,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
@@ -281,7 +304,7 @@ class SubjectsScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
-                                      subject.department,
+                                      course.department,
                                       style: theme.textTheme.bodyMedium,
                                       textAlign: TextAlign.center,
                                     ),
@@ -294,7 +317,7 @@ class SubjectsScreen extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Year ${subject.year}",
+                                          "Year ${course.year}",
                                           style: theme.textTheme.bodyMedium?.copyWith(
                                             fontWeight: FontWeight.w500,
                                             color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -303,7 +326,7 @@ class SubjectsScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          "semester: ${subject.semester}",
+                                          "semester: ${course.semester}",
                                           style: theme.textTheme.bodySmall?.copyWith(
                                             color: Colors.grey.shade500,
                                           ),
@@ -313,77 +336,52 @@ class SubjectsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 2,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 36,
-                                            height: 36,
-                                            decoration: BoxDecoration(
-                                              color: subject.teacherName.isNotEmpty
-                                                  ? Colors.green.withOpacity(0.1)
-                                                  : Colors.grey.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(18),
-                                            ),
-                                            child: Icon(
-                                              subject.teacherName.isNotEmpty
-                                                  ? Icons.person
-                                                  : Icons.person_outline,
-                                              size: 18,
-                                              color: subject.teacherName.isNotEmpty
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              subject.teacherName.isNotEmpty
-                                                  ? subject.teacherName
-                                                  : 'Not Assigned',
-                                              style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: subject.teacherName.isNotEmpty
-                                                    ? isDarkMode ? Colors.white : Colors.grey.shade800
-                                                    : Colors.grey.shade500,
-                                                fontStyle: subject.teacherName.isEmpty
-                                                    ? FontStyle.italic
-                                                    : FontStyle.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                  flex: 1,
+                                  child: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.purple.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: Colors.purple.withOpacity(0.3),
+                                        ),
                                       ),
-                                    ],
-                                  )
+                                      child: Text(
+                                        course.qualification,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: Colors.purple,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
                                 ),
 
-                                Container(
+                                SizedBox(
                                   width: 80,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: IconButton(
-                                          icon: const Icon(Icons.edit, size: 18),
-                                          color: Colors.orange,
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (_) => SubjectFormScreen(existingSubject: subject,),
-                                            );
-                                          },
-                                        ),
+                                  child: Center(
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ],
+                                      child: IconButton(
+                                        icon: const Icon(Icons.edit, size: 18),
+                                        color: Colors.orange,
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => CourseFormScreen(
+                                              existingCourse: course,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],

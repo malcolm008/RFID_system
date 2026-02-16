@@ -6,9 +6,9 @@ import 'program_provider.dart';
 import 'course_provider.dart';
 
 class CourseFormScreen extends StatefulWidget {
-  final Course? existingSubject;
+  final Course? existingCourse;
 
-  const CourseFormScreen({super.key, this.existingSubject});
+  const CourseFormScreen({super.key, this.existingCourse});
 
   @override
   State<CourseFormScreen> createState() => _SubjectFormScreenState();
@@ -38,25 +38,25 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
     'PhD',
   ];
 
-  bool get isEditing => widget.existingSubject != null;
+  bool get isEditing => widget.existingCourse != null;
 
   @override
   void initState() {
     super.initState();
     _nameController =
-        TextEditingController(text: widget.existingSubject?.name ?? '');
+        TextEditingController(text: widget.existingCourse?.name ?? '');
     _codeController =
-        TextEditingController(text: widget.existingSubject?.code ?? '');
+        TextEditingController(text: widget.existingCourse?.code ?? '');
     _departmentController =
-        TextEditingController(text: widget.existingSubject?.department ?? '');
+        TextEditingController(text: widget.existingCourse?.department ?? '');
     _selectedQualification =
-        widget.existingSubject?.qualification;
+        widget.existingCourse?.qualification;
     _selectedProgramId =
-        widget.existingSubject?.programId;
+        widget.existingCourse?.programId;
     _selectedYear =
-        widget.existingSubject?.year;
+        widget.existingCourse?.year;
     _selectedSemester =
-        widget.existingSubject?.semester;
+        widget.existingCourse?.semester;
   }
 
   @override
@@ -202,7 +202,7 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                         _selectedProgramId = value;
 
                         _availableYears = List.generate(
-                            int.parse(selectedProgram.duration),
+                            selectedProgram.duration,
                                 (index) => index + 1);
                         _selectedYear = null;
                       });
@@ -279,7 +279,7 @@ class _SubjectFormScreenState extends State<CourseFormScreen> {
                       if (_formKey.currentState!.validate()) {
                         final provider = Provider.of<CourseProvider>(context, listen: false);
                         final course = Course(
-                          id: widget.existingSubject?.id ?? '',
+                          id: widget.existingCourse?.id ?? '',
                           name: _nameController.text,
                           code: _codeController.text,
                           qualification: _selectedQualification!,

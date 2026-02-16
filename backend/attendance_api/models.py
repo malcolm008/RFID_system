@@ -72,7 +72,8 @@ class Program(models.Model):
     name = models.CharField(max_length=100)
     qualification = models.CharField(
         max_length=20,
-        choices=QUALIFICATION_CHOICES
+        choices=QUALIFICATION_CHOICES,
+        default='Certificate',
     )
     level = models.CharField(
         max_length=20,

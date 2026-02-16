@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/programs/course_provider.dart';
 import 'package:frontend_ui/features/programs/program_provider.dart';
 import 'package:frontend_ui/features/programs/program_screen.dart';
 import 'package:frontend_ui/features/programs/course_screen.dart';
@@ -34,6 +35,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
         ChangeNotifierProvider(create: (_) => ProgramProvider()),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
       ],
       child: MaterialApp(

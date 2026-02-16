@@ -41,13 +41,18 @@ class ProgramProvider extends ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    final data = await ProgramApi.fetchPrograms();
-    _programs
-      ..clear()
-      ..addAll(data);
-
-    _loading = false;
-    notifyListeners();
+    try {
+      final data = await ProgramApi.fetchPrograms();
+      _programs
+        ..clear()
+        ..addAll(data);
+    } catch (e, stack) {
+      debugPrint('Error loading programs: $e\n$stack');
+      // Optionally show a snackbar or keep the old list
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> addProgram(Program program) async {
