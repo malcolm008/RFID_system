@@ -108,8 +108,6 @@ class Course(models.Model):
         related_name="courses"
     )
 
-    department = models.CharField(max_length=100)
-
     semester = models.IntegerField()
     year = models.IntegerField()
 

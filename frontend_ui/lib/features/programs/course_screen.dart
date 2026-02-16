@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'course_provider.dart';
 import 'course_model.dart';
+import 'program_provider.dart';
+
 
 
 class CoursesScreen extends StatelessWidget {
@@ -16,14 +18,10 @@ class CoursesScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
-    final totalSubjects = courses.length;
+    final totalCourses = courses.length;
     final totalPrograms = courses
       .map((c) => c.programName ?? c.programId)
       .where((name) => name != null && name.isNotEmpty)
-      .toSet().length;
-    final totalDepartments = courses
-      .map((c) => c.department)
-      .where((dept) => dept.isNotEmpty)
       .toSet().length;
 
     return AppScaffold(
@@ -40,7 +38,7 @@ class CoursesScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Subjects',
+                      'Courses',
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: isDarkMode ? Colors.white : Colors.grey.shade800,
@@ -48,7 +46,7 @@ class CoursesScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Manage academic subjects and assignments',
+                      'Manage academic courses and assignments',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -79,8 +77,8 @@ class CoursesScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context: context,
-                    label: 'Total Subjects',
-                    value: '$totalSubjects',
+                    label: 'Total Courses',
+                    value: '$totalCourses',
                     color: Colors.blue,
                     icon: Icons.subject,
                   ),
@@ -95,22 +93,12 @@ class CoursesScreen extends StatelessWidget {
                     icon: Icons.person,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context: context,
-                    label: 'Departments',
-                    value: '$totalDepartments',
-                    color: Colors.orange,
-                    icon: Icons.person_off,
-                  ),
-                ),
               ],
             ),
 
             const SizedBox(height: 32),
 
-            // Subjects Table
+            // Courses Table
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -153,16 +141,13 @@ class CoursesScreen extends StatelessWidget {
                             child: _TableHeader(text: 'Code'),
                           ),
                           const Expanded(
+                            flex: 2,
                             child: _TableHeader(text: 'Program'),
-                          ),
-                          const Expanded(
-                            child: _TableHeader(text: 'Department')
                           ),
                           const Expanded(
                             child: _TableHeader(text: 'Year / Semester'),
                           ),
                           const Expanded(
-                            flex: 2,
                             child: _TableHeader(text: 'Qualification'),
                           ),
                           Container(
@@ -188,14 +173,14 @@ class CoursesScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No subjects found',
+                              'No courses found',
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 color: Colors.grey.shade500,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Add your first subject to get started',
+                              'Add your first course to get started',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: Colors.grey.shade400,
                               ),
@@ -265,29 +250,34 @@ class CoursesScreen extends StatelessWidget {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(
-                                            color: Colors.blue.withOpacity(0.3),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.blue.withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              course.code,
+                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
-                                        ),
-                                        child: Text(
-                                          course.code,
-                                          style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 1,
+                                  flex: 2,
                                   child: Center(
                                     child: Text(
                                       course.programName ?? course.programId,
@@ -298,23 +288,9 @@ class CoursesScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      course.department,
-                                      style: theme.textTheme.bodyMedium,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Year ${course.year}",
@@ -372,7 +348,9 @@ class CoursesScreen extends StatelessWidget {
                                       child: IconButton(
                                         icon: const Icon(Icons.edit, size: 18),
                                         color: Colors.orange,
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await Provider.of<ProgramProvider>(context, listen: false)
+                                              .loadPrograms();
                                           showDialog(
                                             context: context,
                                             builder: (_) => CourseFormScreen(

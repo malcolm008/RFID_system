@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'course_model.dart';
 
 class CourseProvider extends ChangeNotifier {
-  final String baseUrl = "http://127.0.0.1:8000/api/courses/";
+  final String baseUrl = "http://127.0.0.1:8000/attendance_api/courses/";
 
   final List<Course> _courses = [];
   bool _loading = false;

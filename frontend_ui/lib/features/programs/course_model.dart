@@ -8,7 +8,6 @@ class Course {
   final String programId;
   final String? programName;
 
-  final String department;
 
   final int semester;
   final int year;
@@ -20,7 +19,6 @@ class Course {
     required this.qualification,
     required this.programId,
     this.programName,
-    required this.department,
     required this.semester,
     required this.year,
 });
@@ -36,7 +34,6 @@ class Course {
       programId: json['program'].toString(),
       programName: json['program_name'],
 
-      department: json['department'].toString(),
 
       semester: int.parse(json['semester'].toString()),
       year: int.parse(json['year'].toString()),
@@ -45,11 +42,11 @@ class Course {
 
   Map<String, dynamic> toJson() {
     return {
+      "id": id.isNotEmpty ? int.tryParse(id) ?? 0: 0,
       "name": name,
       "code": code,
       "qualification": qualification,
       "program": programId,
-      "department": department,
       "semester": semester,
       "year": year,
     };

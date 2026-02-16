@@ -20,7 +20,6 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
 
   late TextEditingController _nameController;
   late TextEditingController _codeController;
-  late TextEditingController _departmentController;
 
   String? _selectedProgramId;
   String? _selectedQualification;
@@ -42,8 +41,6 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         TextEditingController(text: widget.existingCourse?.name ?? '');
     _codeController =
         TextEditingController(text: widget.existingCourse?.code ?? '');
-    _departmentController =
-        TextEditingController(text: widget.existingCourse?.department ?? '');
     _selectedQualification =
         widget.existingCourse?.qualification;
     _selectedProgramId =
@@ -52,6 +49,11 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         widget.existingCourse?.year;
     _selectedSemester =
         widget.existingCourse?.semester;
+
+    Future.microtask(() {
+      Provider.of<ProgramProvider>(context, listen: false)
+          .loadPrograms();
+    });
 
     if (widget.existingCourse != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -304,7 +306,6 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                           code: _codeController.text,
                           qualification: _selectedQualification!,
                           programId: _selectedProgramId!,
-                          department: _departmentController.text,
                           semester: _selectedSemester!,
                           year: _selectedYear!,
                         );
