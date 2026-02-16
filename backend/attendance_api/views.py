@@ -252,19 +252,21 @@ class UpdateDeviceView(CsrfExemptAPIView):
 
 class CreateProgramView(CsrfExemptAPIView):
     def post(self, request):
+        print("🔵 Received POST data:", request.data)  # log incoming data
         serializer = ProgramSerializer(data=request.data)
-
         if serializer.is_valid():
-            serializer.save()
+            program = serializer.save()
+            print("🟢 Program saved with ID:", program.id)
             return Response({
                 'status': 'success',
                 'data': serializer.data
             }, status=201)
-
-        return Response({
-            'status': 'error',
-            'message': serializer.errors
-        }, status=400)
+        else:
+            print("🔴 Validation errors:", serializer.errors)  # <-- this is crucial
+            return Response({
+                'status': 'error',
+                'message': serializer.errors
+            }, status=400)
 
 class ProgramListView(CsrfExemptAPIView):
     def get(self, request):

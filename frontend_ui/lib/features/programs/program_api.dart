@@ -19,17 +19,33 @@ class ProgramApi{
   }
 
   static Future<Program> addProgram(Program program) async {
+    final Map<String, dynamic> data = program.toJson();
+    data.remove('id'); // don't send temporary ID
+
+    print('📤 Sending POST to create program: $data');
+
     final response = await http.post(
       Uri.parse("$baseUrl/create/"),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(program.toJson()),
+      body: jsonEncode(data),
     );
+
+    print('📥 Response status: ${response.statusCode}');
+    print('📥 Response body: ${response.body}');  // <-- important
+
     if (response.statusCode == 201) {
       final Map<String, dynamic> json = jsonDecode(response.body);
-      // The created program is inside json['data']
       return Program.fromJson(json['data']);
     } else {
-      throw Exception('Failed to add program: ${response.statusCode}');
+      // Try to parse error details
+      String errorMsg = 'Failed to add program: ${response.statusCode}';
+      try {
+        final Map<String, dynamic> errorJson = jsonDecode(response.body);
+        if (errorJson.containsKey('message')) {
+          errorMsg += ' - ${errorJson['message']}';
+        }
+      } catch (_) {}
+      throw Exception(errorMsg);
     }
   }
 
