@@ -5,8 +5,8 @@ class Course {
 
   final String qualification;
 
-  final String programId;
-  final String? programName;
+  final List<String> programIds;
+  final List<String>? programNames;
 
 
   final int semester;
@@ -17,8 +17,8 @@ class Course {
     required this.name,
     required this.code,
     required this.qualification,
-    required this.programId,
-    this.programName,
+    required this.programIds,
+    this.programNames,
     required this.semester,
     required this.year,
 });
@@ -31,10 +31,12 @@ class Course {
 
       qualification: json['qualification'],
 
-      programId: json['program'].toString(),
-      programName: json['program_name'],
-
-
+      programIds: List<String>.from(
+        json['programs'].map((p) => p.toString()),
+      ),
+      programNames: json['program_name'] != null
+        ? List<String>.from(json['program_name'])
+        : null,
       semester: int.parse(json['semester'].toString()),
       year: int.parse(json['year'].toString()),
     );
@@ -46,7 +48,7 @@ class Course {
       "name": name,
       "code": code,
       "qualification": qualification,
-      "program": programId,
+      "programs": programIds,
       "semester": semester,
       "year": year,
     };

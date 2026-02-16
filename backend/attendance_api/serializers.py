@@ -88,29 +88,53 @@ class ProgramSerializer(serializers.ModelSerializer):
 
         return data
 
+
 class CourseSerializer(serializers.ModelSerializer):
-    program_name = serializers.CharField(
-        source='program.name',
-        read_only=True
-    )
+    program_names = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = '__all__'
 
+    def get_program_names(self, obj):
+        return [program.name for program in obj.programs.all()]
     def validate(self, data):
-        program = data.get('program')
+        programs = data.get('programs')
         qualification = data.get('qualification')
         year = data.get('year')
 
-        if program.qualification != qualification:
+        if not programs:
             raise serializers.ValidationError(
-                "Selected program does not belong to selected qualification."
+                "At least one program must be selected."
             )
+        for program in programs:
+            if program.qualification != qualification:
+                raise serializers.ValidationError(
+                    f"{program.name} does noy belong to {qualification}."
+                )
 
-        if year > program.duration:
-            raise serializers.ValidationError(
-                f"Year cannot exceed program duration ({program.duration})."
-            )
+            if year > program.duration:
+                raise serializers.ValidationError(
+                    f"Year cannot exceed duration of {program.name} "
+                    f"({program.duration})."
+                )
 
         return data
+    def create(self, validated_data):
+        programs = validated_data.pop('programs')
+        course = Course.objects.create(**validated_data)
+        course.programs.set(programs)
+        return course
+
+    def update(self, instance, validated_data):
+        programs = validated_data.pop('programs', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        if programs is not None:
+            instance.programs.set(programs)
+
+        return instance
