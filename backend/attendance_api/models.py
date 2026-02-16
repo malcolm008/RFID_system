@@ -1,4 +1,10 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+
+def validate_integer(value):
+    if not isinstance(value, int):
+        raise ValidationError('Duratioin must be an integer')
+
 
 class Student(models.Model):
     name = models.CharField(max_length=200)
@@ -81,7 +87,7 @@ class Program(models.Model):
         null=True,
         blank=True
     )
-    duration = models.IntegerField()
+    duration = models.IntegerField(validators=[validate_integer])
     department = models.CharField(max_length=100)
 
     def __str__(self):

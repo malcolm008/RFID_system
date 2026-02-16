@@ -62,6 +62,12 @@ class DeviceSerializer(serializers.ModelSerializer):
             return rep
 
 class ProgramSerializer(serializers.ModelSerializer):
+    duration = serializers.IntegerField(
+        error_messages ={
+            'invalid': 'Duration must be an integer (number of years)'
+        }
+    )
+
     class Meta:
         model = Program
         fields = '__all__'
