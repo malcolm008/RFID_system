@@ -4,7 +4,7 @@ import 'course_model.dart';
 import 'package:provider/provider.dart';
 
 class CourseApi {
-  static const String baseUrl = "http://127.0.0.1:8000/api/courses/";
+  static const String baseUrl = "http://127.0.0.1:8000/attendance_api/courses/";
 
   static Future<List<Course>> fetchCourses() async {
     final response = await http.get(

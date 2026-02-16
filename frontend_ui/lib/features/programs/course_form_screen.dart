@@ -83,7 +83,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         .toList();
 
     final filteredPrograms = allPrograms
-      .where((p) => p.qualification == _selectedQualification)
+      .where((p) => p.qualification.name == _selectedQualification)
       .toList();
 
     return Dialog(
@@ -179,7 +179,9 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                   ),
                   const SizedBox(height: 20),
                   DropdownButtonFormField<String>(
-                    value: _selectedQualification,
+                    value: qualifications.contains(_selectedQualification)
+                        ? _selectedQualification
+                        : null,
                     decoration: const InputDecoration(
                       labelText: 'Qualification',
                       border: OutlineInputBorder(),
