@@ -282,12 +282,25 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                                               ),
                                             ),
                                             const SizedBox(height: 4),
-                                            Text(
-                                              'Program ID: ${programItem.id ?? 'N/A'}',
-                                              style: theme.textTheme.bodySmall?.copyWith(
-                                                color: Colors.grey.shade500,
-                                              ),
-                                            ),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Program ID: ${programItem.id ?? 'N/A'}',
+                                                  style: theme.textTheme.bodySmall?.copyWith(
+                                                    color: Colors.grey.shade500,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  'Code: ${programItem.abbreviation ?? 'N/A'}',
+                                                  style: theme.textTheme.bodySmall?.copyWith(
+                                                    color: Colors.grey.shade500,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+
                                           ],
                                         ),
                                       ),

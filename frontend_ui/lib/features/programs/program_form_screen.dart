@@ -17,6 +17,7 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _departmentController;
+  late TextEditingController _codeController;
 
   ProgramLevel? _selectedLevel;
   Qualification? _selectedQualification;
@@ -29,7 +30,7 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.existingProgram?.name ?? '');
     _departmentController = TextEditingController(text: widget.existingProgram?.department ?? '');
-
+    _codeController = TextEditingController(text: widget.existingProgram?.abbreviation ?? '');
     _selectedLevel = widget.existingProgram?.level;
     _selectedQualification = widget.existingProgram?.qualification;
     _selectedDuration = widget.existingProgram?.duration;
@@ -39,6 +40,7 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
   void dispose() {
     _nameController.dispose();
     _departmentController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -221,6 +223,20 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                    context: context,
+                    controller: _codeController,
+                    label: 'Program abbreviation',
+                    hintText: 'Enter the program code eg. Bsc.COEIT',
+                    icon: Icons.code,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Program abbreviation is required';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
 
@@ -262,6 +278,7 @@ class _ProgramFormScreenState extends State<ProgramFormScreen> {
                             ? widget.existingProgram!.id
                             : DateTime.now().millisecondsSinceEpoch.toString(),
                         name: _nameController.text.trim(),
+                        abbreviation: _codeController.text.trim(),
                         qualification: _selectedQualification!,
                         level: _selectedLevel,
                         duration: _selectedDuration!,

@@ -7,6 +7,7 @@ class Course {
 
   final List<String> programIds;
   final List<String>? programNames;
+  final List<String> programAbbreviations;
 
 
   final int semester;
@@ -19,6 +20,7 @@ class Course {
     required this.qualification,
     required this.programIds,
     this.programNames,
+    required this.programAbbreviations,
     required this.semester,
     required this.year,
 });
@@ -37,6 +39,9 @@ class Course {
       programNames: json['program_name'] != null
         ? List<String>.from(json['program_name'])
         : null,
+      programAbbreviations: json['program_abbreviations'] != null
+          ? List<String>.from(json['program_abbreviations'])
+          : [],
       semester: int.parse(json['semester'].toString()),
       year: int.parse(json['year'].toString()),
     );

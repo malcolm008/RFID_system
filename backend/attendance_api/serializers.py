@@ -90,36 +90,33 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    program_names = serializers.SerializerMethodField()
+    program_abbreviations = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = '__all__'
 
-    def get_program_names(self, obj):
+    def get_program_abbreviations(self, obj):
         return [program.abbreviation for program in obj.programs.all()]
     def validate(self, data):
-        programs = data.get('programs')
+        program_ids = data.get('programs')
         qualification = data.get('qualification')
         year = data.get('year')
 
-        if not programs:
-            raise serializers.ValidationError(
-                "At least one program must be selected."
-            )
+        if not program_ids:
+            raise serializers.ValidationError("At least one program must be selected.")
+
+        programs = Program.objects.filter(id_in=program_ids)
         for program in programs:
             if program.qualification != qualification:
-                raise serializers.ValidationError(
-                    f"{program.name} does noy belong to {qualification}."
-                )
-
+                raise serializers.ValidationError(f"{program.name} does not belong to {qualification}.")
             if year > program.duration:
                 raise serializers.ValidationError(
-                    f"Year cannot exceed duration of {program.name} "
-                    f"({program.duration})."
+                    f"Year cannot exceed duration of {program.name} ({program.duration})"
                 )
-
+        data['program'] = programs
         return data
+
     def create(self, validated_data):
         programs = validated_data.pop('programs')
         course = Course.objects.create(**validated_data)

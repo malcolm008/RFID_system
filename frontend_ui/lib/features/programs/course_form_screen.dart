@@ -88,6 +88,11 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
       .where((p) => p.qualification.name == _selectedQualification)
       .toList();
 
+    final selectedProgramAbbreviations = programProvider.programs
+        .where((p) => _selectedProgramIds.contains(p.id))
+        .map((p) => p.abbreviation) // make sure your Program model has this field
+        .toList();
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -283,6 +288,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                             code: _codeController.text,
                             qualification: _selectedQualification!,
                             programIds: _selectedProgramIds,
+                            programAbbreviations: selectedProgramAbbreviations,
                             semester: _selectedSemester!,
                             year: _selectedYear!,
                           );
