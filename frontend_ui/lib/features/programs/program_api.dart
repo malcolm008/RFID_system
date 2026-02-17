@@ -64,7 +64,7 @@ class ProgramApi{
     }
   }
 
-  static Future<void> bulkDeleteProgram(List<String> ids) async {
+  static Future<void> bulkDeletePrograms(List<String> ids) async {
     final response = await http.post(
       Uri.parse("$baseUrl/bulk-delete/"),
       headers: {'Content-Type': 'application/json'},

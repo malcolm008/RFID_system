@@ -70,4 +70,26 @@ class ProgramProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> deleteProgram(String id) async {
+    try {
+      await ProgramApi.deleteProgram(id);
+      _programs.removeWhere((p) => p.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting program $id: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> bulkDeletePrograms(List<String> ids) async {
+    try {
+      await ProgramApi.bulkDeletePrograms(ids);
+      _programs.removeWhere((p) => ids.contains(p.id));
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error bulk deleting programs: $e');
+      rethrow;
+    }
+  }
 }
