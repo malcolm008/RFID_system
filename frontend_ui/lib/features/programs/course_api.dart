@@ -21,20 +21,41 @@ class CourseApi {
   }
 
   static Future<Course> addCourse(Course course) async {
+    final Map<String, dynamic> data = course.toJson();
+    data.remove('id'); // don't send temporary ID if creating new course
+
+    print('📤 Sending POST to create course: $data');
+
     final response = await http.post(
       Uri.parse("${baseUrl}create/"),
       headers: {"Content-Type": "application/json"},
-      body: json.encode(course.toJson()),
+      body: json.encode(data),
     );
 
-    final data = json.decode(response.body);
+    print('📥 Response status: ${response.statusCode}');
+    print('📥 Response body: ${response.body}'); // <-- see raw server response
 
-    if (response.statusCode == 201) {
-      return Course.fromJson(data['data']);
-    } else {
-      throw Exception(data['message']);
+    // Try parsing JSON safely
+    try {
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+
+      if (response.statusCode == 201) {
+        return Course.fromJson(jsonData['data']);
+      } else {
+        String errorMsg = 'Failed to add course: ${response.statusCode}';
+        if (jsonData.containsKey('message')) {
+          errorMsg += ' - ${jsonData['message']}';
+        }
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      // If decoding fails, probably server returned HTML (like 500 page)
+      throw Exception(
+          'Failed to add course. Server returned non-JSON response:\n${response.body}'
+      );
     }
   }
+
 
   static Future<Course> updateCourse(Course course) async {
     final response = await http.post(
