@@ -16,6 +16,32 @@ class CsrfExemptAPIView(APIView):
         return super().dispatch(*args, **kwargs)
 
 
+class DeleteBaseView(CsrfExemptAPIView):
+    model = None
+    model_name = "Item"
+
+    def post(self, request):
+        item_id = request.data.get('id')
+
+        if not item_id:
+            return Response({
+                'status': 'error',
+                'message': f'{self.model_name} ID is required'
+            }, status=400)
+
+        try:
+            item = self.model.objects.get(id=item_id)
+            item.delete()
+            return Response({
+                'status': 'success',
+                'message': f'{self.model_name} deleted successfully'
+            })
+        except self.model.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': f'{self.model_name} not found'
+            }, status=404)
+
 class BulkDeleteBaseView(CsrfExemptAPIView):
     model = None
     model_name = "Items"
@@ -132,7 +158,13 @@ class UpdateStudentView(CsrfExemptAPIView):
                 'message': f'Student not found'
             }, status=404)
 
+
 class BulkDeleteStudentView(BulkDeleteBaseView):
+    model = Student
+    model_name = "Student"
+
+
+class DeleteStudentView(DeleteBaseView):
     model = Student
     model_name = "Student"
 
@@ -228,6 +260,10 @@ class BulkDeleteTeacherView(BulkDeleteBaseView):
     model = Teacher
     model_name = "Teacher"
 
+class DeleteTeacherView(DeleteBaseView):
+    model = Teacher
+    model_name = "Teacher"
+
 class DeviceListView(CsrfExemptAPIView):
     def get(self, request):
         devices = Device.objects.all().order_by('-lastSeen')
@@ -287,6 +323,10 @@ class UpdateDeviceView(CsrfExemptAPIView):
 
 
 class BulkDeleteDeviceView(BulkDeleteBaseView):
+    model = Device
+    model_name = "Device"
+
+class DeleteDeviceView(DeleteBaseView):
     model = Device
     model_name = "Device"
 
@@ -359,6 +399,10 @@ class BulkDeleteProgramView(BulkDeleteBaseView):
     model = Program
     model_name = "Program"
 
+class DeleteProgramView(DeleteBaseView):
+    model = Program
+    model_name = "Program"
+
 class CourseListView(CsrfExemptAPIView):
     def get(self, request):
         courses = Course.objects.select_related('Program').all()
@@ -423,5 +467,9 @@ class UpdateCourseView(CsrfExemptAPIView):
 
 
 class BulkDeleteCourseView(BulkDeleteBaseView):
+    model = Course
+    model_name = "Course"
+
+class DeleteCourseView(DeleteBaseView):
     model = Course
     model_name = "Course"
