@@ -76,6 +76,10 @@ class Program(models.Model):
     ]
 
     name = models.CharField(max_length=100)
+    abbreviation = models.CharField(
+        max_length=20,
+        unique=True,
+    )
     qualification = models.CharField(
         max_length=20,
         choices=QUALIFICATION_CHOICES,
@@ -91,7 +95,7 @@ class Program(models.Model):
     department = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.name} ({self.qualification})"
+        return self.abbreviation
 
 class Course(models.Model):
     name = models.CharField(max_length=100)

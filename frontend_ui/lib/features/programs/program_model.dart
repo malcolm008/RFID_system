@@ -4,6 +4,7 @@ enum Qualification {Certificate, Diploma, Degree, Masters, PhD}
 class Program {
   final String id;
   final String name;
+  final String? abbreviation;
   final Qualification qualification;
   final ProgramLevel? level;
   final int duration;
@@ -12,6 +13,7 @@ class Program {
   Program({
     required this.id,
     required this.name,
+    this.abbreviation,
     required this.qualification,
     this.level,
     required this.duration,
@@ -22,6 +24,7 @@ class Program {
     return Program(
       id: json['id'].toString(),
       name: json['name'],
+      abbreviation: json['abbreviation'] ?? '',
       qualification: Qualification.values.firstWhere(
           (e) => e.name == json['qualification'],
       ),
@@ -38,6 +41,7 @@ class Program {
     return {
       "id":  id,
       "name": name,
+      "abbreviation": abbreviation,
       "qualification": qualification.name,
       "level": level?.name,
       "duration": duration,
