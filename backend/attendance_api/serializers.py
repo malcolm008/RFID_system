@@ -98,6 +98,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_program_abbreviations(self, obj):
         return [program.abbreviation for program in obj.programs.all()]
+
     def validate(self, data):
         program_ids = data.get('programs')
         qualification = data.get('qualification')
@@ -106,15 +107,19 @@ class CourseSerializer(serializers.ModelSerializer):
         if not program_ids:
             raise serializers.ValidationError("At least one program must be selected.")
 
-        programs = Program.objects.filter(id_in=program_ids)
+        programs = Program.objects.filter(id__in=program_ids)
         for program in programs:
             if program.qualification != qualification:
-                raise serializers.ValidationError(f"{program.name} does not belong to {qualification}.")
+                raise serializers.ValidationError(
+                    f"{program.name} does not belong to {qualification}."
+                )
             if year > program.duration:
                 raise serializers.ValidationError(
-                    f"Year cannot exceed duration of {program.name} ({program.duration})"
+                    f"Year cannot exceed duration of {program.name} ({program.duration})."
                 )
-        data['program'] = programs
+
+        # Replace IDs with actual program instances
+        data['programs'] = programs
         return data
 
     def create(self, validated_data):
@@ -125,13 +130,9 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         programs = validated_data.pop('programs', None)
-
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-
         instance.save()
-
         if programs is not None:
             instance.programs.set(programs)
-
         return instance
