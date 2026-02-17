@@ -97,7 +97,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_program_names(self, obj):
-        return [program.name for program in obj.programs.all()]
+        return [program.abbreviation for program in obj.programs.all()]
     def validate(self, data):
         programs = data.get('programs')
         qualification = data.get('qualification')
