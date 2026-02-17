@@ -44,7 +44,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
     _selectedQualification =
         widget.existingCourse?.qualification;
     _selectedProgramId =
-        widget.existingCourse?.programId;
+        widget.existingCourse?.programIds;
     _selectedYear =
         widget.existingCourse?.year;
     _selectedSemester =

@@ -20,9 +20,8 @@ class CoursesScreen extends StatelessWidget {
 
     final totalCourses = courses.length;
     final totalPrograms = courses
-      .map((c) => c.programName ?? c.programId)
-      .where((name) => name != null && name.isNotEmpty)
-      .toSet().length;
+      .expand((c) => c.programNames ?? c.programIds)
+      .where((name) => name.isNotEmpty).toSet().length;
 
     return AppScaffold(
       child: Padding(
