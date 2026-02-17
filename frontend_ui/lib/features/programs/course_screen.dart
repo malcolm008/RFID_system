@@ -279,7 +279,9 @@ class CoursesScreen extends StatelessWidget {
                                   flex: 2,
                                   child: Center(
                                     child: Text(
-                                      course.programName ?? course.programId,
+                                      (course.programNames != null && course.programNames!.isNotEmpty)
+                                          ? course.programNames!.join(', ')
+                                          : course.programIds.join(', '),
                                       style: theme.textTheme.bodyMedium,
                                       textAlign: TextAlign.center,
                                     ),

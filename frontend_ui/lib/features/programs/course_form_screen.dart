@@ -21,7 +21,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
   late TextEditingController _nameController;
   late TextEditingController _codeController;
 
-  String? _selectedProgramId;
+  List<String> _selectedProgramIds = [];
   String? _selectedQualification;
   int? _selectedYear;
   int? _selectedSemester;
@@ -43,8 +43,8 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         TextEditingController(text: widget.existingCourse?.code ?? '');
     _selectedQualification =
         widget.existingCourse?.qualification;
-    _selectedProgramId =
-        widget.existingCourse?.programIds;
+    _selectedProgramIds =
+        widget.existingCourse?.programIds ?? [];
     _selectedYear =
         widget.existingCourse?.year;
     _selectedSemester =
@@ -60,7 +60,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
         final programProvider = Provider.of<ProgramProvider>(context, listen: false);
 
         final selectedProgram = programProvider.programs
-            .where((p) => p.id == _selectedProgramId)
+            .where((p) => p.id == _selectedProgramIds)
             .toList();
 
         if (selectedProgram.isNotEmpty) {
@@ -197,7 +197,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                     onChanged: (value) {
                       setState(() {
                         _selectedQualification = value;
-                        _selectedProgramId = null;
+                        _selectedProgramIds.clear();
                         _selectedYear = null;
                         _availableYears = [];
                       });
@@ -206,31 +206,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                     value == null ? 'Select qualification' : null,
                   ),
                   const SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    value: _selectedProgramId,
-                    decoration: const InputDecoration(
-                      labelText: 'Program',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: filteredPrograms
-                      .map((program) => DropdownMenuItem(
-                      value: program.id,
-                      child: Text(program.name),
-                    )).toList(),
-                    onChanged: (value) {
-                      final selectedProgram = filteredPrograms.firstWhere((p) => p.id == value);
-
-                      setState(() {
-                        _selectedProgramId = value;
-
-                        _availableYears = List.generate(
-                            selectedProgram.duration,
-                                (index) => index + 1);
-                        _selectedYear = null;
-                      });
-                    },
-                    validator: (value) => value == null ? 'Select program' : null,
-                  ),
+                  _buildProgramMultiSelect(filteredPrograms),
                   const SizedBox(height: 20),
                   DropdownButtonFormField<int>(
                     value: _selectedYear,
@@ -305,7 +281,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                           name: _nameController.text,
                           code: _codeController.text,
                           qualification: _selectedQualification!,
-                          programId: _selectedProgramId!,
+                          programIds: _selectedProgramIds,
                           semester: _selectedSemester!,
                           year: _selectedYear!,
                         );
@@ -412,6 +388,84 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                 color: Colors.red.shade600,
                 fontSize: 12,
               ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgramMultiSelect(List<Program> programs) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Programs",
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            final selected = await showDialog<List<String>>(
+              context: context,
+              builder: (context) {
+                List<String> tempSelected = List.from(_selectedProgramIds);
+
+                return AlertDialog(
+                  title: const Text("Select Programs"),
+                  content: SizedBox(
+                    width: 300,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: programs.map((program)  {
+                        final isSelected = tempSelected.contains(program.id);
+
+                        return CheckboxListTile(
+                          value: isSelected,
+                          title: Text(program.name),
+                          onChanged: (value) {
+                            if (value == true) {
+                              tempSelected.add(program.id);
+                            } else {
+                              tempSelected.remove(program.id);
+                            }
+                            setState(() {
+
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, tempSelected),
+                      child: const Text("Done"),
+                    ),
+                  ],
+                );
+              },
+            );
+            if (selected != null) {
+              setState(() {
+                _selectedProgramIds = selected;
+              });
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              _selectedProgramIds.isEmpty
+                  ? "Select Programs"
+                  : "${_selectedProgramIds.length} program(s) selected",
             ),
           ),
         ),
