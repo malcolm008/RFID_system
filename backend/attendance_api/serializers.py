@@ -1,6 +1,22 @@
 from rest_framework import serializers
 from .models import Student, Teacher, Device, Program, Course
 
+class BulkDeleteSerializer(serializers.Serializer):
+    ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=False,
+        error_messages={
+            "empty": "You must select at least one item to delete."
+        }
+    )
+
+    def validate_ids(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "At least one ID must be provided."
+            )
+        return value
+
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)  # To match your Dart model's string id
 
@@ -100,27 +116,28 @@ class CourseSerializer(serializers.ModelSerializer):
         return [program.abbreviation for program in obj.programs.all()]
 
     def validate(self, data):
-        program_ids = data.get('programs')
+        programs = data.get('programs')
         qualification = data.get('qualification')
         year = data.get('year')
 
-        if not program_ids:
-            raise serializers.ValidationError("At least one program must be selected.")
+        if not programs:
+            raise serializers.ValidationError(
+                {"programs": "At least one program must be selected."}
+            )
 
-        programs = Program.objects.filter(id__in=program_ids)
         for program in programs:
             if program.qualification != qualification:
                 raise serializers.ValidationError(
                     f"{program.name} does not belong to {qualification}."
                 )
+
             if year > program.duration:
                 raise serializers.ValidationError(
                     f"Year cannot exceed duration of {program.name} ({program.duration})."
                 )
 
-        # Replace IDs with actual program instances
-        data['programs'] = programs
         return data
+
 
     def create(self, validated_data):
         programs = validated_data.pop('programs')

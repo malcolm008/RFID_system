@@ -13,6 +13,8 @@ class ProgramsScreen extends StatefulWidget {
 }
 
 class _ProgramsScreenState extends State<ProgramsScreen> {
+  bool _isDeleteMode = false;
+  Set<String> _selectedProgramIds = {};
 
   @override
   void initState(){
@@ -60,6 +62,35 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                     ),
                   ],
                 ),
+                if (_isDeleteMode)
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete),
+                    label: Text('Delete (${_selectedProgramIds.length})'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: _selectedProgramIds.isEmpty
+                        ? null
+                        : () async {
+                      await context.read<ProgramProvider>().deletePrograms(_selectedProgramIds.toList());
+                      setState(() {
+                        _isDeleteMode = false;
+                        _selectedProgramIds.clear();
+                      });
+                    },
+                  ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                  label: Text(_isDeleteMode ? 'Cancel' : 'Bulk Delete'),
+                  onPressed: () {
+                    setState(() {
+                      _isDeleteMode = !_isDeleteMode;
+                      _selectedProgramIds.clear();
+                    });
+                  },
+                ),
+                const SizedBox(width: 12),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
                   label: const Text('Add Program'),

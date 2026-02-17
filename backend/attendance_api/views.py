@@ -15,6 +15,33 @@ class CsrfExemptAPIView(APIView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+
+class BulkDeleteBaseView(CsrfExemptAPIView):
+    model = None
+    model_name = "Items"
+
+    def post(self, request):
+        if not self.model:
+            return Response({
+                'status': 'error',
+                'message': 'Model not configured'
+            }, status=500)
+
+        ids = request.data.get('ids')
+
+        if not ids or not isinstance(ids, list):
+            return Response({
+                'status': 'error',
+                'message': f'A list of {self.model_name} IDs is required'
+            }, status=400)
+
+        deleted_count, _ = self.model.objects.filter(id__in=ids).delete()
+
+        return Response({
+            'status': 'success',
+            'message': f'{deleted_count} {self.model_name}(s) deleted successfully'
+        })
+
 # Now all views inherit from CsrfExemptAPIView
 class StudentListView(CsrfExemptAPIView):
     def get(self, request):
@@ -105,6 +132,10 @@ class UpdateStudentView(CsrfExemptAPIView):
                 'message': f'Student not found'
             }, status=404)
 
+class BulkDeleteStudentView(BulkDeleteBaseView):
+    model = Student
+    model_name = "Student"
+
 class TeacherListView(CsrfExemptAPIView):
     def get(self, request):
         try:
@@ -193,6 +224,10 @@ class UpdateTeacherView(CsrfExemptAPIView):
                 'message': f'Student not found'
             }, status=400)
 
+class BulkDeleteTeacherView(BulkDeleteBaseView):
+    model = Teacher
+    model_name = "Teacher"
+
 class DeviceListView(CsrfExemptAPIView):
     def get(self, request):
         devices = Device.objects.all().order_by('-lastSeen')
@@ -250,6 +285,11 @@ class UpdateDeviceView(CsrfExemptAPIView):
             'message': serializer.errors
         }, status=400)
 
+
+class BulkDeleteDeviceView(BulkDeleteBaseView):
+    model = Device
+    model_name = "Device"
+
 class CreateProgramView(CsrfExemptAPIView):
     def post(self, request):
         print("🔵 Received POST data:", request.data)  # log incoming data
@@ -277,7 +317,6 @@ class ProgramListView(CsrfExemptAPIView):
             'status': 'success',
             'data': serializer.data
         })
-
 
 class UpdateProgramView(CsrfExemptAPIView):
     def post(self, request):
@@ -314,6 +353,11 @@ class UpdateProgramView(CsrfExemptAPIView):
             'status': 'error',
             'message': serializer.errors
         }, status=400)
+
+
+class BulkDeleteProgramView(BulkDeleteBaseView):
+    model = Program
+    model_name = "Program"
 
 class CourseListView(CsrfExemptAPIView):
     def get(self, request):
@@ -376,3 +420,8 @@ class UpdateCourseView(CsrfExemptAPIView):
             'status': 'error',
             'message': serializer.errors
         }, status=400)
+
+
+class BulkDeleteCourseView(BulkDeleteBaseView):
+    model = Course
+    model_name = "Course"
