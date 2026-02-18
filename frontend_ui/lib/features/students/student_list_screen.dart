@@ -272,7 +272,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -286,12 +286,29 @@ class _StudentListScreenState extends State<StudentListScreen> {
                       onPressed: _selectedStudentIds.isEmpty
                           ? null
                           : () async {
-                        await context.read<StudentProvider>().bulkDeleteStudents(_selectedStudentIds.toList());
+                        await context
+                            .read<StudentProvider>()
+                            .bulkDeleteStudents(_selectedStudentIds.toList());
                         setState(() {
-                    )
+                          _isDeleteMode = false;
+                          _selectedStudentIds.clear();
+                        });
+                      }
+                    ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                    label: Text(_isDeleteMode ? 'Cancel' : 'Delete'),
+                    onPressed: () {
+                      setState(() {
+                        _isDeleteMode = !_isDeleteMode;
+                        _selectedStudentIds.clear();
+                      });
+                    },
+                  ),
                 ],
-              )
-
+              ),
+              const SizedBox(height: 10),
               // Students Table
               SizedBox(
                 height: 600,
@@ -311,6 +328,8 @@ class _StudentListScreenState extends State<StudentListScreen> {
                   ),
                   child: Column(
                     children: [
+                      if (_isDeleteMode)
+                        const SizedBox(width: 40),
                       // Table Header
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -374,6 +393,9 @@ class _StudentListScreenState extends State<StudentListScreen> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                                 decoration: BoxDecoration(
+                                  color: _selectedStudentIds.contains(s.id)
+                                      ? Colors.red.withOpacity(0.05)
+                                      : null,
                                   border: Border(
                                     bottom: BorderSide(
                                       color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
