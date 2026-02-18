@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'teacher_model.dart';
+import 'teacher_api.dart';
 
 class TeacherProvider extends ChangeNotifier {
   final String baseUrl = "http://127.0.0.1:8000/attendance_api/teachers";
@@ -97,6 +98,28 @@ class TeacherProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error updating student: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteTeacher(String id) async {
+    try {
+      await TeacherApi.deleteTeacher(id);
+      _teachers.removeWhere((t) => t.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting teacher $id: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> bulkDeleteTeacher(List<String> ids) async {
+    try {
+      await TeacherApi.bulkDeleteTeachers(ids);
+      _teachers.removeWhere((t) => ids.contains(t.id));
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error bulk deleting teachers: $e');
       rethrow;
     }
   }

@@ -61,4 +61,34 @@ class TeacherApi {
       throw Exception(body['message'] ?? 'Failed to update teacher');
     }
   }
+
+  static Future<void> deleteTeacher(String id) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"id": int.parse(id)}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Teacher deleted: $id");
+    } else {
+      throw Exception(body['message'] ?? 'Failed to delete teacher');
+    }
+  }
+
+  static Future<void> bulkDeleteTeachers(List<String> ids) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/bulk-delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"ids": ids.map((e) => int.parse(e)).toList()}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Teachers deleted: ${ids.join(', ')}");
+    } else {
+      throw Exception(body['message'] ?? "Failed to bulk delete teachers");
+    }
+  }
 }

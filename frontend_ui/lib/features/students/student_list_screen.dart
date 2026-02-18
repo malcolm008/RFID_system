@@ -404,6 +404,22 @@ class _StudentListScreenState extends State<StudentListScreen> {
                                 ),
                                 child: Row(
                                   children: [
+                                    if (_isDeleteMode)
+                                      SizedBox(
+                                        width: 40,
+                                        child: Checkbox(
+                                          value: _selectedStudentIds.contains(s.id),
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              if (value == true) {
+                                                _selectedStudentIds.add(s.id!);
+                                              } else {
+                                                _selectedStudentIds.remove(s.id);
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     Expanded(
                                       flex:1,
                                       child: Container(
