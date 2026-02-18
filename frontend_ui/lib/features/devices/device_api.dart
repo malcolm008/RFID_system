@@ -62,4 +62,34 @@ class DeviceApi {
       throw Exception(body['message'] ?? 'Failed to update device');
     }
   }
+
+  static Future<void> deleteDevice(String id) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"id": int.parse(id)}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Devices deleted: $id");
+    } else {
+      throw Exception(body['message'] ?? 'Failed to delete device');
+    }
+  }
+
+  static Future<void> bulkDeleteDevices(List<String> ids) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/bulk-delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"ids": ids.map((e) => int.parse(e)).toList()}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Devices deleted: ${ids.join(', ')}");
+    } else {
+      throw Exception(body['message'] ?? 'Failed to bulk delete devices');
+    }
+  }
 }

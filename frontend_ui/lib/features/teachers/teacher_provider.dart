@@ -113,7 +113,7 @@ class TeacherProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> bulkDeleteTeacher(List<String> ids) async {
+  Future<void> bulkDeleteTeachers(List<String> ids) async {
     try {
       await TeacherApi.bulkDeleteTeachers(ids);
       _teachers.removeWhere((t) => ids.contains(t.id));

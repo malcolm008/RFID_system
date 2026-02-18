@@ -15,6 +15,8 @@ class TeacherListScreen extends StatefulWidget {
 }
 
 class _TeacherListScreenState extends State<TeacherListScreen> {
+  bool _isDeleteMode = false;
+  Set<String> _selectedTeacherIds = {};
   String searchQuery= '';
   String? selectedDepartment;
   String? selectedCourse;
@@ -271,8 +273,44 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
-
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (_isDeleteMode)
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.delete),
+                      label: Text('Delete (${_selectedTeacherIds.length})'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: _selectedTeacherIds.isEmpty
+                          ? null
+                          : () async {
+                        await context
+                            .read<TeacherProvider>()
+                            .bulkDeleteTeachers(_selectedTeacherIds.toList());
+                        setState(() {
+                          _isDeleteMode = false;
+                          _selectedTeacherIds.clear();
+                        });
+                      }
+                    ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                    label: Text(_isDeleteMode ? 'Cancel' : 'Delete'),
+                    onPressed: () {
+                      setState(() {
+                        _isDeleteMode = !_isDeleteMode;
+                        _selectedTeacherIds.clear();
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // Teachers Table
               SizedBox(
                 height: 800,
                 child: Container(
@@ -291,6 +329,8 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
                   ),
                   child: Column(
                     children: [
+                      if (_isDeleteMode)
+                        const SizedBox(width: 40),
                       // Table Header
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -361,6 +401,22 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
                                 ),
                                 child: Row(
                                   children: [
+                                    if (_isDeleteMode)
+                                      SizedBox(
+                                        width: 40,
+                                        child: Checkbox(
+                                          value: _selectedTeacherIds.contains(t.id),
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              if (value == true) {
+                                                _selectedTeacherIds.add(t.id!);
+                                              } else {
+                                                _selectedTeacherIds.remove(t.id);
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     Expanded(
                                       flex: 1,
                                       child: Padding(

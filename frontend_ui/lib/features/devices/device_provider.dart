@@ -52,6 +52,28 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
+  Future<void> deleteDevice(String id) async {
+    try {
+      await DeviceApi.deleteDevice(id);
+      _devices.removeWhere((d) => d.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting device $id: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> bulkDeleteDevice(List<String> ids) async {
+    try {
+      await DeviceApi.bulkDeleteDevices(ids);
+      _devices.removeWhere((d) => ids.contains(d.id));
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error bulk deleting devices: $e');
+      rethrow;
+    }
+  }
+
   Device? getById(String id) {
     try {
       return _devices.firstWhere((d) => d.id == id);

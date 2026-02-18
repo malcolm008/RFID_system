@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'course_api.dart';
 import 'package:flutter/material.dart';
 import 'course_model.dart';
 
@@ -93,6 +94,17 @@ class CourseProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error updating course: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteCourse(String id) async {
+    try {
+      await CourseApi.deleteCourse(id);
+      _courses.removeWhere((c) => c.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting course $id: $e');
       rethrow;
     }
   }
