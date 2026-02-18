@@ -14,6 +14,8 @@ class StudentListScreen extends StatefulWidget {
 }
 
 class _StudentListScreenState extends State<StudentListScreen> {
+  bool _isDeleteMode = false;
+  Set<String> _selectedStudentIds = {};
   String searchQuery = '';
   int? selectedYear;
   String? selectedProgram;
@@ -271,6 +273,24 @@ class _StudentListScreenState extends State<StudentListScreen> {
               ),
 
               const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (_isDeleteMode)
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.delete),
+                      label: Text('Delete (${_selectedStudentIds.length})'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: _selectedStudentIds.isEmpty
+                          ? null
+                          : () async {
+                        await context.read<StudentProvider>().bulkDeleteStudents(_selectedStudentIds.toList());
+                        setState(() {
+                    )
+                ],
+              )
 
               // Students Table
               SizedBox(

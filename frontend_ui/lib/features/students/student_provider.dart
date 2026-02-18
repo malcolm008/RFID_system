@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/students/student_api.dart';
 import 'package:http/http.dart' as http;
 import 'student_model.dart';
 
@@ -97,6 +98,28 @@ class StudentProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error updating student: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteStudent(String id) async {
+    try {
+      await StudentApi.deleteStudent(id);
+      _students.removeWhere((s) => s.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting student $id: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> bulkDeleteStudents(List<String> ids) async {
+    try {
+      await StudentApi.bulkDeleteStudents(ids);
+      _students.removeWhere((s) => ids.contains(s.id));
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error bulk deleting studens: $e');
       rethrow;
     }
   }
