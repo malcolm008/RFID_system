@@ -61,4 +61,34 @@ class StudentApi {
       throw Exception(body['message'] ?? 'Failed to update student');
     }
   }
+
+  static Future<void> deleteStudent(String id) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"id": int.parse(id)}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Student deleted: $id");
+    } else {
+      throw Exception(body['message'] ?? 'Failed to delete student');
+    }
+  }
+
+  static Future<void> bulkDeleteStudents(List<String> ids) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/bulk-delete/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"ids": ids.map((e) => int.parse(e)).toList()}),
+    );
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200 && body['status'] == 'success') {
+      print("Students deleted: ${ids.join(', ')}");
+    } else {
+      throw Exception(body['message'] ?? 'Failed to bulk delete students');
+    }
+  }
 }
