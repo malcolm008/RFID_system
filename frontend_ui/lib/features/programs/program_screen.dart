@@ -62,34 +62,6 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                     ),
                   ],
                 ),
-                if (_isDeleteMode)
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete),
-                    label: Text('Delete (${_selectedProgramIds.length})'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    onPressed: _selectedProgramIds.isEmpty
-                        ? null
-                        : () async {
-                      await context.read<ProgramProvider>().deletePrograms(_selectedProgramIds.toList());
-                      setState(() {
-                        _isDeleteMode = false;
-                        _selectedProgramIds.clear();
-                      });
-                    },
-                  ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
-                  label: Text(_isDeleteMode ? 'Cancel' : 'Bulk Delete'),
-                  onPressed: () {
-                    setState(() {
-                      _isDeleteMode = !_isDeleteMode;
-                      _selectedProgramIds.clear();
-                    });
-                  },
-                ),
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
@@ -177,8 +149,41 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
               ],
             ),
 
-            const SizedBox(height: 32),
-
+            const SizedBox(height: 22),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (_isDeleteMode)
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete),
+                    label: Text('Delete (${_selectedProgramIds.length})'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: _selectedProgramIds.isEmpty
+                        ? null
+                        : () async {
+                      await context.read<ProgramProvider>().bulkDeletePrograms(_selectedProgramIds.toList());
+                      setState(() {
+                        _isDeleteMode = false;
+                        _selectedProgramIds.clear();
+                      });
+                    },
+                  ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                  label: Text(_isDeleteMode ? 'Cancel' : 'Delete'),
+                  onPressed: () {
+                    setState(() {
+                      _isDeleteMode = !_isDeleteMode;
+                      _selectedProgramIds.clear();
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             // Classes Table
             Expanded(
               child: Container(
@@ -197,6 +202,8 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                 ),
                 child: Column(
                   children: [
+                    if (_isDeleteMode)
+                      const SizedBox(width: 40),
                     // Table Header
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -275,6 +282,9 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             decoration: BoxDecoration(
+                              color: _selectedProgramIds.contains(programItem.id)
+                                  ? Colors.red.withOpacity(0.05)
+                                  : null,
                               border: Border(
                                 bottom: BorderSide(
                                   color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
@@ -283,6 +293,22 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
                             ),
                             child: Row(
                               children: [
+                                if (_isDeleteMode)
+                                  SizedBox(
+                                    width: 40,
+                                    child: Checkbox(
+                                      value: _selectedProgramIds.contains(programItem.id),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          if (value == true) {
+                                            _selectedProgramIds.add(programItem.id!);
+                                          } else {
+                                            _selectedProgramIds.remove(programItem.id);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 Expanded(
                                   flex: 2,
                                   child: Row(
