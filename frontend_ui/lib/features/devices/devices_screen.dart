@@ -13,6 +13,8 @@ class DevicesScreen extends StatefulWidget {
 }
 
 class _DevicesScreenState extends State<DevicesScreen> {
+  bool _isDeleteMode = false;
+  Set<String> _selectedDeviceIds = {};
 
   @override
   void initState() {
@@ -115,8 +117,43 @@ class _DevicesScreenState extends State<DevicesScreen> {
               ],
             ),
 
-            const SizedBox(height: 32),
-
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (_isDeleteMode)
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete),
+                    label: Text('Delete (${_selectedDeviceIds.length})'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: _selectedDeviceIds.isEmpty
+                        ? null
+                        : () async {
+                      await context
+                          .read<DeviceProvider>()
+                          .bulkDeleteDevices(_selectedDeviceIds.toList());
+                      setState(() {
+                        _isDeleteMode = false;
+                        _selectedDeviceIds.clear();
+                      });
+                    }
+                  ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                  label: Text(_isDeleteMode ? 'Cancel' : 'Delete'),
+                  onPressed: () {
+                    setState(() {
+                      _isDeleteMode = !_isDeleteMode;
+                      _selectedDeviceIds.clear();
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             // Devices Table
             Expanded(
               child: Container(
@@ -135,6 +172,8 @@ class _DevicesScreenState extends State<DevicesScreen> {
                 ),
                 child: Column(
                   children: [
+                    if (_isDeleteMode)
+                      const SizedBox(width: 40),
                     // Table Header
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -204,6 +243,22 @@ class _DevicesScreenState extends State<DevicesScreen> {
                               ),
                               child: Row(
                                 children: [
+                                  if (_isDeleteMode)
+                                    SizedBox(
+                                      width: 40,
+                                      child: Checkbox(
+                                        value: _selectedDeviceIds.contains(d.id),
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            if (value == true) {
+                                              _selectedDeviceIds.add(d.id!);
+                                            } else {
+                                              _selectedDeviceIds.remove(d.id);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
                                   Expanded(
                                     flex: 2,
                                     child: Row(

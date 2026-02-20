@@ -8,10 +8,25 @@ import 'program_provider.dart';
 
 
 
-class CoursesScreen extends StatelessWidget {
+class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
 
   @override
+  State<CoursesScreen> createState() => _CourseScreenState();
+}
+
+class _CourseScreenState extends State<CoursesScreen> {
+  bool _isDeleteMode = false;
+  Set<String> _selectedCourseIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<CourseProvider>().loadCourses();
+    });
+  }
+
   Widget build(BuildContext context) {
     final provider = context.watch<CourseProvider>();
     final courses = provider.courses;
@@ -20,8 +35,8 @@ class CoursesScreen extends StatelessWidget {
 
     final totalCourses = courses.length;
     final totalPrograms = courses
-      .expand((c) => c.programNames ?? c.programIds)
-      .where((name) => name.isNotEmpty).toSet().length;
+        .expand((c) => c.programNames ?? c.programIds)
+        .where((name) => name.isNotEmpty).toSet().length;
 
     return AppScaffold(
       child: Padding(
@@ -95,7 +110,43 @@ class CoursesScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (_isDeleteMode)
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete),
+                    label: Text('Delete (${_selectedCourseIds.length})'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: _selectedCourseIds.isEmpty
+                        ? null
+                        : () async {
+                      await context
+                          .read<CourseProvider>()
+                          .bulkDeleteCourses(_selectedCourseIds.toList());
+                      setState(() {
+                        _isDeleteMode = false;
+                        _selectedCourseIds.clear();
+                      });
+                    }
+                  ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: Icon(_isDeleteMode ? Icons.close : Icons.delete_outline),
+                  label: Text(_isDeleteMode ? 'Cancel': 'Delete'),
+                  onPressed: () {
+                    setState(() {
+                      _isDeleteMode = !_isDeleteMode;
+                      _selectedCourseIds.clear();
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
 
             // Courses Table
             Expanded(
@@ -115,6 +166,8 @@ class CoursesScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    if (_isDeleteMode)
+                      const SizedBox(width: 40),
                     // Table Header
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -202,6 +255,22 @@ class CoursesScreen extends StatelessWidget {
                             ),
                             child: Row(
                               children: [
+                                if (_isDeleteMode)
+                                  SizedBox(
+                                    width: 40,
+                                    child: Checkbox(
+                                      value: _selectedCourseIds.contains(course.id),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          if (value == true) {
+                                            _selectedCourseIds.add(course.id!);
+                                          } else {
+                                            _selectedCourseIds.remove(course.id);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 Expanded(
                                   flex: 2,
                                   child: Row(
@@ -280,8 +349,8 @@ class CoursesScreen extends StatelessWidget {
                                   child: Center(
                                     child: Text(
                                       course.programAbbreviations.isNotEmpty
-                                        ? course.programAbbreviations.join(', ')
-                                        : '-',
+                                          ? course.programAbbreviations.join(', ')
+                                          : '-',
                                       style: theme.textTheme.bodyMedium,
                                       textAlign: TextAlign.center,
                                     ),

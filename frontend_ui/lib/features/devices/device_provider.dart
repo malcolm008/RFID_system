@@ -63,7 +63,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> bulkDeleteDevice(List<String> ids) async {
+  Future<void> bulkDeleteDevices(List<String> ids) async {
     try {
       await DeviceApi.bulkDeleteDevices(ids);
       _devices.removeWhere((d) => ids.contains(d.id));

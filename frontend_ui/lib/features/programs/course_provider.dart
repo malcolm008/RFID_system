@@ -108,4 +108,15 @@ class CourseProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> bulkDeleteCourses(List<String> ids) async {
+    try {
+      await CourseApi.bulkDeleteCourses(ids);
+      _courses.removeWhere((c) => ids.contains(c.id));
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error bulk deleting courses: $e');
+      rethrow;
+    }
+  }
 }
