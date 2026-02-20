@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Device, Program, Course
+from .models import Student, Teacher, Device, Program, Course, TimetableEntry
+
 
 class BulkDeleteSerializer(serializers.Serializer):
     ids = serializers.ListField(
@@ -153,3 +154,34 @@ class CourseSerializer(serializers.ModelSerializer):
         if programs is not None:
             instance.programs.set(programs)
         return instance
+
+class TimetebleEntrySerializer(serializers.ModelSerializer):
+    program = serializers.PrimaryKeyRelatedField(queryset=Program.objects.all())
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
+    teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
+    device = serializers.PrimaryKeyRelatedField(
+        queryset=Device.objects.all(),
+        allow_null=True,
+        required=False
+    )
+
+    program_name = serializers.CharField(source='program.name', read_only=True)
+    course_name = serializers.CharField(source='course.name', read_only=True)
+    teacher_name = serializers.CharField(source='teacher.name', read_only=True)
+    device_name = serializers.CharField(source='device.name', read_only=True, allow_null=True)
+
+    class Meta:
+        model = TimetableEntry
+        fields = [
+            'id', 'program', 'program_name', 'course', 'course_name', 'teacher', 'teacher_name',
+            'device', 'device_name', 'location', 'year', 'day', 'startTime', 'endTime',
+            'qualification', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['id'] = str(rep['id'])
+        return rep
+    def to_internal_value(self, data):
+        return super().to_internal_value(data)
