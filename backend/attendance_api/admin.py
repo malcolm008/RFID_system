@@ -9,5 +9,5 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(TimetableEntry)
 class TimetableEntryAdmin(admin.ModelAdmin):
-    list_display = ('program', 'course', 'teacher', 'day', 'start_time', 'end_time')
+    list_display = ('program', 'course', 'teacher', 'day', 'startTime', 'endTime')
     list_filter = ('program', 'day', 'year')
