@@ -4,7 +4,9 @@ from .views import (
     TeacherListView, CreateTeacherView, UpdateTeacherView, DeleteTeacherView, BulkDeleteTeacherView,
     DeviceListView, CreateDeviceView, UpdateDeviceView, DeleteDeviceView, BulkDeleteDeviceView,
     CreateProgramView, UpdateProgramView, ProgramListView, DeleteProgramView, BulkDeleteProgramView,
-    CourseListView, CreateCourseView, UpdateCourseView, DeleteCourseView, BulkDeleteCourseView
+    CourseListView, CreateCourseView, UpdateCourseView, DeleteCourseView, BulkDeleteCourseView,
+    TimetableEntryListView, CreateTimetableEntryView, UpdateTimetableEntryView, DeleteTimetableEntryView,
+    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView,
 )
 
 urlpatterns = [
@@ -46,4 +48,11 @@ urlpatterns = [
     path('courses/delete/', DeleteCourseView.as_view(), name='delete_course'),
     path('courses/bulk-delete/', BulkDeleteCourseView.as_view(), name='bulk_delete_course'),
 
+    #TIMETABLE
+    path('timetable/list/', TimetableEntryListView.as_view(), name='timetable_list'),
+    path('timetable/create/', CreateTimetableEntryView.as_view(), name='timetable_create'),
+    path('timetable/update/', UpdateTimetableEntryView.as_view(), name='timetable_update'),
+    path('timetable/delete/', DeleteTimetableEntryView.as_view(), name='timetable_delete'),
+    path('timetable/bulk-delete/', BulkDeleteTimetableEntryView.as_view(), name='timetable-bulk-delete'),
+    path('timetable/bulk-create/', BulkCreateTimetableEntryView.as_view(), name='timetable-bulk-create'),
 ]
