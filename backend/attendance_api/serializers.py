@@ -155,7 +155,7 @@ class CourseSerializer(serializers.ModelSerializer):
             instance.programs.set(programs)
         return instance
 
-class TimetebleEntrySerializer(serializers.ModelSerializer):
+class TimetableEntrySerializer(serializers.ModelSerializer):
     program = serializers.PrimaryKeyRelatedField(queryset=Program.objects.all())
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())

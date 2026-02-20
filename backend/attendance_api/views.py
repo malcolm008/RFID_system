@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .models import Student, Teacher, Device, Program, Course
+from .models import Student, Teacher, Device, Program, Course, TimetableEntry
 from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer, ProgramSerializer, \
-    CourseSerializer
+    CourseSerializer, TimetableEntrySerializer
 
 
 # Create a base class that explicitly disables CSRF
@@ -473,3 +473,109 @@ class BulkDeleteCourseView(BulkDeleteBaseView):
 class DeleteCourseView(DeleteBaseView):
     model = Course
     model_name = "Course"
+
+class TimetableEntryListView(CsrfExemptAPIView):
+    def get(self, request):
+        queryset = TimetableEntry.objects.all().select_related(
+            'program', 'course', 'teacher', 'device'
+        )
+
+        program = request.query_params.get('program')
+        if program:
+            queryset = queryset.filter(program__id=program)
+
+        year = request.query_params.get('year')
+        if year:
+            queryset = queryset.filter(year=year)
+
+        teacher = request.query_params.get('teacher')
+        if teacher:
+            queryset = queryset.filter(teacher__id=teacher)
+
+        location = request.query_params.get('location')
+        if location:
+            queryset = queryset.filter(location_icontains=location)
+
+        day = request.query_params.get('day')
+        if day:
+            queryset = queryset.filter(day=day)
+
+        qualification = request.query_params.get('qualification')
+        if qualification:
+            queryset = queryset.filter(qualification__icontains=qualification)
+
+        serializer = TimetableEntrySerializer(queryset, many=True)
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
+
+class CreateTimetableEntryView(CsrfExemptAPIView):
+    def post(self, request):
+        serializer = TimetableEntrySerializer(data=request.data)
+        if serializer.is_valid():
+            entry = serializer.save()
+            return Response({
+                'status': 'success',
+                'data': TimetableEntrySerializer(entry).data
+            }, status=201)
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class BulkCreateTimetableEntryView(CsrfExemptAPIView):
+    def post(self, request):
+        if not isinstance(request.data, list):
+            return Response({
+                'status': 'error',
+                'message': 'Expected a list of timetable entries.'
+            }, status=400)
+
+        serializer = TimetableEntrySerializer(data=request.data, many=True)
+        if serializer.is_valid():
+            entries = serializer.save()
+            return Response({
+                'status': 'success',
+                'data': TimetableEntrySerializer(entries, many=True).data
+            }, status=201)
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class UpdateTimetableEntryView(CsrfExemptAPIView):
+    def post(self, request):
+        entry_id = request.data.get('id')
+        if not entry_id:
+            return Response({
+                'status': 'error',
+                'message': 'Entry ID is required'
+            }, status=400)
+        try :
+            entry = TimetableEntry.objects.get(id=entry_id)
+        except TimetableEntry.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Timetable entry not found'
+            }, status=404)
+
+        serializer = TimetableEntrySerializer(entry, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+        return Response({
+            'status': 'error',
+            'message': serializer.errors
+        }, status=400)
+
+class DeleteTimetableEntryView(DeleteBaseView):
+    model = TimetableEntry
+    model_name = "TimetableEntry"
+
+class BulkDeleteTimetableEntryView(BulkDeleteBaseView):
+    model = TimetableEntry
+    model_name = "TimetableEntry"
