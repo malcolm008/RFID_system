@@ -118,3 +118,46 @@ class Course(models.Model):
         return self.name
 
 
+class TimetableEntry(models.Model):
+    DAY_CHOICES = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    program = models.ForeignKey(
+        'Program',
+        on_delete=models.CASCADE,
+        related_name='timetable_entries'
+    )
+    course = models.ForeignKey(
+        'Course',
+        on_delete=models.CASCADE,
+        related_name='timetable_entries'
+    )
+    teacher = models.ForeignKey(
+        'Teacher',
+        on_delete=models.CASCADE,
+        related_name='timetable_entries'
+    )
+    device = models.ForeignKey(
+        'Device',
+        on_delete=models.CASCADE,
+        null= True,
+        blank=True,
+        related_name='timetable_entries'
+    )
+    location = models.CharField(max_length=200)
+    year = models.IntegerField()
+    day = models.CharField(max_length=10, choices=DAY_CHOICES)
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    qualification = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.program} - {self.course} ({self.day} {self.start_time})"
