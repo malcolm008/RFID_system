@@ -393,6 +393,9 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                                 decoration: BoxDecoration(
+                                  color: _selectedTeacherIds.contains(t.id)
+                                      ? Colors.red.withOpacity(0.05)
+                                      : null,
                                   border: Border(
                                     bottom: BorderSide(
                                       color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,

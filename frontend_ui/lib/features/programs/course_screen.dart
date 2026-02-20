@@ -69,7 +69,7 @@ class _CourseScreenState extends State<CoursesScreen> {
                 ),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.add_circle_outline),
-                  label: const Text('Add Subject'),
+                  label: const Text('Add Course'),
                   onPressed: () {
                     showDialog(context: context, builder: (_) => CourseFormScreen(),);
                   },
@@ -247,6 +247,9 @@ class _CourseScreenState extends State<CoursesScreen> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             decoration: BoxDecoration(
+                              color: _selectedCourseIds.contains(course.id)
+                                  ? Colors.red.withOpacity(0.05)
+                                  : null,
                               border: Border(
                                 bottom: BorderSide(
                                   color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,

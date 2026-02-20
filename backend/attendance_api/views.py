@@ -405,7 +405,7 @@ class DeleteProgramView(DeleteBaseView):
 
 class CourseListView(CsrfExemptAPIView):
     def get(self, request):
-        courses = Course.objects.select_related('Program').all()
+        courses = Course.objects.prefetch_related('programs').all()
         serializer = CourseSerializer(courses, many=True)
 
         return Response({

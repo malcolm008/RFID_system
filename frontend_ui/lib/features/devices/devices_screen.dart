@@ -235,6 +235,9 @@ class _DevicesScreenState extends State<DevicesScreen> {
                             return Container(
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                               decoration: BoxDecoration(
+                                color: _selectedDeviceIds.contains(d.id)
+                                    ? Colors.red.withOpacity(0.05)
+                                    : null,
                                 border: Border(
                                   bottom: BorderSide(
                                     color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
@@ -262,6 +265,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                   Expanded(
                                     flex: 2,
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: 48,
@@ -297,7 +301,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
 
                                   Expanded(
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -325,9 +329,10 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                         ],
                                       )
                                   ),
-
                                   Expanded(
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.location_on,
@@ -347,7 +352,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                   ),
                                   Expanded(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: 12,
@@ -374,13 +379,18 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                   ),
 
                                   Expanded(
-                                    child: Text(
-                                      '${DateTime.now().difference(d.lastSeen).inMinutes} min ago',
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                        color: isDarkMode ? Colors.white : Colors.grey.shade800,
-                                      ),
-                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${DateTime.now().difference(d.lastSeen).inMinutes} min ago',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            color: isDarkMode ? Colors.white : Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ),
                                 ],
                               ),
@@ -497,6 +507,7 @@ class _TableHeader extends StatelessWidget {
         color: Colors.grey,
         fontSize: 13,
       ),
+      textAlign: TextAlign.center,
     );
   }
 }
