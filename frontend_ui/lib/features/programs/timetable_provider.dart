@@ -23,6 +23,7 @@ class TimetableProvider extends ChangeNotifier {
   int? get filterProgramId => _filterProgramId;
   int? get filterYear => _filterYear;
   int? get filterTeacherId => _filterTeacherId;
+  String? get filterDay => _filterDay;
 
   void setProgramFilter(int? programId) {
     _filterProgramId = programId;
