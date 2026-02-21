@@ -32,4 +32,74 @@ class TimetableApi {
       throw Exception('Failed to load timetable: ${response.statusCode}');
     }
   }
+
+  Future<TimetableEntry> createEntry(Map<String, dynamic> entryData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/timetable/create/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(entryData),
+    );
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      return TimetableEntry.fromJson(jsonResponse['data']);
+    }else {
+      throw Exception('Failed to create timetable entry: ${response.body}');
+    }
+  }
+
+  Future<List<TimetableEntry>> bulkCreateEntries(List<Map<String, dynamic>> entriesData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/timetable/bulk-create/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(entriesData),
+    );
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      final List<dynamic> data = jsonResponse['data'];
+      return data.map((e) => TimetableEntry.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to bulk create entries: ${response.body}');
+    }
+  }
+
+  Future<TimetableEntry> updateEntry(String id, Map<String, dynamic> entryData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/timetable/update/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'id': id, ...entryData}),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      return TimetableEntry.fromJson(jsonResponse['data']);
+    } else {
+      throw Exception('Failed to update timetable entry: ${response.body}');
+    }
+  }
+
+  Future<void> deleteEntry(String id) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/timetable/delete/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'id': id}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete entry: ${response.body}');
+    }
+  }
+
+  Future<void> bulkDeleteEntries(List<String> ids) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/timetable/bulk-delete/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'ids': ids}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to bulk delete entries: ${response.body}');
+    }
+  }
 }
