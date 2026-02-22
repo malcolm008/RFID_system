@@ -49,11 +49,16 @@ class TimetableApi {
   }
 
   Future<List<TimetableEntry>> bulkCreateEntries(List<Map<String, dynamic>> entriesData) async {
+    print('🔍 Bulk creating entries: ${json.encode(entriesData)}'); // Debug print
+
     final response = await http.post(
       Uri.parse('$baseUrl/timetable/bulk-create/'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(entriesData),
     );
+
+    print('📥 Response status: ${response.statusCode}');
+    print('📥 Response body: ${response.body}');
 
     if (response.statusCode == 201) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);

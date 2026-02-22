@@ -17,6 +17,7 @@ import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/auth_provider.dart';
 import 'features/auth/login_screen.dart';
+import 'package:frontend_ui/features/programs/timetable_provider.dart';
 
 void main() {
   runApp(const AttendanceApp());
@@ -37,6 +38,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProgramProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
+        ChangeNotifierProvider(create: (_) => TimetableProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

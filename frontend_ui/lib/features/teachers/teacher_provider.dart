@@ -7,10 +7,15 @@ import 'teacher_api.dart';
 class TeacherProvider extends ChangeNotifier {
   final String baseUrl = "http://127.0.0.1:8000/attendance_api/teachers";
   final List<Teacher> _teachers = [];
+  bool _isLoading = false;
 
   List<Teacher> get teachers => _teachers;
+  bool get isLoading => _isLoading;
 
   Future<void> loadTeachers() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
       final res = await http.get(Uri.parse("$baseUrl/list/"));
       print("Load Teachers Response: ${res.statusCode} - ${res.body}");
@@ -32,6 +37,9 @@ class TeacherProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error loading teachers: $e");
       rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
