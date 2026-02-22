@@ -162,15 +162,15 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
   List<Map<String, dynamic>> _prepareApiData() {
     return _entries.map((e) {
       return {
-        'program': int.tryParse(e['programId']?.toString() ?? ''), // Convert to int if needed
+        'program': int.tryParse(e['programId']?.toString() ?? ''),
         'course': int.tryParse(e['courseId']?.toString() ?? ''),
         'teacher': int.tryParse(e['teacherId']?.toString() ?? ''),
         'device': e['deviceId'] != null ? int.tryParse(e['deviceId'].toString()) : null,
         'location': e['location'] ?? '',
         'year': e['year'] ?? 1,
         'day': e['day'] ?? '',
-        'start_time': e['startTime'] ?? '',  // Ensure it's never null
-        'end_time': e['endTime'] ?? '',      // Ensure it's never null
+        'startTime': e['startTime'] ?? '',  // Changed from start_time to startTime
+        'endTime': e['endTime'] ?? '',      // Changed from end_time to endTime
         'qualification': e['qualification'] ?? '',
       };
     }).toList();

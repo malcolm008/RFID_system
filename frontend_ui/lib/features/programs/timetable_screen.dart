@@ -9,10 +9,23 @@ import 'timetable_model.dart';
 import '../programs/program_provider.dart';
 import '../teachers/teacher_provider.dart';
 
-class TimetableScreen extends StatelessWidget {
+class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
 
   @override
+  State<TimetableScreen> createState() => _TimetableScreenState();
+}
+
+class _TimetableScreenState extends State<TimetableScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<TimetableProvider>().loadTimetable();
+    });
+  }
+
   Widget build(BuildContext context) {
     final timetableProvider = context.watch<TimetableProvider>();
     final programProvider = context.watch<ProgramProvider>();

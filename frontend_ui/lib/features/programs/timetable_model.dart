@@ -35,8 +35,8 @@ class TimetableEntry {
       device: json['device_name'] ?? '',
       year: json['year'] ?? 1,
       day: json['day'] ?? '',
-      startTime: json['start_time'] ?? '',
-      endTime: json['end_time'] ?? '',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
       qualification: json['qualification'] ?? '',
     );
   }
