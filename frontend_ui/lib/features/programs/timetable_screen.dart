@@ -123,7 +123,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                 children: [
                   // Program filter
                   Container(
-                    width: 200,
+                    width: 160,
                     margin: const EdgeInsets.only(right: 12),
                     child: DropdownButtonFormField<int?>(
                       value: timetableProvider.filterProgramId,
