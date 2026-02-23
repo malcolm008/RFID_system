@@ -106,8 +106,8 @@ class TimetableProvider extends ChangeNotifier {
   Future<void> addMultipleEntries(List<Map<String, dynamic>> entriesData) async {
     try {
       final newEntries = await _api.bulkCreateEntries(entriesData);
-      _entries.addAll(newEntries);
-      notifyListeners();
+      await _fetchFiltered();
+      debugPrint('Successfully added ${newEntries.length} entries');
     } catch (e) {
       _error = e.toString();
       notifyListeners();

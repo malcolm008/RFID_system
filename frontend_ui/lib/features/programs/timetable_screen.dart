@@ -155,7 +155,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                   // Year filter
                   Container(
-                    width: 120,
+                    width: 140,
                     margin: const EdgeInsets.only(right: 12),
                     child: DropdownButtonFormField<int?>(
                       value: timetableProvider.filterYear,
