@@ -94,10 +94,11 @@ class TimetableProvider extends ChangeNotifier {
   Future<void> addEntry(Map<String, dynamic> entryData) async {
     try {
       final newEntry = await _api.createEntry(entryData);
-      _entries.add(newEntry);
-      notifyListeners();
+      await _fetchFiltered();
+      debugPrint('Successfully added entry');
     } catch (e) {
       _error = e.toString();
+      debugPrint('Error adding entry: $e');
       notifyListeners();
       rethrow;
     }

@@ -322,7 +322,6 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                         : () async {
                       if (_formKey.currentState!.validate() && _validateAllEntries()) {
                         final apiData = _prepareApiData();
-
                         // 🔍 DEBUG: Print the exact data being sent
                         print('🔍 SENDING DATA TO API:');
                         for (var entry in apiData) {
@@ -334,8 +333,8 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                           print('    location: ${entry['location']}');
                           print('    year: ${entry['year']}');
                           print('    day: ${entry['day']}');
-                          print('    start_time: ${entry['start_time']}');
-                          print('    end_time: ${entry['end_time']}');
+                          print('    startTime: ${entry['startTime']}');
+                          print('    endTime: ${entry['endTime']}');
                           print('    qualification: ${entry['qualification']}');
                         }
 
@@ -354,6 +353,8 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
                           if (context.mounted) {
                             Navigator.pop(context);
+
+                            // Show success message
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -362,6 +363,7 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                                       : 'Schedule updated successfully',
                                 ),
                                 backgroundColor: Colors.green,
+                                duration: const Duration(seconds: 2),
                               ),
                             );
                           }

@@ -22,8 +22,16 @@ class _TimetableScreenState extends State<TimetableScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
+      debugPrint('Loading timetable data on screen init');
       context.read<TimetableProvider>().loadTimetable();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = context.watch<TimetableProvider>();
+    debugPrint('Entries count: ${provider.entries.length}');
   }
 
   Widget build(BuildContext context) {
