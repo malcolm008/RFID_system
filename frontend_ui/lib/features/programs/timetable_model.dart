@@ -48,8 +48,8 @@ class TimetableEntry {
       // Display names from the response
       program: json['program_name'] ?? json['program'].toString(),
       course: json['course_name'] ?? json['course'].toString(),
-      teacherName: json['teacher_name'] ?? json['teacher'].toString(),
-      device: json['device_name'] ?? '',
+      teacherName: json['teacher_name'] ?? 'Unknwon Teacher',
+      device: json['device_name'] ?? 'No device',
 
       // Other fields
       location: json['location'] ?? '',

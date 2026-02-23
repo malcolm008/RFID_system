@@ -50,13 +50,13 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
   Map<String, dynamic> _entryToMap(TimetableEntry entry) {
     return {
-      'programId': entry.program,      // Will be replaced with actual ID mapping
-      'programName': entry.program,
-      'courseId': entry.course,
-      'courseName': entry.course,
-      'teacherId': entry.teacherName,
-      'teacherName': entry.teacherName,
-      'deviceId': entry.device,
+      'programId': entry.programId,      // Use the ID from the model
+      'programName': entry.program,       // Use the name from the model
+      'courseId': entry.courseId,         // Use the ID from the model
+      'courseName': entry.course,         // Use the name from the model
+      'teacherId': entry.teacherId,       // Use the ID from the model
+      'teacherName': entry.teacherName,   // Use the name from the model
+      'deviceId': entry.deviceId.isEmpty ? null : entry.deviceId,  // Handle empty
       'deviceName': entry.device,
       'day': entry.day,
       'startTime': entry.startTime,
@@ -567,22 +567,21 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Program dropdown
             _buildDropdownField<String?>(
-              value: entry['programId'],
+              value: entry['programId'],  // This should be the ID, not the name
               label: 'Program *',
               hint: 'Select Program',
               items: programProvider.programs.map((p) {
                 return DropdownMenuItem<String?>(
-                  value: p.id,
-                  child: Text(p.name),
+                  value: p.id,  // Value is the ID
+                  child: Text(p.name),  // Display is the name
                 );
               }).toList(),
               onChanged: (val) {
                 setState(() {
-                  entry['programId'] = val;
+                  entry['programId'] = val;  // Store the ID
                   final program = _findProgramById(val, programProvider.programs);
-                  entry['programName'] = program?.name;
+                  entry['programName'] = program?.name;  // Store the name separately
 
                   if (program != null) {
                     entry['qualification'] = program.qualification.name;
@@ -597,24 +596,23 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
             const SizedBox(height: 12),
 
-            // Course dropdown (filtered by selected program)
             _buildDropdownField<String?>(
-              value: entry['courseId'],
+              value: entry['courseId'],  // This should be the ID
               label: 'Course *',
               hint: 'Select Course',
               items: courseProvider.courses
                   .where((c) => entry['programId'] == null || c.programIds.contains(entry['programId']))
                   .map((c) {
                 return DropdownMenuItem<String?>(
-                  value: c.id,
-                  child: Text(c.name),
+                  value: c.id,  // Value is the ID
+                  child: Text(c.name),  // Display is the name
                 );
               }).toList(),
               onChanged: (val) {
                 setState(() {
-                  entry['courseId'] = val;
+                  entry['courseId'] = val;  // Store the ID
                   final course = _findCourseById(val, courseProvider.courses);
-                  entry['courseName'] = course?.name;
+                  entry['courseName'] = course?.name;  // Store the name separately
                   if (course != null) {
                     entry['year'] = course.year;
                   }
@@ -625,22 +623,21 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
             const SizedBox(height: 12),
 
-            // Teacher dropdown
             _buildDropdownField<String?>(
-              value: entry['teacherId'],
+              value: entry['teacherId'],  // This should be the ID
               label: 'Teacher *',
               hint: 'Select Teacher',
               items: teacherProvider.teachers.map((t) {
                 return DropdownMenuItem<String?>(
-                  value: t.id,
-                  child: Text(t.name),
+                  value: t.id,  // Value is the ID
+                  child: Text(t.name),  // Display is the name
                 );
               }).toList(),
               onChanged: (val) {
                 setState(() {
-                  entry['teacherId'] = val;
+                  entry['teacherId'] = val;  // Store the ID
                   final teacher = _findTeacherById(val, teacherProvider.teachers);
-                  entry['teacherName'] = teacher?.name;
+                  entry['teacherName'] = teacher?.name;  // Store the name separately
                 });
               },
               validator: (val) => val == null ? 'Required' : null,
@@ -648,9 +645,8 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
 
             const SizedBox(height: 12),
 
-            // Device dropdown (optional)
             _buildDropdownField<String?>(
-              value: entry['deviceId'],
+              value: entry['deviceId'],  // This should be the ID
               label: 'Device (Optional)',
               hint: 'Select Device',
               items: [
@@ -660,18 +656,17 @@ class _TimetableFormScreenState extends State<TimetableFormScreen> {
                 ),
                 ...deviceProvider.devices.map((d) {
                   return DropdownMenuItem<String?>(
-                    value: d.id,
-                    child: Text(d.name),
+                    value: d.id,  // Value is the ID
+                    child: Text(d.name),  // Display is the name
                   );
                 }).toList(),
               ],
               onChanged: (val) {
                 setState(() {
-                  entry['deviceId'] = val;
+                  entry['deviceId'] = val;  // Store the ID
                   if (val != null) {
                     final device = _findDeviceById(val, deviceProvider.devices);
-                    entry['deviceName'] = device?.name;
-                    // Auto-fill location from device
+                    entry['deviceName'] = device?.name;  // Store the name separately
                     entry['location'] = device?.location ?? '';
                   } else {
                     entry['deviceName'] = null;

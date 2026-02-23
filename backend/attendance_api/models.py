@@ -140,12 +140,14 @@ class TimetableEntry(models.Model):
     )
     teacher = models.ForeignKey(
         'Teacher',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null = True,
+        blank = True,
         related_name='timetable_entries'
     )
     device = models.ForeignKey(
         'Device',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null= True,
         blank=True,
         related_name='timetable_entries'
