@@ -21,7 +21,7 @@ class TimetableApi {
     if (day != null && day.isNotEmpty) query['day'] = day;
     if (qualification != null && qualification.isNotEmpty) query['qualification'] = qualification;
 
-    final uri = Uri.parse('$baseUrl/timetable/').replace(queryParameters: query);
+    final uri = Uri.parse('$baseUrl/timetable/list/').replace(queryParameters: query);
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {

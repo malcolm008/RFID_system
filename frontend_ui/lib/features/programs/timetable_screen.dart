@@ -34,6 +34,156 @@ class _TimetableScreenState extends State<TimetableScreen> {
     debugPrint('Entries count: ${provider.entries.length}');
   }
 
+  // Show entry details dialog with edit/delete options
+  void _showEntryDetails(BuildContext context, TimetableEntry entry) {
+    final theme = Theme.of(context);
+    final timetableProvider = Provider.of<TimetableProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.schedule, color: Colors.blue.shade700),
+              ),
+              const SizedBox(width: 12),
+              const Text('Schedule Details'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDetailRow('Program', entry.program),
+                _buildDetailRow('Course', entry.course),
+                _buildDetailRow('Teacher', entry.teacherName),
+                _buildDetailRow('Day', entry.day),
+                _buildDetailRow('Time', '${entry.startTime} - ${entry.endTime}'),
+                _buildDetailRow('Year', 'Year ${entry.year}'),
+                _buildDetailRow('Qualification', entry.qualification),
+                if (entry.location.isNotEmpty) _buildDetailRow('Location', entry.location),
+                if (entry.device.isNotEmpty) _buildDetailRow('Device', entry.device),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context); // Close details dialog
+                // Open edit form with existing entry
+                showDialog(
+                  context: context,
+                  builder: (_) => TimetableFormScreen(existingEntry: entry),
+                );
+              },
+              icon: const Icon(Icons.edit, size: 18),
+              label: const Text('Edit'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () async {
+                // Confirm delete
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirm Delete'),
+                      content: Text('Are you sure you want to delete this schedule for ${entry.course}?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirm == true) {
+                  Navigator.pop(context); // Close details dialog
+                  try {
+                    await timetableProvider.deleteEntry(entry.id);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Schedule deleted successfully'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error deleting schedule: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              icon: const Icon(Icons.delete, size: 18),
+              label: const Text('Delete'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Helper widget for detail rows
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final timetableProvider = context.watch<TimetableProvider>();
     final programProvider = context.watch<ProgramProvider>();
@@ -93,7 +243,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
             const SizedBox(height: 24),
 
-            // Stats cards (same as before)
+            // Stats cards
             Row(
               children: [
                 _buildStatCard(
@@ -144,7 +294,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         ...programProvider.programs.map((p) {
                           return DropdownMenuItem<int?>(
                             value: int.tryParse(p.id),
-                            child: Text(p.name),
+                            child: Text(p.abbreviation),
                           );
                         }).toList(),
                       ],
@@ -194,7 +344,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                   // Teacher filter
                   Container(
-                    width: 200,
+                    width: 230,
                     margin: const EdgeInsets.only(right: 12),
                     child: DropdownButtonFormField<int?>(
                       value: timetableProvider.filterTeacherId,
@@ -338,21 +488,24 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         (e) => e.startTime.startsWith('${hour.toString().padLeft(2, '0')}:')
                                 );
                                 final entry = matching.isNotEmpty ? matching.first : null;
-                                return Container(
-                                  width: 200,
-                                  height: 70,
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(color: Colors.grey.shade300),
-                                      bottom: BorderSide(color: Colors.grey.shade300),
+                                return GestureDetector(
+                                  onTap: entry != null ? () => _showEntryDetails(context, entry) : null,
+                                  child: Container(
+                                    width: 200,
+                                    height: 70,
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(color: Colors.grey.shade300),
+                                        bottom: BorderSide(color: Colors.grey.shade300),
+                                      ),
                                     ),
-                                  ),
-                                  child: entry != null
-                                      ? _buildEntryCard(entry, theme)
-                                      : Text(
-                                    timeLabel,
-                                    style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+                                    child: entry != null
+                                        ? _buildEntryCard(entry, theme)
+                                        : Text(
+                                      timeLabel,
+                                      style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -377,26 +530,52 @@ class _TimetableScreenState extends State<TimetableScreen> {
         color: Colors.blue.shade50,
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.blue.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.shade100.withOpacity(0.3),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(2),
+      height: 68,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            entry.course,
-            style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Flexible(
+            child: Text(
+              entry.course,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          Text(
-            entry.teacherName,
-            style: theme.textTheme.bodySmall,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: 1),
+          Flexible(
+            child: Text(
+              entry.teacherName,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 10,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          Text(
-            '${entry.startTime} - ${entry.endTime}',
-            style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+          const SizedBox(height: 1),
+          Flexible(
+            child: Text(
+              '${entry.startTime} - ${entry.endTime}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 9,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

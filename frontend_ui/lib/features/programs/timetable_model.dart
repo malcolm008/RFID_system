@@ -1,10 +1,16 @@
+// lib/features/programs/timetable_model.dart
+
 class TimetableEntry {
   final String id;
-  final String program;
-  final String course;
-  final String teacherName;
-  final String location;
+  final String programId;      // Add this
+  final String program;        // Keep this for display name
+  final String courseId;       // Add this
+  final String course;         // Keep this for display name
+  final String teacherId;      // Add this
+  final String teacherName;    // Keep this for display name
+  final String deviceId;       // Add this
   final String device;
+  final String location;
   final int year;
   final String day;
   final String startTime;
@@ -13,11 +19,15 @@ class TimetableEntry {
 
   TimetableEntry({
     required this.id,
+    required this.programId,      // Add
     required this.program,
+    required this.courseId,       // Add
     required this.course,
+    required this.teacherId,      // Add
     required this.teacherName,
-    required this.location,
+    required this.deviceId,       // Add
     required this.device,
+    required this.location,
     required this.year,
     required this.day,
     required this.startTime,
@@ -28,11 +38,21 @@ class TimetableEntry {
   factory TimetableEntry.fromJson(Map<String, dynamic> json) {
     return TimetableEntry(
       id: json['id'].toString(),
+
+      // IDs from the response
+      programId: json['program']?.toString() ?? '',  // The ID field from backend
+      courseId: json['course']?.toString() ?? '',    // The ID field from backend
+      teacherId: json['teacher']?.toString() ?? '',  // The ID field from backend
+      deviceId: json['device']?.toString() ?? '',    // The ID field from backend (nullable)
+
+      // Display names from the response
       program: json['program_name'] ?? json['program'].toString(),
       course: json['course_name'] ?? json['course'].toString(),
       teacherName: json['teacher_name'] ?? json['teacher'].toString(),
-      location: json['location'] ?? '',
       device: json['device_name'] ?? '',
+
+      // Other fields
+      location: json['location'] ?? '',
       year: json['year'] ?? 1,
       day: json['day'] ?? '',
       startTime: json['startTime'] ?? '',
@@ -43,15 +63,15 @@ class TimetableEntry {
 
   Map<String, dynamic> toJson() {
     return {
-      'program': program,           // In create/update, we'll send IDs, not names.
-      'course': course,             // This will be replaced by ID mapping in the API service.
-      'teacher': teacherName,
-      'device': device,
+      'program': programId,        // Send the ID, not the name
+      'course': courseId,          // Send the ID, not the name
+      'teacher': teacherId,        // Send the ID, not the name
+      'device': deviceId.isEmpty ? null : deviceId,  // Send null if empty
       'location': location,
       'year': year,
       'day': day,
-      'start_time': startTime,
-      'end_time': endTime,
+      'startTime': startTime,
+      'endTime': endTime,
       'qualification': qualification,
     };
   }
