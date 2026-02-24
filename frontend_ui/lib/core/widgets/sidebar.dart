@@ -103,6 +103,11 @@ class Sidebar extends StatelessWidget {
                     route: AppRoutes.reports,
                   ),
 
+                  _MenuItem(
+                    title: 'Settings',
+                    icon: Icons.settings,
+                    route: AppRoutes.settings,
+                  ),
                   const SizedBox(height: 8),
 
                   if (user?.role == UserRole.admin)

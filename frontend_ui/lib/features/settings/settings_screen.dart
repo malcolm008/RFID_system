@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/widgets/app_scaffold.dart';
 import 'settings_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -11,16 +12,8 @@ class SettingsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
-      appBar: AppBar(
-        title: const Text("Settings"),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: isDark ? Colors.white : Colors.grey.shade800,
-      ),
-      body: SingleChildScrollView(
+    return AppScaffold(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
