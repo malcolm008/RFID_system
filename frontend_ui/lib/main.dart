@@ -6,6 +6,7 @@ import 'package:frontend_ui/features/programs/course_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/device_provider.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
+import 'package:frontend_ui/features/settings/settings_provider.dart';
 import 'package:frontend_ui/features/students/student_list_screen.dart';
 import 'package:frontend_ui/features/reports/report_provider.dart';
 import 'package:frontend_ui/features/students/student_provider.dart';
@@ -39,6 +40,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
         ChangeNotifierProvider(create: (_) => TimetableProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

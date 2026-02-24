@@ -6,6 +6,7 @@ import 'package:frontend_ui/features/programs/timetable_form_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_screen.dart';
 import 'package:frontend_ui/features/devices/devices_screen.dart';
 import 'package:frontend_ui/features/reports/report_screen.dart';
+import 'package:frontend_ui/features/settings/settings_screen.dart';
 import 'package:frontend_ui/features/students/student_form_screen.dart';
 import 'package:frontend_ui/features/students/student_list_screen.dart';
 import 'package:frontend_ui/features/teachers/teacher_list_screen.dart';
@@ -399,7 +400,7 @@ class DashboardScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DevicesScreen(),
+                    builder: (_) => SettingsScreen(),
                   ),
                 );
               }

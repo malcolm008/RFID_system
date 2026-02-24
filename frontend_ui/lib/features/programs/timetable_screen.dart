@@ -283,6 +283,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
 
     return AppScaffold(
+
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -506,114 +507,148 @@ class _TimetableScreenState extends State<TimetableScreen> {
             Expanded(
               child: timetableProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : entries.isEmpty
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.calendar_today, size: 64, color: Colors.grey.shade400),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No schedules found',
-                      style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey.shade500),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Adjust filters or add new schedules',
-                      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade400),
-                    ),
-                  ],
-                ),
-              )
                   : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // =========================
-                      // DAY HEADERS
-                      // =========================
-                      Row(
-                        children: daysOfWeek.map((day) {
-                          return Container(
-                            width: 200,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: _getDayColor(day).withOpacity(0.1),
-                              border: Border(
-                                right: BorderSide(color: Colors.grey.shade300),
-                                bottom: BorderSide(color: Colors.grey.shade300),
-                              ),
-                            ),
-                            child: Text(
-                              day,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: _getDayColor(day),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-
-                      // =========================
-                      // CALENDAR BODY
-                      // =========================
-                      SizedBox(
-                        height: 12 * 70.0,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: daysOfWeek.map((day) {
-                              final dayEntries =
-                              entries.where((e) => e.day == day).toList();
-
-                              return Container(
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(color: Colors.grey.shade300),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    // Hour grid lines
-                                    Column(
-                                      children: List.generate(12, (index) {
-                                        final hour = 8 + index;
-                                        return Container(
-                                          height: 70,
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                  color: Colors.grey.shade300),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-
-                                    // Positioned entries PER DAY
-                                    ..._buildPositionedEntries(dayEntries),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  scrollDirection: Axis.horizontal,
+                  child: _buildCalendarWithTime(daysOfWeek, entries),
                 ),
-              )
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCalendarWithTime(
+      List<String> daysOfWeek,
+      List<TimetableEntry> entries,
+      ) {
+    const double hourHeight = 70;
+    const double columnWidth = 200;
+    const double timeColumnWidth = 70;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // =========================
+        // HEADER ROW (Time + Days)
+        // =========================
+        Row(
+          children: [
+            // Empty top-left corner (Time column header)
+            Container(
+              width: timeColumnWidth,
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border(
+                  right: BorderSide(color: Colors.grey.shade300),
+                  bottom: BorderSide(color: Colors.grey.shade300),
+                ),
+              ),
+            ),
+
+            // Day headers
+            ...daysOfWeek.map((day) {
+              return Container(
+                width: columnWidth,
+                height: 50,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _getDayColor(day).withOpacity(0.1),
+                  border: Border(
+                    right: BorderSide(color: Colors.grey.shade300),
+                    bottom: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
+                child: Text(
+                  day,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _getDayColor(day),
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+
+        // =========================
+        // BODY (Time + Day Columns)
+        // =========================
+        SizedBox(
+          height: 12 * hourHeight,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ===== TIME COLUMN =====
+              Column(
+                children: List.generate(12, (index) {
+                  final hour = 8 + index;
+                  return Container(
+                    width: timeColumnWidth,
+                    height: hourHeight,
+                    alignment: Alignment.topCenter,
+                    padding: const EdgeInsets.only(top: 4),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(color: Colors.grey.shade300),
+                        bottom:
+                        BorderSide(color: Colors.grey.shade300),
+                      ),
+                    ),
+                    child: Text(
+                      '${hour.toString().padLeft(2, '0')}:00',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+
+              // ===== DAY COLUMNS =====
+              ...daysOfWeek.map((day) {
+                final dayEntries =
+                entries.where((e) => e.day == day).toList();
+
+                return Container(
+                  width: columnWidth,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right:
+                      BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      // Grid lines
+                      Column(
+                        children: List.generate(12, (index) {
+                          return Container(
+                            height: hourHeight,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.grey.shade300),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+
+                      // Positioned entries
+                      ..._buildPositionedEntries(dayEntries),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
