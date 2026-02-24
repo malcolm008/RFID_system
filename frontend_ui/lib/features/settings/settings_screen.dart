@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'settings_provider.dart';
+import 'admin_edit_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +219,18 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildProfileHeader(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final adminData = {
+      'name': 'John Doe',
+      'email': 'john.doe@example.com',
+      'phone': '+1 234 567 890',
+      'department': 'Administration',
+      'position': 'System Administrator',
+      'role': 'Administrator',
+      'bio': 'Experienced administrator with 10+ years in system management. Passionate about educational technology and system optimization.',
+      'isActive': true,
+      'imageUrl': null,
+    };
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -236,51 +250,71 @@ class SettingsScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade400, Colors.blue.shade600],
+          GestureDetector(
+            onTap: () => _showEditAdminDialog(context, adminData),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade400, Colors.blue.shade600],
+                ),
+                shape: BoxShape.circle,
               ),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 30,
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 30,
+              ),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "John Doe",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              onTap: () => _showEditAdminDialog(context, adminData),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "John Doe",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Administrator",
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
+                  const SizedBox(height: 4),
+                  Text(
+                    "Administrator",
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          Icon(
-            Icons.edit_outlined,
-            color: Colors.blue.shade400,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.edit_outlined,
+                color: Colors.blue.shade400,
+                size: 22,
+              ),
+              onPressed: () => _showEditAdminDialog(context, adminData),
+              tooltip: 'Edit Profile',
+              splashRadius: 24,
+            ),
           ),
         ],
       ),
     );
   }
+
+
 
   Widget _buildSettingsCategory({
     required BuildContext context,
@@ -713,5 +747,32 @@ class SettingsScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _showEditAdminDialog(BuildContext context, Map<String, dynamic> adminData) {
+    showDialog(
+      context: context,
+      builder: (context) => AdminEditDialog(adminData: adminData),
+    ).then((updatedData) {
+      if (updatedData != null) {
+        // Update your provider or state with the new data
+        print('Updated admin data: $updatedData');
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Profile updated successfully'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+
+        // Here you would typically update your provider
+        // context.read<SettingsProvider>().updateAdminProfile(updatedData);
+      }
+    });
   }
 }
