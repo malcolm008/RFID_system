@@ -18,6 +18,24 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : Colors.grey.shade800,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             // Profile Section
             _buildProfileHeader(context),
 
