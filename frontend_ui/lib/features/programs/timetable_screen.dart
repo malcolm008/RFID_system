@@ -18,6 +18,87 @@ class TimetableScreen extends StatefulWidget {
 
 class _TimetableScreenState extends State<TimetableScreen> {
 
+  double _timeToDouble(String time) {
+    final parts = time.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    return hour + (minute / 60.0);
+  }
+
+  double _calculateTop(String startTime) {
+    final start = 8.0;
+    final hourHeight = 70.0;
+    final time = _timeToDouble(startTime);
+    return (time - start) * hourHeight;
+  }
+
+  double _calculateHeight(String startTime, String endTime) {
+    final hourHeight = 70.0;
+    final start = _timeToDouble(startTime);
+    final end = _timeToDouble(endTime);
+    return (end - start) * hourHeight;
+  }
+
+  List<List<TimetableEntry>> _groupOverlapping(List<TimetableEntry> entries) {
+    entries.sort((a, b) =>
+        _timeToDouble(a.startTime).compareTo(_timeToDouble(b.startTime)));
+
+    List<List<TimetableEntry>> groups = [];
+
+    for (var entry in entries) {
+      bool placed = false;
+
+      for (var group in groups) {
+        final overlaps = group.any((e) =>
+        _timeToDouble(entry.startTime) < _timeToDouble(e.endTime) &&
+            _timeToDouble(entry.endTime) > _timeToDouble(e.startTime));
+
+        if (overlaps) {
+          group.add(entry);
+          placed = true;
+          break;
+        }
+      }
+
+      if (!placed) {
+        groups.add([entry]);
+      }
+    }
+
+    return groups;
+  }
+
+  List<Widget> _buildPositionedEntries(
+      List<TimetableEntry> dayEntries,
+      ) {
+    final groups = _groupOverlapping(dayEntries);
+    const columnWidth = 200.0;
+
+    return groups.expand((group) {
+      final widthFactor = 1 / group.length;
+
+      return group.asMap().entries.map((entryMap) {
+        final index = entryMap.key;
+        final entry = entryMap.value;
+
+        final top = _calculateTop(entry.startTime);
+        final height =
+        _calculateHeight(entry.startTime, entry.endTime);
+
+        return Positioned(
+          top: top,
+          left: index * columnWidth * widthFactor,
+          width: columnWidth * widthFactor,
+          height: height,
+          child: GestureDetector(
+            onTap: () => _showEntryDetails(context, entry),
+            child: _buildEntryCard(entry, Theme.of(context)),
+          ),
+        );
+      });
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -446,75 +527,84 @@ class _TimetableScreenState extends State<TimetableScreen> {
               )
                   : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: daysOfWeek.length * 200.0,
-                  child: Column(
-                    children: [
-                      // Day headers
-                      Row(
-                        children: daysOfWeek.map((day) {
-                          return Container(
-                            width: 200,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: _getDayColor(day).withOpacity(0.1),
-                              border: Border(
-                                right: BorderSide(color: Colors.grey.shade300),
-                                bottom: BorderSide(color: Colors.grey.shade300),
-                              ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // =========================
+                    // DAY HEADERS
+                    // =========================
+                    Row(
+                      children: daysOfWeek.map((day) {
+                        return Container(
+                          width: 200,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: _getDayColor(day).withOpacity(0.1),
+                            border: Border(
+                              right: BorderSide(color: Colors.grey.shade300),
+                              bottom: BorderSide(color: Colors.grey.shade300),
                             ),
-                            child: Text(
-                              day,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: _getDayColor(day),
-                              ),
-                              textAlign: TextAlign.center,
+                          ),
+                          child: Text(
+                            day,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: _getDayColor(day),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                      // Time slots (8am to 8pm)
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: 12,
-                          itemBuilder: (context, slotIndex) {
-                            final hour = 8 + slotIndex;
-                            final timeLabel = '${hour.toString().padLeft(2, '0')}:00';
-                            return Row(
-                              children: daysOfWeek.map((day) {
-                                final dayEntries = groupedByDay[day] ?? [];
-                                final matching = dayEntries.where(
-                                        (e) => e.startTime.startsWith('${hour.toString().padLeft(2, '0')}:')
-                                );
-                                final entry = matching.isNotEmpty ? matching.first : null;
-                                return GestureDetector(
-                                  onTap: entry != null ? () => _showEntryDetails(context, entry) : null,
-                                  child: Container(
-                                    width: 200,
-                                    height: 70,
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(color: Colors.grey.shade300),
-                                        bottom: BorderSide(color: Colors.grey.shade300),
-                                      ),
-                                    ),
-                                    child: entry != null
-                                        ? _buildEntryCard(entry, theme)
-                                        : Text(
-                                      timeLabel,
-                                      style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
-                                    ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    // =========================
+                    // CALENDAR BODY
+                    // =========================
+                    SizedBox(
+                      height: 12 * 70.0,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: daysOfWeek.map((day) {
+                            final dayEntries =
+                            entries.where((e) => e.day == day).toList();
+
+                            return Container(
+                              width: 200,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  right: BorderSide(color: Colors.grey.shade300),
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Hour grid lines
+                                  Column(
+                                    children: List.generate(12, (index) {
+                                      final hour = 8 + index;
+                                      return Container(
+                                        height: 70,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey.shade300),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                   ),
-                                );
-                              }).toList(),
+
+                                  // Positioned entries PER DAY
+                                  ..._buildPositionedEntries(dayEntries),
+                                ],
+                              ),
                             );
-                          },
+                          }).toList(),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -527,12 +617,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
   Widget _buildEntryCard(TimetableEntry entry, ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: _getDayColor(entry.day).withOpacity(0.5),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.blue.shade200),
+        border: Border.all(color: _getDayColor(entry.day).withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade100.withOpacity(0.3),
+            color: _getDayColor(entry.day).withOpacity(0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),
