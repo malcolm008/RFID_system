@@ -11,6 +11,7 @@ import 'package:frontend_ui/features/students/student_form_screen.dart';
 import 'package:frontend_ui/features/students/student_list_screen.dart';
 import 'package:frontend_ui/features/teachers/teacher_list_screen.dart';
 import '../../core/widgets/app_scaffold.dart';
+import '../../core/theme/app_theme.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -37,7 +38,6 @@ class DashboardScreen extends StatelessWidget {
                       'Dashboard',
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: isDarkMode ? Colors.white : Colors.grey.shade800,
                       ),
                     ),
                     const SizedBox(height: 4),

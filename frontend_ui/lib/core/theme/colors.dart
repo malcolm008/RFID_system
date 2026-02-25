@@ -20,7 +20,7 @@ class AppColors {
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF6F7FB);
-  static const Color backgroundDark = Color(0xFF000000);   // Pure Black
+  static const Color backgroundDark = Color(0xFF1A1A1A);   // Pure Black
 
   // Surface Colors
   static const Color surfaceLight = Colors.white;

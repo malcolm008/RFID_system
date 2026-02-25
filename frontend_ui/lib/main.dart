@@ -18,6 +18,8 @@ import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/auth_provider.dart';
 import 'features/auth/login_screen.dart';
+import 'features/settings/settings_provider.dart';
+import 'features/settings/settings_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_provider.dart';
 
 void main() {
@@ -42,11 +44,17 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TimetableProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: const LoginScreen(),
-        routes: AppRoutes.routes,
+      child: Consumer<SettingsProvider>(
+        builder: (context, settings, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settings.themeMode,
+            home: const LoginScreen(),
+            routes: AppRoutes.routes,
+          );
+        },
       ),
     );
   }
