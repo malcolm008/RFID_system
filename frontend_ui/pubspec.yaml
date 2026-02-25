@@ -37,6 +37,8 @@ dependencies:
   provider: ^6.1.5+1
   http: ^1.6.0
   image_picker: ^1.2.1
+  flutter_local_notifications: ^20.1.0
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_test:

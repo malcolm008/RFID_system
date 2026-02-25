@@ -232,7 +232,7 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(20),
         boxShadow: isDarkMode
             ? null
