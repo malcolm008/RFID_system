@@ -100,7 +100,7 @@ class NotificationModel {
 
   IconData get icon {
     switch (type) {
-      case NotificationType.classReminder:
+      case NotificationType.Reminder:
         return Icons.schedule;
       case NotificationType.system:
         return Icons.system_update;
@@ -115,7 +115,7 @@ class NotificationModel {
 
   Color getColor(BuildContext context) {
     switch (type) {
-      case NotificationType.classReminder:
+      case NotificationType.Reminder:
         return Colors.blue;
       case NotificationType.system:
         return Colors.purple;

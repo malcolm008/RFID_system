@@ -1,9 +1,7 @@
-// lib/core/services/notification_service.dart
-
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'notification_model.dart';
 
 class NotificationService {
@@ -11,153 +9,193 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+  final List<NotificationModel> _notifications = [];
+  List<NotificationModel> get notifications => List.unmodifiable(_notifications);
 
-  final List<AppNotification> _notifications = [];
-  List<AppNotification> get notifications => List.unmodifiable(_notifications);
+  bool _permissionGranted = false;
+  bool get permissionGranted => _permissionGranted;
 
-  // Initialize notifications
+  bool _notificationsSupported = false;
+  bool get notificationsSupported => _notificationsSupported;
+
+  static const String _storageKey = 'notifications';
+
+  Timer? _schedulerTimer;
+
   Future<void> init() async {
-    // Initialize timezone
-    tz.initializeTimeZones();
-
-    // Android settings
-    const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    // iOS settings
-    const DarwinInitializationSettings iosSettings =
-    DarwinInitializationSettings();
-
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _notificationsPlugin.initialize(
-      settings: initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        _handleNotificationTap(response);
-      },
-      onDidReceiveBackgroundNotificationResponse: (NotificationResponse response) {
-        _handleNotificationTap(response);
-      },
-    );
-
-    // Request permissions
-    await _requestPermissions();
+    await _loadNotifications();
+    _checkBrowserSupport();
+    _startScheduler();
   }
 
-  Future<void> _requestPermissions() async {
-    // Android permissions are granted at install time
-    // iOS requires permission request
-    await _notificationsPlugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+  void _checkBrowserSupport() {
+    try {
+      _notificationsSupported = true;
+    } catch (e) {
+      _notificationsSupported = false;
+    }
   }
 
-  void _handleNotificationTap(NotificationResponse response) {
-    // Handle notification tap - navigate to relevant screen
-    debugPrint('Notification tapped: ${response.payload}');
+  Future<bool> requestPermission() async {
+    try {
+      _permissionGranted = true;
+      return true;
+    } catch (e) {
+      debugPrint('Error requesting permission: $e');
+      return false;
+    }
   }
 
-  // Schedule a class reminder notification
-  Future<void> scheduleClassReminder({
+  void _showBrowserNotifications(NotificationModel notification) {
+    if (!_permissionGranted) return;
+
+    try {
+      debugPrint('🔔 NOTIFICATION: ${notification.title} - ${notification.body}');
+    } catch (e) {
+      debugPrint('Error showing notifications: $e');
+    }
+  }
+
+  void scheduleReminder({
     required String courseName,
     required String teacherName,
     required DateTime startTime,
     required int reminderMinutes,
-  }) async {
+}) {
     final scheduledTime = startTime.subtract(Duration(minutes: reminderMinutes));
 
-    // Don't schedule if the time is in the past
     if (scheduledTime.isBefore(DateTime.now())) return;
 
-    final notification = AppNotification(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+    final notification = NotificationModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: 'Upcoming Class',
       body: '$courseName with $teacherName starts in $reminderMinutes minutes',
       type: NotificationType.Reminder,
       timestamp: DateTime.now(),
-      relatedData: {
+      scheduledTime: scheduledTime,
+      data: {
         'courseName': courseName,
         'teacherName': teacherName,
         'startTime': startTime.toIso8601String(),
         'reminderMinutes': reminderMinutes,
       },
     );
-
-    // Add to in-app notification list
     _addNotification(notification);
-
-    // Schedule local notification
-    await _notificationsPlugin.zonedSchedule(
-      id: notification.id,
-      title: notification.title,
-      body: notification.body,
-      scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'class_reminders',
-          'Class Reminders',
-          channelDescription: 'Notifications for upcoming classes',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: 'schedule',
-        ),
-        iOS: DarwinNotificationDetails(
-          categoryIdentifier: 'class_reminder',
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exact,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
-    );
   }
 
-  // Add notification to in-app list
-  void _addNotification(AppNotification notification) {
+  void addSystemNotification({
+    required String title,
+    required String body,
+    Map<String, dynamic>? data
+}) {
+    final notification = NotificationModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      body: body,
+      type: NotificationType.system,
+      timestamp: DateTime.now(),
+      data: data,
+    );
+
+    _addNotification(notification);
+  }
+
+  void _addNotification(NotificationModel notification) {
     _notifications.insert(0, notification);
-    // Keep only last 50 notifications
+    _trimNotification();
+    _saveNotifications();
+  }
+
+  void _trimNotification() {
     if (_notifications.length > 50) {
-      _notifications.removeLast();
+      _notifications.removeRange(50, _notifications.length);
     }
   }
 
-  // Mark notification as read
-  void markAsRead(int id) {
+  void _startScheduler() {
+    _schedulerTimer?.cancel();
+    _schedulerTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _checkDueNotifications();
+    });
+  }
+
+  void _checkDueNotifications() {
+    final now = DateTime.now();
+    bool updated = false;
+
+    for (var i = 0; i < _notifications.length; i++) {
+      final notification = _notifications[i];
+
+      if (!notification.isShown && notification.scheduledTime != null && notification.scheduledTime!.isBefore(now)){
+        _showBrowserNotifications(notification);
+        _notifications[i] = notification.copyWith(isShown: true);
+        updated = true;
+      }
+    }
+
+    if (updated) {
+      _saveNotifications();
+    }
+  }
+
+  void markAsRead(String id) {
     final index = _notifications.indexWhere((n) => n.id == id);
     if (index != -1) {
       _notifications[index] = _notifications[index].copyWith(isRead: true);
+      _saveNotifications();
     }
   }
 
-  // Mark all as read
   void markAllAsRead() {
     for (int i = 0; i < _notifications.length; i++) {
       _notifications[i] = _notifications[i].copyWith(isRead: true);
     }
+    _saveNotifications();
   }
 
-  // Clear all notifications
+  void removeNotification(String id) {
+    _notifications.removeWhere((n) => n.id == id);
+    _saveNotifications();
+  }
+
   void clearAll() {
     _notifications.clear();
-    _notificationsPlugin.cancelAll();
+    _saveNotifications();
   }
 
-  // Remove a specific notification
-  void removeNotification(int id) {
-    _notifications.removeWhere((n) => n.id == id);
-    _notificationsPlugin.cancel(id);
+  int get unreadCount {
+    return _notifications.where((n) => !n.isRead).length;
   }
 
-  // Get unread count
-  int get unreadCount => _notifications.where((n) => !n.isRead).length;
+  Future<void> _saveNotifications() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final List<Map<String, dynamic>> jsonList = _notifications.map((n) => n.toJson()).toList();
+      final String encoded = jsonEncode(jsonList);
+      await prefs.setString(_storageKey, encoded);
+    } catch (e) {
+      debugPrint('Error saving notifications: $e');
+    }
+  }
+
+  Future<void> _loadNotifications() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? encoded = prefs.getString(_storageKey);
+
+      if (encoded != null) {
+        final List<dynamic> jsonList = jsonDecode(encoded);
+        _notifications.clear();
+        _notifications.addAll(
+          jsonList.map((json) => NotificationModel.fromJson(json)).toList()
+        );
+      }
+    } catch (e) {
+      debugPrint('Error loading notifications: $e');
+    }
+  }
+
+  void dispose() {
+    _schedulerTimer?.cancel();
+  }
 }
-
-// Singleton instance
-final notificationService = NotificationService();
