@@ -5,45 +5,81 @@ enum NotificationType {
   system,
   attendance,
   device,
-  enrollment
+  enrollment,
 }
 
-class AppNotification {
-  final int id;
+class NotificationModel {
+  final String id;
   final String title;
   final String body;
   final NotificationType type;
   final DateTime timestamp;
-  final bool isRead;
-  final Map<String, dynamic>? relatedData;
+  final DateTime? scheduledTime;
+  bool isRead;
+  bool isShown;
+  final Map<String, dynamic>? data;
 
-  AppNotification({
+  NotificationModel({
     required this.id,
     required this.title,
     required this.body,
     required this.type,
     required this.timestamp,
+    this.scheduledTime,
     this.isRead = false,
-    this.relatedData,
+    this.isShown = false,
+    this.data,
 });
 
-  AppNotification copyWith({
-    int? id,
+  NotificationModel copyWith({
+    String? id,
     String? title,
     String? body,
     NotificationType? type,
     DateTime? timestamp,
+    DateTime? scheduledTime,
     bool? isRead,
-    Map<String, dynamic>? relatedData,
+    bool? isShown,
+    Map<String, dynamic>? data,
 }) {
-    return AppNotification(
+    return NotificationModel(
       id: id ?? this.id,
       title: title ?? this.title,
       body: body ?? this.body,
       type: type ?? this.type,
       timestamp: timestamp ?? this.timestamp,
+      scheduledTime: scheduledTime ?? this.scheduledTime,
       isRead: isRead ?? this.isRead,
-      relatedData: relatedData ?? this.relatedData,
+      isShown: isShown ?? this.isShown,
+      data: data ?? this.data,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'body': body,
+      'type': type.index,
+      'timestamp': timestamp.toIso8601String(),
+      'scheduledTime': scheduledTime?.toIso8601String(),
+      'isRead': isRead,
+      'isShown': isShown,
+      'data': data,
+    };
+  }
+
+  factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    return NotificationModel(
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+      type: NotificationType.values[json['type']],
+      timestamp: DateTime.parse(json['timestamp']),
+      scheduledTime: json['scheduledTime'] != null ? DateTime.parse(json['scheduledTime']) : null,
+      isRead: json['isRead'] ?? false,
+      isShown: json['isShown'] ?? false,
+      data: json['data'],
     );
   }
 
@@ -52,11 +88,11 @@ class AppNotification {
     final difference = now.difference(timestamp);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+      return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+      return '${difference.inHours}h ago';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+      return '${difference.inMinutes}m ago';
     } else {
       return 'Just now';
     }
@@ -64,7 +100,7 @@ class AppNotification {
 
   IconData get icon {
     switch (type) {
-      case NotificationType.Reminder:
+      case NotificationType.classReminder:
         return Icons.schedule;
       case NotificationType.system:
         return Icons.system_update;
@@ -79,16 +115,16 @@ class AppNotification {
 
   Color getColor(BuildContext context) {
     switch (type) {
-      case NotificationType.Reminder:
-        return Colors.pinkAccent;
+      case NotificationType.classReminder:
+        return Colors.blue;
       case NotificationType.system:
-        return Colors.purpleAccent;
+        return Colors.purple;
       case NotificationType.attendance:
-        return Colors.teal;
+        return Colors.green;
       case NotificationType.device:
-        return Colors.orange.shade200;
+        return Colors.orange;
       case NotificationType.enrollment:
-        return Colors.tealAccent;
+        return Colors.teal;
     }
   }
 }
