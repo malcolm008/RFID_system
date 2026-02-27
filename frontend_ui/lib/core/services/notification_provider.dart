@@ -54,7 +54,7 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void markAllAsRead(String id) {
+  void markAllAsRead() {
     _service.markAllAsRead();
     notifyListeners();
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'notification_provider.dart';
-import 'notifications_screen.dart';
+import 'notification_screen.dart';
 
 class NotificationBell extends StatelessWidget {
   const NotificationBell({super.key});
