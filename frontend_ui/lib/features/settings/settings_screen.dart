@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'settings_provider.dart';
 import 'admin_edit_dialog.dart';
+import '../../main.dart';
+import '../../core/services/notification_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -51,6 +53,68 @@ class SettingsScreen extends StatelessWidget {
               color: Colors.blue,
               child: Column(
                 children: [
+                  Consumer<NotificationProvider>(
+                    builder: (context, notificationProvider, child) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: notificationProvider.permissionGranted
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.orange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              notificationProvider.permissionGranted
+                                  ? Icons.notifications_active
+                                  : Icons.notifications_off,
+                              color: notificationProvider.permissionGranted
+                                ? Colors.green
+                                  : Colors.orange,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    notificationProvider.permissionGranted
+                                        ? 'Notifications Enabled'
+                                        : 'Notifications Disabled',
+                                    style: const TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    notificationProvider.permissionGranted
+                                        ? 'You will receive schedule reminders'
+                                        : 'Enable to get reminders about upcoming schedules',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (!notificationProvider.permissionGranted)
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await notificationProvider.requestPermission();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                ),
+                                child: const Text('Enable'),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 8),
                   _buildModernSwitchTile(
                     context: context,
                     value: settings.notificationsEnabled,
