@@ -1,22 +1,66 @@
-// lib/features/notifications/notification_provider.dart
-
 import 'package:flutter/material.dart';
-import 'notification_service.dart';
 import 'notification_model.dart';
+import 'notification_service.dart';
 
 class NotificationProvider extends ChangeNotifier {
-  final NotificationService _service = notificationService;
+  final NotificationService _service = NotificationService();
 
-  List<AppNotification> get notifications => _service.notifications;
+  List<NotificationModel> get notifications => _service.notifications;
   int get unreadCount => _service.unreadCount;
+  bool get permissionGranted => _service.permissionGranted;
+  bool get notificationsSupported => _service.notificationsSupported;
 
-  void markAsRead(int id) {
+  Future<void> init() async {
+    await _service.init();
+    notifyListeners();
+  }
+
+  Future<bool> requestPermission() async {
+    final result = await _service.requestPermission();
+    notifyListeners();
+    return result;
+  }
+
+  void scheduleReminder({
+    required String courseName,
+    required String teacherName,
+    required DateTime startTime,
+    required int reminderMinutes,
+}) {
+    _service.scheduleReminder(
+      courseName: courseName,
+      teacherName: teacherName,
+      startTime: startTime,
+      reminderMinutes: reminderMinutes,
+    );
+    notifyListeners();
+  }
+
+  void addSystemNotification({
+    required String title,
+    required String body,
+    Map<String, dynamic>? data
+}) {
+    _service.addSystemNotification(
+      title: title,
+      body: body,
+      data: data,
+    );
+    notifyListeners();
+  }
+
+  void markAsRead(String id) {
     _service.markAsRead(id);
     notifyListeners();
   }
 
-  void markAllAsRead() {
+  void markAllAsRead(String id) {
     _service.markAllAsRead();
+    notifyListeners();
+  }
+
+  void removeNotification(String id) {
+    _service.removeNotification(id);
     notifyListeners();
   }
 
@@ -25,22 +69,9 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeNotification(int id) {
-    _service.removeNotification(id);
-    notifyListeners();
-  }
-
-  // Add a test notification (for demonstration)
-  void addTestNotification() {
-    final notification = AppNotification(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title: 'Test Notification',
-      body: 'This is a test notification',
-      type: NotificationType.system,
-      timestamp: DateTime.now(),
-    );
-
-    _service._addNotification(notification);
-    notifyListeners();
+  @override
+  void dispose() {
+    _service.dispose();
+    super.dispose();
   }
 }
