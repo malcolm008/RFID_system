@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/core/services/notification_provider.dart';
 import 'package:frontend_ui/features/programs/course_provider.dart';
 import 'package:frontend_ui/features/programs/program_provider.dart';
 import 'package:frontend_ui/features/programs/program_screen.dart';
@@ -21,13 +22,21 @@ import 'features/auth/login_screen.dart';
 import 'features/settings/settings_provider.dart';
 import 'features/settings/settings_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_provider.dart';
+import 'core/services/notification_screen.dart';
 
 void main() {
-  runApp(const AttendanceApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final notificationProvider = NotificationProvider();
+  notificationProvider.init();
+
+  runApp(AttendanceApp(notificationProvider: notificationProvider));
 }
 
 class AttendanceApp extends StatelessWidget {
-  const AttendanceApp({super.key});
+  final NotificationProvider notificationProvider;
+
+  const AttendanceApp({super.key, required this.notificationProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +52,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
         ChangeNotifierProvider(create: (_) => TimetableProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => notificationProvider),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, child) {
