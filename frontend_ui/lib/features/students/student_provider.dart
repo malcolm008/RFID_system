@@ -64,7 +64,11 @@ class StudentProvider extends ChangeNotifier {
       final Map<String, dynamic> response = jsonDecode(res.body);
       if (res.statusCode == 201 && response["status"] == "success") {
         await loadStudents();
-        _notificationProvider.addEnrollmentNotification()
+        _notificationProvider.addEnrollmentNotification(
+          type: "student",
+          name: student.name,
+          details: 'Program: ${student.program}, Year: ${student.year}',
+        );
       } else {
         throw Exception(response["message"] ?? "Failed to add student");
       }
