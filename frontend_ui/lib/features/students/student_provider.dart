@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:frontend_ui/features/students/student_api.dart';
 import 'package:http/http.dart' as http;
 import 'student_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class StudentProvider extends ChangeNotifier {
   final String baseUrl = "http://127.0.0.1:8000/attendance_api/students";
   final List<Student> _students = [];
+  final NotificationProvider _notificationProvider;
 
   List<Student> get students => _students;
+
+  StudentProvider({required NotificationProvider notificationProvider})
+   : _notificationProvider = notificationProvider;
 
   Future<void> loadStudents() async {
     try{
@@ -59,6 +64,7 @@ class StudentProvider extends ChangeNotifier {
       final Map<String, dynamic> response = jsonDecode(res.body);
       if (res.statusCode == 201 && response["status"] == "success") {
         await loadStudents();
+        _notificationProvider.addEnrollmentNotification()
       } else {
         throw Exception(response["message"] ?? "Failed to add student");
       }

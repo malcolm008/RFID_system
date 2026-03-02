@@ -25,7 +25,7 @@ class AppColors {
 
   // Surface Colors
   static const Color surfaceLight = Colors.white;
-  static const Color surfaceDark = Color(0xFF121212);      // Dark surface
+  static const Color surfaceDark = Color(0xFF343434);      // Dark surface
   static const Color surfaceDarkElevated = Color(0xFF1E1E1E);
 
   // Text Colors

@@ -106,6 +106,28 @@ class NotificationService {
     _saveNotifications();
   }
 
+  void addNotification({
+    required String title,
+    required String body,
+    required NotificationType type,
+    Map<String, dynamic>? data,
+}) {
+    final notification = NotificationModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      body: body,
+      type: type,
+      timestamp: DateTime.now(),
+      data: data,
+    );
+
+    _addNotification(notification);
+
+    if (type == NotificationType.enrollment) {
+      _showBrowserNotifications(notification);
+    }
+  }
+
   void _trimNotification() {
     if (_notifications.length > 50) {
       _notifications.removeRange(50, _notifications.length);

@@ -21,6 +21,58 @@ class NotificationProvider extends ChangeNotifier {
     return result;
   }
 
+  void addEnrollmentNotification({
+    required String type,
+    required String name,
+    String? details,
+}) {
+    String title;
+    String body;
+
+    switch (type) {
+      case 'student':
+        title = 'New Student Enrolled';
+        body = '$name has been added to the system';
+        break;
+
+      case 'teacher':
+        title = 'New Teacher Added';
+        body = '$name has joined as a new teacher';
+        break;
+
+      case 'program':
+        title = 'New Program Created';
+        body = '$name program has been added';
+        break;
+
+      case 'course':
+        title = 'New Course Added';
+        body = '$name course has been created';
+        break;
+
+      default:
+        title = 'New Enrollment';
+        body = '$name has been added';
+    }
+
+    if (details != null ) {
+      body = '$body\n$details';
+    }
+
+    _service.addNotification(
+      title: title,
+      body: body,
+      type: NotificationType.enrollment,
+      data: {
+        'enrollmentType': type,
+        'name': name,
+        'details': Icons.details,
+      },
+    );
+    notifyListeners();
+
+  }
+
   void scheduleReminder({
     required String courseName,
     required String teacherName,

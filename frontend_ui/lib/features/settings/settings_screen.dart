@@ -119,10 +119,11 @@ class SettingsScreen extends StatelessWidget {
                     context: context,
                     value: settings.notificationsEnabled,
                     onChanged: settings.toggleNotifications,
-                    title: "Enable Notifications",
-                    subtitle: "Get reminders about upcoming classes",
+                    title: "Enable Notifications Timer",
+                    subtitle: "Get reminders about upcoming schedules",
                     icon: Icons.notifications_outlined,
                   ),
+
                   if (settings.notificationsEnabled) ...[
                     const SizedBox(height: 8),
                     _buildDropdownTile(

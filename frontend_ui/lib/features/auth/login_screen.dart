@@ -47,9 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              theme.colorScheme.primary.withOpacity(0.08),
-              theme.colorScheme.secondary.withOpacity(0.04),
-              Colors.white,
+              theme.colorScheme.background.withOpacity(0.08),
+              theme.colorScheme.primary.withOpacity(0.04),
+              theme.colorScheme.primary,
             ],
           ),
         ),
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Padding(
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Welcome Back',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: theme.colorScheme.primary,
+                          color: theme.appBarTheme.foregroundColor,
                         ),
                       ),
 
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Sign in to your account',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade600,
+                          color: theme.appBarTheme.foregroundColor,
                         ),
                       ),
 
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Email',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade700,
+                              color: theme.appBarTheme.foregroundColor,
                             ),
                           ),
 
@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Password',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade700,
+                              color: theme.appBarTheme.foregroundColor,
                             ),
                           ),
 
@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Text(
                                 'Remember me',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey.shade600,
+                                  color: theme.appBarTheme.foregroundColor,
                                 ),
                               ),
                             ],
