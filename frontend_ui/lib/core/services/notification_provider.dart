@@ -31,22 +31,22 @@ class NotificationProvider extends ChangeNotifier {
 
     switch (type) {
       case 'student':
-        title = 'New Student Enrolled';
+        title = '🎓 New Student Enrolled';
         body = '$name has been added to the system';
         break;
 
       case 'teacher':
-        title = 'New Teacher Added';
+        title = '👨‍🏫 New Teacher Added';
         body = '$name has joined as a new teacher';
         break;
 
       case 'program':
-        title = 'New Program Created';
+        title = '📚 New Program Created';
         body = '$name program has been added';
         break;
 
       case 'course':
-        title = 'New Course Added';
+        title = '📖 New Course Added';
         body = '$name course has been created';
         break;
 
