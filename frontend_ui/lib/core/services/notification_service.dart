@@ -189,16 +189,28 @@ class NotificationService {
     return _notifications.where((n) => !n.isRead).length;
   }
 
-  Future<void> _saveNotifications() async {
+ Future<void> _saveNotifications() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final List<Map<String, dynamic>> jsonList = _notifications.map((n) => n.toJson()).toList();
+      final List<Map<String, dynamic>> jsonList = _notifications.map((n) {
+        try {
+          return n.toJson();
+        } catch (e) {
+          debugPrint('Error saving notifications: $e');
+          return null;
+        }
+      }).whereType<Map<String, dynamic>>().toList();
+
+      debugPrint('Saving ${jsonList.length} notifications');
       final String encoded = jsonEncode(jsonList);
+      debugPrint('Encoded JSON: $encoded');
+
       await prefs.setString(_storageKey, encoded);
+      debugPrint('Notifications saved successfully');
     } catch (e) {
       debugPrint('Error saving notifications: $e');
     }
-  }
+ }
 
   Future<void> _loadNotifications() async {
     try {

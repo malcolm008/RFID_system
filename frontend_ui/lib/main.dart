@@ -24,11 +24,11 @@ import 'features/settings/settings_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_provider.dart';
 import 'core/services/notification_screen.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   final notificationProvider = NotificationProvider();
-  notificationProvider.init();
+  await notificationProvider.init();
 
   runApp(AttendanceApp(notificationProvider: notificationProvider));
 }
@@ -42,8 +42,9 @@ class AttendanceApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: notificationProvider),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => StudentProvider()),
+        ChangeNotifierProvider(create: (context) => StudentProvider(notificationProvider: context.read<NotificationProvider>(),)),
         ChangeNotifierProvider(create: (_) => TeacherProvider()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
@@ -52,7 +53,6 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DeviceProvider()),
         ChangeNotifierProvider(create: (_) => TimetableProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => notificationProvider),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, child) {

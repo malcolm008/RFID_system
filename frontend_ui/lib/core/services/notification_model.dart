@@ -79,7 +79,7 @@ class NotificationModel {
       scheduledTime: json['scheduledTime'] != null ? DateTime.parse(json['scheduledTime']) : null,
       isRead: json['isRead'] ?? false,
       isShown: json['isShown'] ?? false,
-      data: json['data'],
+      data: json['data'] != null ? Map<String, dynamic>.from(json['data']) : null,
     );
   }
 
@@ -98,7 +98,7 @@ class NotificationModel {
     }
   }
 
-  IconData get icon {
+  IconData getIcon() {
     switch (type) {
       case NotificationType.Reminder:
         return Icons.schedule;
