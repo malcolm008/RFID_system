@@ -21,11 +21,12 @@ class NotificationProvider extends ChangeNotifier {
     return result;
   }
 
+// In NotificationProvider
   void addEnrollmentNotification({
     required String type,
     required String name,
     String? details,
-}) {
+  }) {
     String title;
     String body;
 
@@ -34,32 +35,29 @@ class NotificationProvider extends ChangeNotifier {
         title = '🎓 New Student Enrolled';
         body = '$name has been added to the system';
         break;
-
       case 'teacher':
         title = '👨‍🏫 New Teacher Added';
         body = '$name has joined as a new teacher';
         break;
-
       case 'program':
         title = '📚 New Program Created';
         body = '$name program has been added';
         break;
-
       case 'course':
         title = '📖 New Course Added';
         body = '$name course has been created';
         break;
-
       default:
         title = 'New Enrollment';
         body = '$name has been added';
     }
 
-    if (details != null ) {
+    if (details != null) {
       body = '$body\n$details';
     }
 
-    _service.addNotification(
+    // Add notification and get it back
+    final notification = _service.addNotification(
       title: title,
       body: body,
       type: NotificationType.enrollment,
@@ -69,8 +67,11 @@ class NotificationProvider extends ChangeNotifier {
         'details': details,
       },
     );
+
+    // IMPORTANT: Notify listeners that data has changed
     notifyListeners();
 
+    debugPrint('✅ Notification added and UI notified');
   }
 
   void scheduleReminder({

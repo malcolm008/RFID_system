@@ -100,36 +100,32 @@ class NotificationService {
     _addNotification(notification);
   }
 
-  void _addNotification(NotificationModel notification) {
+  NotificationModel _addNotification(NotificationModel notification) {
     try {
       _notifications.insert(0, notification);
       _trimNotification();
 
-      // Try to save, but don't let failure stop the notification
+      // Save asynchronously - don't await
       _saveNotifications().catchError((e) {
         debugPrint('Warning: Failed to save notification to storage: $e');
-        // Notification still appears in memory even if save fails
       });
 
-      // Show browser notification if permission granted
-      if (_permissionGranted) {
-        _showBrowserNotifications(notification);
-      }
+      return notification; // Return the added notification
     } catch (e) {
       debugPrint('Error adding notification: $e');
-      // Still try to add it to the list even if something fails
       if (!_notifications.contains(notification)) {
         _notifications.insert(0, notification);
       }
+      return notification;
     }
   }
 
-  void addNotification({
+  NotificationModel addNotification({
     required String title,
     required String body,
     required NotificationType type,
     Map<String, dynamic>? data,
-}) {
+  }) {
     final notification = NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -139,11 +135,11 @@ class NotificationService {
       data: data,
     );
 
-    _addNotification(notification);
-
     if (type == NotificationType.enrollment) {
       _showBrowserNotifications(notification);
     }
+
+    return _addNotification(notification);
   }
 
   void _trimNotification() {
