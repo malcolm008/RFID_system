@@ -229,6 +229,17 @@ class NotificationService {
     }
   }
 
+  Future<void> clearCorruptedData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_storageKey);
+      _notifications.clear();
+      debugPrint('Cleared corrupted notification data');
+    } catch (e) {
+      debugPrint('Error clearing data: $e');
+    }
+  }
+
   void dispose() {
     _schedulerTimer?.cancel();
   }
