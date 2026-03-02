@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:js' as js;
+import 'dart:html' as html;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,8 +40,15 @@ class NotificationService {
 
   Future<bool> requestPermission() async {
     try {
-      _permissionGranted = true;
-      return true;
+      if (js.context.hasProperty('Notification')) {
+        final permission = await html.Notification.requestPermission();
+        _permissionGranted = permission == 'granted';
+        debugPrint('Browser notification permission: $permission');
+        return _permissionGranted;
+      } else {
+        debugPrint('Browser does not support notifications');
+        return false;
+      }
     } catch (e) {
       debugPrint('Error requesting permission: $e');
       return false;
@@ -50,9 +59,24 @@ class NotificationService {
     if (!_permissionGranted) return;
 
     try {
-      debugPrint('🔔 NOTIFICATION: ${notification.title} - ${notification.body}');
+      if (js.context.hasProperty('Notification') && html.Notification.permission == 'granted') {
+        final options = {
+          'body': notification.body,
+          'tag': notification.id,
+          'requireInteraction': true,
+        };
+
+        final browserNotification = html.Notification(notification.title, options);
+
+        browserNotification.onClick.listen((_) {
+          html.window.focus();
+          browserNotification.close();
+        });
+
+        debugPrint('Browser notification shown: ${notification.title}');
+      }
     } catch (e) {
-      debugPrint('Error showing notifications: $e');
+      debugPrint('Error showing browser notification: $e');
     }
   }
 

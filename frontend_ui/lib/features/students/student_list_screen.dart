@@ -4,6 +4,7 @@ import '../../core/widgets/app_scaffold.dart';
 import 'student_provider.dart';
 import 'student_form_screen.dart';
 import 'student_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class StudentListScreen extends StatefulWidget {
   const StudentListScreen({super.key});
@@ -72,6 +73,16 @@ class _StudentListScreenState extends State<StudentListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ElevatedButton(
+                onPressed: () {
+                  final provider = context.read<NotificationProvider>();
+                  print('Current notifications: ${provider.notifications.length}');
+                  provider.notifications.forEach((n) {
+                    print('- ${n.title}: ${n.body}');
+                  });
+                },
+                child: Text('Check Notifications'),
+              ),
               // Header with Add Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
