@@ -67,21 +67,37 @@ class NotificationService {
     if (!_permissionGranted) return;
 
     try {
-      if (js.context.hasProperty('Notification') && html.Notification.permission == 'granted') {
-        final options = {
+      if (js.context.hasProperty('Notification') &&
+          html.Notification.permission == 'granted') {
+
+        // Create options as a proper JavaScript object
+        final options = js.JsObject.jsify({
           'body': notification.body,
+          'icon': '/icons/notification-icon.png',
           'tag': notification.id,
           'requireInteraction': true,
-        };
-
-        final browserNotification = html.Notification(notification.title, options);
-
-        browserNotification.onClick.listen((_) {
-          html.window.focus();
-          browserNotification.close();
         });
 
-        debugPrint('Browser notification shown: ${notification.title}');
+        // Call the Notification constructor
+        final notificationJs = js.context['Notification'].callMethod(
+            'new',
+            [notification.title, options]
+        );
+
+        // Set onclick handler
+        notificationJs['onclick'] = () {
+          // Close the notification
+          notificationJs.callMethod('close');
+          // Focus the window
+          js.context.callMethod('focus');
+        };
+
+        // Auto-close after 10 seconds
+        Timer(const Duration(seconds: 10), () {
+          notificationJs.callMethod('close');
+        });
+
+        debugPrint('✅ Browser notification shown: ${notification.title}');
       }
     } catch (e) {
       debugPrint('Error showing browser notification: $e');
