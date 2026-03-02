@@ -32,9 +32,17 @@ class NotificationService {
 
   void _checkBrowserSupport() {
     try {
-      _notificationsSupported = true;
+      _notificationsSupported = js.context.hasProperty('Notification') && html.Notification != null;
+
+      if (_notificationsSupported) {
+        _permissionGranted = html.Notification.permission == 'granted';
+      }
+
+      debugPrint('Browsetr notifications supported: $_notificationsSupported');
+      debugPrint('Current permission: ${html.Notification.permission}');
     } catch (e) {
       _notificationsSupported = false;
+      debugPrint('Error checking browser support: $e');
     }
   }
 
