@@ -66,7 +66,7 @@ class NotificationProvider extends ChangeNotifier {
       data: {
         'enrollmentType': type,
         'name': name,
-        'details': Icons.details,
+        'details': details,
       },
     );
     notifyListeners();
