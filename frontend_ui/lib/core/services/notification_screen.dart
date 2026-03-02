@@ -143,7 +143,7 @@ class NotificationsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              notification.icon,
+              notification.getIcon(),
               color: notification.getColor(context),
             ),
           ),

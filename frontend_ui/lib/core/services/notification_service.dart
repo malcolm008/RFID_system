@@ -189,28 +189,48 @@ class NotificationService {
     return _notifications.where((n) => !n.isRead).length;
   }
 
- Future<void> _saveNotifications() async {
+  Future<void> _saveNotifications() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final List<Map<String, dynamic>> jsonList = _notifications.map((n) {
-        try {
-          return n.toJson();
-        } catch (e) {
-          debugPrint('Error saving notifications: $e');
-          return null;
-        }
-      }).whereType<Map<String, dynamic>>().toList();
+      debugPrint('=' * 50);
+      debugPrint('Saving ${_notifications.length} notifications');
 
-      debugPrint('Saving ${jsonList.length} notifications');
+      final List<Map<String, dynamic>> jsonList = [];
+
+      for (var i = 0; i < _notifications.length; i++) {
+        final notification = _notifications[i];
+        debugPrint('Notification $i:');
+        debugPrint('  id: ${notification.id}');
+        debugPrint('  title: ${notification.title}');
+        debugPrint('  body: ${notification.body}');
+        debugPrint('  type: ${notification.type}');
+        debugPrint('  timestamp: ${notification.timestamp}');
+        debugPrint('  scheduledTime: ${notification.scheduledTime}');
+        debugPrint('  isRead: ${notification.isRead}');
+        debugPrint('  isShown: ${notification.isShown}');
+        debugPrint('  data: ${notification.data}');
+
+        try {
+          final json = notification.toJson();
+          debugPrint('  toJson result: $json');
+          jsonList.add(json);
+        } catch (e) {
+          debugPrint('  ERROR converting notification $i: $e');
+        }
+      }
+
+      debugPrint('JSON List length: ${jsonList.length}');
       final String encoded = jsonEncode(jsonList);
       debugPrint('Encoded JSON: $encoded');
 
+      final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, encoded);
       debugPrint('Notifications saved successfully');
+      debugPrint('=' * 50);
     } catch (e) {
       debugPrint('Error saving notifications: $e');
+      debugPrint('Stack trace: ${StackTrace.current}');
     }
- }
+  }
 
   Future<void> _loadNotifications() async {
     try {
