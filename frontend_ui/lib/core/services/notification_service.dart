@@ -101,9 +101,27 @@ class NotificationService {
   }
 
   void _addNotification(NotificationModel notification) {
-    _notifications.insert(0, notification);
-    _trimNotification();
-    _saveNotifications();
+    try {
+      _notifications.insert(0, notification);
+      _trimNotification();
+
+      // Try to save, but don't let failure stop the notification
+      _saveNotifications().catchError((e) {
+        debugPrint('Warning: Failed to save notification to storage: $e');
+        // Notification still appears in memory even if save fails
+      });
+
+      // Show browser notification if permission granted
+      if (_permissionGranted) {
+        _showBrowserNotifications(notification);
+      }
+    } catch (e) {
+      debugPrint('Error adding notification: $e');
+      // Still try to add it to the list even if something fails
+      if (!_notifications.contains(notification)) {
+        _notifications.insert(0, notification);
+      }
+    }
   }
 
   void addNotification({
