@@ -74,14 +74,11 @@ class _StudentListScreenState extends State<StudentListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  final provider = context.read<NotificationProvider>();
-                  print('Current notifications: ${provider.notifications.length}');
-                  provider.notifications.forEach((n) {
-                    print('- ${n.title}: ${n.body}');
-                  });
+                onPressed: () async {
+                  final granted = await context.read<NotificationProvider>().requestPermission();
+                  print("Permission granted: $granted");
                 },
-                child: Text('Check Notifications'),
+                child: Text("Enable Notifications"),
               ),
               // Header with Add Button
               Row(

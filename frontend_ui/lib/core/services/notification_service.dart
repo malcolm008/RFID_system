@@ -38,7 +38,7 @@ class NotificationService {
         _permissionGranted = html.Notification.permission == 'granted';
       }
 
-      debugPrint('Browsetr notifications supported: $_notificationsSupported');
+      debugPrint('Browser notifications supported: $_notificationsSupported');
       debugPrint('Current permission: ${html.Notification.permission}');
     } catch (e) {
       _notificationsSupported = false;
@@ -67,40 +67,25 @@ class NotificationService {
     if (!_permissionGranted) return;
 
     try {
-      if (js.context.hasProperty('Notification') &&
-          html.Notification.permission == 'granted') {
-
-        // Create options as a proper JavaScript object
-        final options = js.JsObject.jsify({
-          'body': notification.body,
-          'icon': '/icons/notification-icon.png',
-          'tag': notification.id,
-          'requireInteraction': true,
-        });
-
-        // Call the Notification constructor
-        final notificationJs = js.context['Notification'].callMethod(
-            'new',
-            [notification.title, options]
+      if (html.Notification.permission == 'granted') {
+        final browserNotification = html.Notification(
+          notification.title,
+          body: notification.body,
+          tag: notification.id,
         );
 
-        // Set onclick handler
-        notificationJs['onclick'] = () {
-          // Close the notification
-          notificationJs.callMethod('close');
-          // Focus the window
-          js.context.callMethod('focus');
-        };
+        browserNotification.onClick.listen((event) {
+          browserNotification.close();
+        });
 
-        // Auto-close after 10 seconds
         Timer(const Duration(seconds: 10), () {
-          notificationJs.callMethod('close');
+          browserNotification.close();
         });
 
         debugPrint('✅ Browser notification shown: ${notification.title}');
       }
-    } catch (e) {
-      debugPrint('Error showing browser notification: $e');
+    } catch(e) {
+      debugPrint('❌ Error showing browser notification: $e')
     }
   }
 
