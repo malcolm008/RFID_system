@@ -45,7 +45,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: notificationProvider),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => StudentProvider(notificationProvider: context.read<NotificationProvider>(),)),
-        ChangeNotifierProvider(create: (_) => TeacherProvider()),
+        ChangeNotifierProvider(create: (context) => TeacherProvider(notificationProvider: context.read<NotificationProvider>(),)),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
         ChangeNotifierProvider(create: (_) => ProgramProvider()),

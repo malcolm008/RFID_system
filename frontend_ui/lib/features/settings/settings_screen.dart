@@ -55,73 +55,37 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   Consumer<NotificationProvider>(
                     builder: (context, notificationProvider, child) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: notificationProvider.permissionGranted
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.orange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              notificationProvider.permissionGranted
-                                  ? Icons.notifications_active
-                                  : Icons.notifications_off,
-                              color: notificationProvider.permissionGranted
-                                ? Colors.green
-                                  : Colors.orange,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    notificationProvider.permissionGranted
-                                        ? 'Notifications Enabled'
-                                        : 'Notifications Disabled',
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    notificationProvider.permissionGranted
-                                        ? 'You will receive schedule reminders'
-                                        : 'Enable to get reminders about upcoming schedules',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
+                      return _buildModernSwitchTile(
+                        context: context,
+                        value: settings.notificationsEnabled && notificationProvider.permissionGranted,
+                        icon: Icons.notifications_outlined,
+                        title: "Enable Notifications",
+                        subtitle: notificationProvider.permissionGranted
+                            ? "Receive schedule reminders"
+                            : "Browser permission required",
+                        onChanged: (value) async {
+                          if (value) {
+                            if (!notificationProvider.permissionGranted) {
+                              final granted = await notificationProvider.requestPermission();
+
+                              if (!granted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Please allow notifications in you browser"
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            if (!notificationProvider.permissionGranted)
-                              ElevatedButton(
-                                onPressed: () async {
-                                  await notificationProvider.requestPermission();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                ),
-                                child: const Text('Enable'),
-                              ),
-                          ],
-                        ),
+                                );
+                                return;
+                              }
+                            }
+                            settings.toggleNotifications(true);
+                          } else {
+                            settings.toggleNotifications(false);
+                          }
+                        },
                       );
                     },
-                  ),
-
-                  const SizedBox(height: 8),
-                  _buildModernSwitchTile(
-                    context: context,
-                    value: settings.notificationsEnabled,
-                    onChanged: settings.toggleNotifications,
-                    title: "Enable Notifications Timer",
-                    subtitle: "Get reminders about upcoming schedules",
-                    icon: Icons.notifications_outlined,
                   ),
 
                   if (settings.notificationsEnabled) ...[

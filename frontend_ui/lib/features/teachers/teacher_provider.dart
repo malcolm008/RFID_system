@@ -3,14 +3,21 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'teacher_model.dart';
 import 'teacher_api.dart';
+import '../../core/services/notification_provider.dart';
 
 class TeacherProvider extends ChangeNotifier {
   final String baseUrl = "http://127.0.0.1:8000/attendance_api/teachers";
   final List<Teacher> _teachers = [];
   bool _isLoading = false;
+  final NotificationProvider _notificationProvider;
+
 
   List<Teacher> get teachers => _teachers;
   bool get isLoading => _isLoading;
+
+  TeacherProvider({required NotificationProvider notificationProvider})
+    : _notificationProvider = notificationProvider;
+
 
   Future<void> loadTeachers() async {
     _isLoading = true;
@@ -67,6 +74,11 @@ class TeacherProvider extends ChangeNotifier {
       final Map<String, dynamic> response = jsonDecode(res.body);
       if (res.statusCode == 201 && response["status"] == "success") {
         await loadTeachers();
+        _notificationProvider.addEnrollmentNotification(
+          type: "teacher",
+          name: teacher.name,
+          details: 'Course: ${teacher.course}, Department: ${teacher.department}',
+        );
       } else {
         throw Exception(response["message"] ?? "Failed to add teacher");
       }

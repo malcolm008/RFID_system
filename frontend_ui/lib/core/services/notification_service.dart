@@ -85,7 +85,7 @@ class NotificationService {
         debugPrint('✅ Browser notification shown: ${notification.title}');
       }
     } catch(e) {
-      debugPrint('❌ Error showing browser notification: $e')
+      debugPrint('❌ Error showing browser notification: $e');
     }
   }
 
