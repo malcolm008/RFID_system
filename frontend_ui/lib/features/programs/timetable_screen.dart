@@ -8,6 +8,7 @@ import 'timetable_form_screen.dart';
 import 'timetable_model.dart';
 import '../programs/program_provider.dart';
 import '../teachers/teacher_provider.dart';
+import '../settings/settings_provider.dart';
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -25,15 +26,20 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return hour + (minute / 60.0);
   }
 
-  double _calculateTop(String startTime) {
-    final start = 8.0;
-    final hourHeight = 70.0;
+  double _calculateTop(
+      String startTime,
+      int startHour,
+      double hourHeight,
+      ) {
     final time = _timeToDouble(startTime);
-    return (time - start) * hourHeight;
+    return (time - startHour) * hourHeight;
   }
 
-  double _calculateHeight(String startTime, String endTime) {
-    final hourHeight = 70.0;
+  double _calculateHeight(
+      String startTime,
+      String endTime,
+      double hourHeight,
+      ) {
     final start = _timeToDouble(startTime);
     final end = _timeToDouble(endTime);
     return (end - start) * hourHeight;
@@ -70,6 +76,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
   List<Widget> _buildPositionedEntries(
       List<TimetableEntry> dayEntries,
+      int startHour,
+      double hourHeight,
       ) {
     final groups = _groupOverlapping(dayEntries);
     const columnWidth = 200.0;
@@ -81,9 +89,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
         final index = entryMap.key;
         final entry = entryMap.value;
 
-        final top = _calculateTop(entry.startTime);
-        final height =
-        _calculateHeight(entry.startTime, entry.endTime);
+        final top = _calculateTop(entry.startTime, startHour, hourHeight);
+        final height = _calculateHeight(entry.startTime, entry.endTime, hourHeight);
 
         return Positioned(
           top: top,
@@ -269,6 +276,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     final timetableProvider = context.watch<TimetableProvider>();
     final programProvider = context.watch<ProgramProvider>();
     final teacherProvider = context.watch<TeacherProvider>();
+    final settings = Provider.of<SettingsProvider>(context);
 
     final entries = timetableProvider.entries;
     final theme = Theme.of(context);
@@ -511,7 +519,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                 scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: _buildCalendarWithTime(daysOfWeek, entries),
+                  child: _buildCalendarWithTime(daysOfWeek, entries, settings),
                 ),
               ),
             ),
@@ -524,17 +532,23 @@ class _TimetableScreenState extends State<TimetableScreen> {
   Widget _buildCalendarWithTime(
       List<String> daysOfWeek,
       List<TimetableEntry> entries,
+      SettingsProvider settings,
       ) {
+    final int startHour = settings.startHour;
+    final int endHour = settings.endHour;
     const double hourHeight = 70;
     const double columnWidth = 200;
     const double timeColumnWidth = 70;
 
+    final visibleDays = settings.showWeekends
+        ? daysOfWeek
+        : daysOfWeek.where((d) => d != "Saturday" && d != "Sunday").toList();
+
+    final int totalHours = endHour - startHour;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // =========================
-        // HEADER ROW (Time + Days)
-        // =========================
         Row(
           children: [
             // Empty top-left corner (Time column header)
@@ -550,7 +564,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
             ),
 
             // Day headers
-            ...daysOfWeek.map((day) {
+            ...visibleDays.map((day) {
               return Container(
                 width: columnWidth,
                 height: 50,
@@ -574,18 +588,15 @@ class _TimetableScreenState extends State<TimetableScreen> {
           ],
         ),
 
-        // =========================
-        // BODY (Time + Day Columns)
-        // =========================
         SizedBox(
-          height: 12 * hourHeight,
+          height: totalHours * hourHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ===== TIME COLUMN =====
               Column(
-                children: List.generate(12, (index) {
-                  final hour = 8 + index;
+                children: List.generate(totalHours, (index) {
+                  final hour = startHour + index;
                   return Container(
                     width: timeColumnWidth,
                     height: hourHeight,
@@ -610,7 +621,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
               ),
 
               // ===== DAY COLUMNS =====
-              ...daysOfWeek.map((day) {
+              ...visibleDays.map((day) {
                 final dayEntries =
                 entries.where((e) => e.day == day).toList();
 
@@ -626,7 +637,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     children: [
                       // Grid lines
                       Column(
-                        children: List.generate(12, (index) {
+                        children: List.generate(totalHours, (index) {
                           return Container(
                             height: hourHeight,
                             decoration: BoxDecoration(
@@ -640,7 +651,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       ),
 
                       // Positioned entries
-                      ..._buildPositionedEntries(dayEntries),
+                      ..._buildPositionedEntries(dayEntries, startHour, hourHeight),
                     ],
                   ),
                 );
