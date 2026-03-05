@@ -63,8 +63,19 @@ class ProgramProvider extends ChangeNotifier {
 
   Future<void> deleteProgram(String id) async {
     try {
+      final program = _programs.firstWhere(
+          (p) => p.id == id,
+          orElse: () => throw Exception("Program not found"),
+      );
+
       await ProgramApi.deleteProgram(id);
       _programs.removeWhere((p) => p.id == id);
+
+      _notificationProvider.addEnrollmentDeleteNotification(
+        type: "program",
+        name: program.name,
+      );
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error deleting program $id: $e');
@@ -74,8 +85,17 @@ class ProgramProvider extends ChangeNotifier {
 
   Future<void> bulkDeletePrograms(List<String> ids) async {
     try {
+      final deletedPrograms = _programs.where((p) => ids.contains(p.id)).toList();
+
       await ProgramApi.bulkDeletePrograms(ids);
       _programs.removeWhere((p) => ids.contains(p.id));
+
+      for(var program in deletedPrograms) {
+        _notificationProvider.addEnrollmentDeleteNotification(
+          type: "program",
+          name: program.name,
+        );
+      }
       notifyListeners();
     } catch (e) {
       debugPrint('Error bulk deleting programs: $e');
