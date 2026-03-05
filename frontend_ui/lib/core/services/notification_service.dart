@@ -168,11 +168,13 @@ class NotificationService {
       data: data,
     );
 
+    final addedNotification = _addNotification(notification);
+
     if (type == NotificationType.enrollment) {
-      _showBrowserNotifications(notification);
+      _showBrowserNotifications(addedNotification);
     }
 
-    return _addNotification(notification);
+    return addedNotification;
   }
 
   void _trimNotification() {

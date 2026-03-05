@@ -114,11 +114,14 @@ class StudentProvider extends ChangeNotifier {
 
   Future<void> deleteStudent(String id) async {
     try {
-      final student = _students.firstWhere((s) => s.id == id);
+      final student = _students.firstWhere(
+        (s) => s.id == id,
+        orElse: () => throw Exception("Student not found"),
+      );
 
       await StudentApi.deleteStudent(id);
-
       _students.removeWhere((s) => s.id == id);
+
       _notificationProvider.addEnrollmentDeleteNotification(
         type: "student",
         name: student.name,
