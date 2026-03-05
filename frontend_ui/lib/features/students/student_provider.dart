@@ -136,11 +136,20 @@ class StudentProvider extends ChangeNotifier {
 
   Future<void> bulkDeleteStudents(List<String> ids) async {
     try {
+      final deletedStudents = _students.where((s) => ids.contains(s.id)).toList();
       await StudentApi.bulkDeleteStudents(ids);
       _students.removeWhere((s) => ids.contains(s.id));
+
+      for(var student in deletedStudents) {
+        _notificationProvider.addEnrollmentDeleteNotification(
+          type: "student",
+          name: student.name,
+        );
+      }
+
       notifyListeners();
     } catch (e) {
-      debugPrint('Error bulk deleting studens: $e');
+      debugPrint('Error bulk deleting students: $e');
       rethrow;
     }
   }

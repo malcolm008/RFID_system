@@ -108,19 +108,16 @@ class NotificationProvider extends ChangeNotifier {
         body = '$name has been removed';
     }
 
-    if (details != null) {
-      body = '$body\n$details';
-    }
+    debugPrint('Delete notification triggered for $name');
 
     _service.addNotification(
       title: title,
       body: body,
       type: NotificationType.enrollment,
       data: {
-        'action': 'delete',
         'enrollmentType': type,
         'name': name,
-        'details': details,
+        'action': 'delete',
       },
     );
     notifyListeners();
