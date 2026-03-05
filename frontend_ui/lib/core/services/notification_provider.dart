@@ -111,6 +111,21 @@ class NotificationProvider extends ChangeNotifier {
     if (details != null) {
       body = '$body\n$details';
     }
+
+    _service.addNotification(
+      title: title,
+      body: body,
+      type: NotificationType.enrollment,
+      data: {
+        'action': 'delete',
+        'enrollmentType': type,
+        'name': name,
+        'details': details,
+      },
+    );
+    notifyListeners();
+
+    debugPrint('Delete notification added');
   }
 
   void scheduleReminder({
