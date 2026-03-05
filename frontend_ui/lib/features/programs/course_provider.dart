@@ -70,7 +70,7 @@ class CourseProvider extends ChangeNotifier {
         _notificationProvider.addEnrollmentNotification(
           type: "course",
           name: course.name,
-          details: 'Code ${course.code}, Program: ${course.programNames}',
+          details: 'Code ${course.code}',
         );
       } else {
         throw Exception(response["message"]);

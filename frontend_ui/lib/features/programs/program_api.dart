@@ -5,7 +5,6 @@ import 'program_model.dart';
 class ProgramApi{
   static const baseUrl = "http://127.0.0.1:8000/attendance_api/programs";
 
-
   static Future<List<Program>> fetchPrograms() async {
     final response = await http.get(Uri.parse("$baseUrl/list/"));
     if (response.statusCode == 200) {

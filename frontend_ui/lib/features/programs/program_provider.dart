@@ -3,13 +3,18 @@ import 'program_model.dart';
 import 'program_api.dart';
 import 'course_model.dart';
 import 'timetable_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class ProgramProvider extends ChangeNotifier {
   final List<Program> _programs = [];
   bool _loading = false;
+  final NotificationProvider _notificationProvider;
 
   List<Program> get programs => _programs;
   bool get isLoading => _loading;
+
+  ProgramProvider({required NotificationProvider notificationProvider})
+    : _notificationProvider = notificationProvider;
 
   Future<void> loadPrograms() async {
     _loading = true;
@@ -30,9 +35,20 @@ class ProgramProvider extends ChangeNotifier {
   }
 
   Future<void> addProgram(Program program) async {
-    final newProgram = await ProgramApi.addProgram(program);
-    _programs.add(newProgram);
-    notifyListeners();
+      try {
+        final newProgram = await ProgramApi.addProgram(program);
+        _programs.add(newProgram);
+        notifyListeners();
+
+        _notificationProvider.addEnrollmentNotification(
+          type: "program",
+          name: program.name,
+          details: 'Qualification: ${program.qualification}, Code: ${program.abbreviation}'
+        );
+      } catch (e) {
+        debugPrint('Error adding program: $e');
+        rethrow;
+      }
   }
 
   Future<void> updateProgram(Program program) async {
