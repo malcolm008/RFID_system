@@ -33,7 +33,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> addDevice(Device device) async {
+  Future<void> addDevice(Device device, NotificationProvider notificationProvider) async {
     try{
       final newDevice = await DeviceApi.addDevice(device);
       _devices.add(newDevice);
@@ -50,7 +50,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> updateDevice(Device device) async {
+  Future<void> updateDevice(Device device, NotificationProvider notificationProvider) async {
     try {
       final updated = await DeviceApi.updateDevice(device);
       final index = _devices.indexWhere((d) => d.id == updated.id);
@@ -79,7 +79,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> deleteDevice(String id) async {
+  Future<void> deleteDevice(String id, NotificationProvider notificationProvider) async {
     try {
       final device = _devices.firstWhere((d) => d.id == id);
       await DeviceApi.deleteDevice(id);
@@ -97,7 +97,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> bulkDeleteDevices(List<String> ids) async {
+  Future<void> bulkDeleteDevices(List<String> ids, NotificationProvider notificationProvider) async {
     try {
       final deletedDevices = _devices.where((d) => ids.contains(d.id)).toList();
       await DeviceApi.bulkDeleteDevices(ids);
