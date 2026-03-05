@@ -3,15 +3,21 @@ import 'package:http/http.dart' as http;
 import 'course_api.dart';
 import 'package:flutter/material.dart';
 import 'course_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class CourseProvider extends ChangeNotifier {
   final String baseUrl = "http://127.0.0.1:8000/attendance_api/courses/";
+  final NotificationProvider _notificationProvider;
 
   final List<Course> _courses = [];
   bool _loading = false;
 
   List<Course> get courses => _courses;
   bool get isLoading => _loading;
+
+  CourseProvider({required NotificationProvider notificationProvider})
+    : _notificationProvider = notificationProvider;
+
 
   Future<void> loadCourses() async {
     _loading = true;
@@ -61,6 +67,11 @@ class CourseProvider extends ChangeNotifier {
         final newCourse = Course.fromJson(response["data"]);
         _courses.add(newCourse);
         notifyListeners();
+        _notificationProvider.addEnrollmentNotification(
+          type: "course",
+          name: course.name,
+          details: 'Code ${course.code}, Program: ${course.programNames}',
+        );
       } else {
         throw Exception(response["message"]);
       }
