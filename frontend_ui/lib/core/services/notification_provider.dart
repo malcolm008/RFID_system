@@ -125,6 +125,52 @@ class NotificationProvider extends ChangeNotifier {
     debugPrint('Delete notification added');
   }
 
+  void addDeviceNotification({
+    required String action,
+    required String deviceName,
+}) {
+    String title;
+    String body;
+
+    switch (action) {
+      case 'added':
+        title = 'Device Added';
+        body = '$deviceName has been registered';
+        break;
+
+      case 'deleted':
+        title = 'Device Removed';
+        body = '$deviceName has been removed from the system';
+        break;
+
+      case 'online':
+        title = 'Device Online';
+        body = '$deviceName is now online';
+        break;
+
+      case 'offline':
+        title = 'Device Offline';
+        body = '$deviceName is now offline';
+        break;
+
+      default:
+        title = 'Device Update';
+        body = '$deviceName status has been updated';
+    }
+
+    _service.addNotification(
+      title: title,
+      body: body,
+      type: NotificationType.device,
+      data: {
+        'deviceName': deviceName,
+        'action': action,
+      },
+    );
+
+    notifyListeners();
+  }
+
   void scheduleReminder({
     required String courseName,
     required String teacherName,

@@ -170,7 +170,7 @@ class NotificationService {
 
     final addedNotification = _addNotification(notification);
 
-    if (type == NotificationType.enrollment) {
+    if (type == NotificationType.enrollment || type == NotificationType.device) {
       _showBrowserNotifications(addedNotification);
     }
 
