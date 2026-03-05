@@ -111,8 +111,19 @@ class CourseProvider extends ChangeNotifier {
 
   Future<void> deleteCourse(String id) async {
     try {
+      final course = _courses.firstWhere(
+          (c) => c.id == id,
+        orElse: () => throw Exception("Course not found"),
+      );
+
       await CourseApi.deleteCourse(id);
       _courses.removeWhere((c) => c.id == id);
+
+      _notificationProvider.addEnrollmentDeleteNotification(
+        type: "course",
+        name: course.name,
+      );
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error deleting course $id: $e');
@@ -122,8 +133,18 @@ class CourseProvider extends ChangeNotifier {
 
   Future<void> bulkDeleteCourses(List<String> ids) async {
     try {
+      final deletedCourses = _courses.where((c) => ids.contains(c.id)).toList();
+
       await CourseApi.bulkDeleteCourses(ids);
       _courses.removeWhere((c) => ids.contains(c.id));
+
+      for (var course in deletedCourses) {
+        _notificationProvider.addEnrollmentDeleteNotification(
+          type: "course",
+          name: course.name,
+        );
+      }
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error bulk deleting courses: $e');
