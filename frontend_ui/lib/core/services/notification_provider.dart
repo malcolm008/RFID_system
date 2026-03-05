@@ -74,6 +74,45 @@ class NotificationProvider extends ChangeNotifier {
     debugPrint('✅ Notification added and UI notified');
   }
 
+  void addEnrollmentDeleteNotification({
+    required String type,
+    required String name,
+    String? details,
+}) {
+    String title;
+    String body;
+
+    switch (type) {
+      case 'student':
+        title = 'Student Removed';
+        body = '$name has been removed from the system';
+        break;
+
+      case 'teacher':
+        title = 'Teacher Removed';
+        body = '$name has been removed from the system';
+        break;
+
+      case 'program':
+        title = 'Program Removed';
+        body = '$name program has been removed';
+        break;
+
+      case 'course':
+        title = 'Course Deleted';
+        body = '$name course has been deleted';
+        break;
+
+      default:
+        title = 'Enrollment Removed';
+        body = '$name has been removed';
+    }
+
+    if (details != null) {
+      body = '$body\n$details';
+    }
+  }
+
   void scheduleReminder({
     required String courseName,
     required String teacherName,
