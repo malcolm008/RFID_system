@@ -124,8 +124,19 @@ class TeacherProvider extends ChangeNotifier {
 
   Future<void> deleteTeacher(String id) async {
     try {
+      final teacher = _teachers.firstWhere(
+          (t) => t.id == id,
+        orElse: () => throw Exception("Teacher not found"),
+      );
+
       await TeacherApi.deleteTeacher(id);
       _teachers.removeWhere((t) => t.id == id);
+
+      _notificationProvider.addEnrollmentDeleteNotification(
+        type: "teacher",
+        name: teacher.name,
+      );
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error deleting teacher $id: $e');
@@ -135,8 +146,18 @@ class TeacherProvider extends ChangeNotifier {
 
   Future<void> bulkDeleteTeachers(List<String> ids) async {
     try {
+      final deletedTeachers = _teachers.where((t) => ids.contains(t.id)).toList();
+
       await TeacherApi.bulkDeleteTeachers(ids);
       _teachers.removeWhere((t) => ids.contains(t.id));
+
+
+      for(var teacher in deletedTeachers) {
+        _notificationProvider.addEnrollmentDeleteNotification(
+          type: "teacher",
+          name: teacher.name,
+        );
+      }
       notifyListeners();
     } catch (e) {
       debugPrint('Error bulk deleting teachers: $e');
