@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'notification_model.dart';
 import 'notification_service.dart';
+import '../../features/settings/settings_provider.dart';
 
 class NotificationProvider extends ChangeNotifier {
   final NotificationService _service = NotificationService();
@@ -175,14 +176,15 @@ class NotificationProvider extends ChangeNotifier {
     required String courseName,
     required String teacherName,
     required DateTime startTime,
-    required int reminderMinutes,
+    required SettingsProvider settings,
 }) {
     _service.scheduleReminder(
       courseName: courseName,
       teacherName: teacherName,
       startTime: startTime,
-      reminderMinutes: reminderMinutes,
+      reminderMinutes: settings.reminderMinutes,
     );
+
     notifyListeners();
   }
 
