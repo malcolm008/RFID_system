@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/app_scaffold.dart';
 import 'device_provider.dart';
 import 'device_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class DevicesScreen extends StatefulWidget {
   const DevicesScreen({super.key});
@@ -131,14 +132,19 @@ class _DevicesScreenState extends State<DevicesScreen> {
                     onPressed: _selectedDeviceIds.isEmpty
                         ? null
                         : () async {
-                      await context
-                          .read<DeviceProvider>()
-                          .bulkDeleteDevices(_selectedDeviceIds.toList());
+                      final deviceProvider = context.read<DeviceProvider>();
+                      final notificationProvider = context.read<NotificationProvider>();
+
+                      await deviceProvider.bulkDeleteDevices(
+                        _selectedDeviceIds.toList(),
+                        notificationProvider: notificationProvider, // pass it here
+                      );
+
                       setState(() {
                         _isDeleteMode = false;
                         _selectedDeviceIds.clear();
                       });
-                    }
+                    },
                   ),
                 const SizedBox(width: 12),
                 ElevatedButton.icon(

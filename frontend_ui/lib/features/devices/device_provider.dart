@@ -10,7 +10,7 @@ class DeviceProvider extends ChangeNotifier{
 
   final NotificationProvider notificationProvider;
 
-  DeviceProvider(this.notificationProvider);
+  DeviceProvider({required this.notificationProvider});
 
   List<Device> get devices => _devices;
   bool get isLoading => _loading;
@@ -97,7 +97,7 @@ class DeviceProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> bulkDeleteDevices(List<String> ids, NotificationProvider notificationProvider) async {
+  Future<void> bulkDeleteDevices(List<String> ids, {required NotificationProvider notificationProvider}) async {
     try {
       final deletedDevices = _devices.where((d) => ids.contains(d.id)).toList();
       await DeviceApi.bulkDeleteDevices(ids);

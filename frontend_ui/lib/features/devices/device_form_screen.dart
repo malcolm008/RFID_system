@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'device_provider.dart';
 import 'device_model.dart';
+import '../../core/services/notification_provider.dart';
 
 class DeviceFormScreen extends StatefulWidget {
   final Device? existingDevice;
@@ -534,6 +535,7 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
     );
 
     final provider = context.read<DeviceProvider>();
+    final notificationProvider = context.read<NotificationProvider>();
 
     try {
       showDialog(
@@ -543,9 +545,9 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
       );
 
       if (isEditing) {
-        await provider.updateDevice(device);
+        await provider.updateDevice(device, notificationProvider);
       } else {
-        await provider.addDevice(device);
+        await provider.addDevice(device, notificationProvider);
       }
 
       Navigator.pop(context);
