@@ -27,7 +27,7 @@ class NotificationService {
   Future<void> init() async {
     await _loadNotifications();
     Timer.periodic(const Duration(seconds: 30), (_) {
-      _checkDueNotifications();
+      checkDueNotifications();
     });
     _checkBrowserSupport();
     _startScheduler();
@@ -119,6 +119,26 @@ class NotificationService {
     _addNotification(notification);
   }
 
+  void checkDueNotifications() {
+    final now = DateTime.now();
+    bool updated = false;
+
+    for (var i = 0; i < _notifications.length; i++) {
+      final notification = _notifications[i];
+
+      if (!notification.isShown && notification.scheduledTime != null && now.isAfter(notification.scheduledTime!)){
+        _showBrowserNotifications(notification);
+        _notifications[i] = notification.copyWith(isShown: true);
+        updated = true;
+      }
+    }
+
+    if (updated) {
+      _saveNotifications();
+    }
+  }
+
+
   void addSystemNotification({
     required String title,
     required String body,
@@ -190,29 +210,9 @@ class NotificationService {
   void _startScheduler() {
     _schedulerTimer?.cancel();
     _schedulerTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _checkDueNotifications();
+      checkDueNotifications();
     });
   }
-
-  void _checkDueNotifications() {
-    final now = DateTime.now();
-    bool updated = false;
-
-    for (var i = 0; i < _notifications.length; i++) {
-      final notification = _notifications[i];
-
-      if (!notification.isShown && notification.scheduledTime != null && now.isAfter(notification.scheduledTime!)){
-        _showBrowserNotifications(notification);
-        _notifications[i] = notification.copyWith(isShown: true);
-        updated = true;
-      }
-    }
-
-    if (updated) {
-      _saveNotifications();
-    }
-  }
-
   void markAsRead(String id) {
     final index = _notifications.indexWhere((n) => n.id == id);
     if (index != -1) {

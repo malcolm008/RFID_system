@@ -23,12 +23,22 @@ import 'features/settings/settings_provider.dart';
 import 'features/settings/settings_screen.dart';
 import 'package:frontend_ui/features/programs/timetable_provider.dart';
 import 'core/services/notification_screen.dart';
+import 'core/services/notification_provider.dart';
+import 'core/services/notification_service.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   final notificationProvider = NotificationProvider();
   await notificationProvider.init();
+
+  notificationProvider.scheduleReminder(
+    courseName: "Math",
+    teacherName: "Dr. Smith",
+    startTime: DateTime.now().add(const Duration(minutes: 1)),
+    reminderMinutes: 1, // triggers immediately
+  );
+  notificationProvider.checkDueNotifications();
 
   runApp(AttendanceApp(notificationProvider: notificationProvider));
 }

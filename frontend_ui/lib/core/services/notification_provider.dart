@@ -176,15 +176,21 @@ class NotificationProvider extends ChangeNotifier {
     required String courseName,
     required String teacherName,
     required DateTime startTime,
-    required SettingsProvider settings,
+    SettingsProvider? settings,
+    int? reminderMinutes
 }) {
     _service.scheduleReminder(
       courseName: courseName,
       teacherName: teacherName,
       startTime: startTime,
-      reminderMinutes: settings.reminderMinutes,
+      reminderMinutes: reminderMinutes ?? settings?.reminderMinutes ?? 10,
     );
 
+    notifyListeners();
+  }
+
+  void checkDueNotifications() {
+    _service.checkDueNotifications();
     notifyListeners();
   }
 
