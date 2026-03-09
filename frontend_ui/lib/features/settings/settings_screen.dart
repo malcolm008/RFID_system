@@ -102,7 +102,13 @@ class SettingsScreen extends StatelessWidget {
                         DropdownMenuItem(value: 60, child: Text("1 hour before")),
                       ],
                       onChanged: (value) {
-                        if (value != null) settings.setReminderMinutes(value);
+                        if (value != null)
+                          settings.setReminderMinutes(value);
+                          context.read<NotificationProvider>().addSystemNotification(
+                            title: "Reminder Time Updated",
+                            body: "You will now be notified $value minutes before classes.",
+                            data: {"reminderMinutes": value},
+                          );
                       },
                     ),
                   ],
@@ -188,7 +194,15 @@ class SettingsScreen extends StatelessWidget {
                   _buildModernSwitchTile(
                     context: context,
                     value: settings.showWeekends,
-                    onChanged: settings.toggleWeekends,
+                    onChanged: (value) {
+                      settings.toggleWeekends(value);
+                      context.read<NotificationProvider>().addSystemNotification(
+                        title: "Weekend Display Updated",
+                        body: value
+                          ? "Weekends are now visible in the timetable."
+                          : "Weekends are now hidden from the timetable.",
+                      );
+                    },
                     title: "Show Weekends",
                     subtitle: "Display Saturday and Sunday in timetable",
                     icon: Icons.weekend_outlined,
@@ -535,7 +549,13 @@ class SettingsScreen extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return InkWell(
-      onTap: () => onChanged(value),
+      onTap: () {
+        onChanged(value);
+        context.read<NotificationProvider>().addSystemNotification(
+          title: "Theme Updated",
+          body: "Application theme changed to ${value.name} mode"
+        );
+      },
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),

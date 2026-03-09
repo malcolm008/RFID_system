@@ -26,6 +26,9 @@ class NotificationService {
 
   Future<void> init() async {
     await _loadNotifications();
+    Timer.periodic(const Duration(seconds: 30), (_) {
+      _checkDueNotifications();
+    });
     _checkBrowserSupport();
     _startScheduler();
   }
@@ -122,7 +125,7 @@ class NotificationService {
     Map<String, dynamic>? data
 }) {
     final notification = NotificationModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
       title: title,
       body: body,
       type: NotificationType.system,
@@ -131,6 +134,7 @@ class NotificationService {
     );
 
     _addNotification(notification);
+    _showBrowserNotifications(notification);
   }
 
   NotificationModel _addNotification(NotificationModel notification) {
@@ -197,7 +201,7 @@ class NotificationService {
     for (var i = 0; i < _notifications.length; i++) {
       final notification = _notifications[i];
 
-      if (!notification.isShown && notification.scheduledTime != null && notification.scheduledTime!.isBefore(now)){
+      if (!notification.isShown && notification.scheduledTime != null && now.isAfter(notification.scheduledTime!)){
         _showBrowserNotifications(notification);
         _notifications[i] = notification.copyWith(isShown: true);
         updated = true;
