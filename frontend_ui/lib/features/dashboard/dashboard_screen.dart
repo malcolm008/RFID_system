@@ -15,14 +15,29 @@ import '../../core/theme/app_theme.dart';
 import '../../core/services/notification_provider.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/notification_model.dart';
+import 'stats_provider.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<StatsProvider>().loadStats();
+    });
+  }
+
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    final stats = context.watch<StatsProvider>();
 
     return AppScaffold(
       child: SingleChildScrollView(
@@ -100,7 +115,7 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 _StatCard(
                   title: 'Students',
-                  value: '1,200',
+                  value: stats.students.toString(),
                   icon: Icons.school,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
@@ -116,7 +131,7 @@ class DashboardScreen extends StatelessWidget {
 
                 _StatCard(
                   title: 'Teachers',
-                  value: '75',
+                  value: stats.teachers.toString(),
                   icon: Icons.people,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
@@ -132,7 +147,7 @@ class DashboardScreen extends StatelessWidget {
 
                 _StatCard(
                   title: 'Programs',
-                  value: '75',
+                  value: stats.programs.toString(),
                   icon: Icons.people,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
@@ -149,7 +164,7 @@ class DashboardScreen extends StatelessWidget {
 
                 _StatCard(
                   title: 'Courses',
-                  value: '92',
+                  value: stats.courses.toString(),
                   icon: Icons.book,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
@@ -165,7 +180,7 @@ class DashboardScreen extends StatelessWidget {
 
                 _StatCard(
                   title: 'Active Devices',
-                  value: '14',
+                  value: stats.activeDevices.toString(),
                   icon: Icons.devices,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
@@ -528,12 +543,12 @@ class DashboardScreen extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: _buildActivityItem(
-                context,
-                title: notification.title,
-                subtitle: notification.body,
-                time: _formatTime(notification.timestamp),
-                icon: _getNotificationIcon(notification.type),
-                color: _getNotificationColor(notification.type)
+                  context,
+                  title: notification.title,
+                  subtitle: notification.body,
+                  time: _formatTime(notification.timestamp),
+                  icon: _getNotificationIcon(notification.type),
+                  color: _getNotificationColor(notification.type)
               ),
             );
           })
