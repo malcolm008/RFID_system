@@ -15,7 +15,7 @@ class Sidebar extends StatelessWidget {
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: theme.appBarTheme.backgroundColor,
+        color: theme.colorScheme.surface,
         border: Border(
           right: BorderSide(
             color: theme.colorScheme.outline.withOpacity(0.1),

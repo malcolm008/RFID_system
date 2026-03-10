@@ -12,6 +12,9 @@ import 'package:frontend_ui/features/students/student_list_screen.dart';
 import 'package:frontend_ui/features/teachers/teacher_list_screen.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/notification_provider.dart';
+import 'package:provider/provider.dart';
+import '../../core/services/notification_model.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -99,8 +102,8 @@ class DashboardScreen extends StatelessWidget {
                   title: 'Students',
                   value: '1,200',
                   icon: Icons.school,
-                  color: Colors.blue,
-                  gradientColors: [Colors.blue, Colors.lightBlue],
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
@@ -115,8 +118,8 @@ class DashboardScreen extends StatelessWidget {
                   title: 'Teachers',
                   value: '75',
                   icon: Icons.people,
-                  color: Colors.green,
-                  gradientColors: [Colors.green, Colors.lightGreen],
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
@@ -131,8 +134,8 @@ class DashboardScreen extends StatelessWidget {
                   title: 'Programs',
                   value: '75',
                   icon: Icons.people,
-                  color: Colors.teal,
-                  gradientColors: [Colors.teal, Colors.tealAccent],
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
@@ -148,8 +151,8 @@ class DashboardScreen extends StatelessWidget {
                   title: 'Today Attendance',
                   value: '92%',
                   icon: Icons.calendar_today,
-                  color: Colors.orange,
-                  gradientColors: [Colors.orange, Colors.amber],
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
@@ -164,8 +167,8 @@ class DashboardScreen extends StatelessWidget {
                   title: 'Active Devices',
                   value: '14',
                   icon: Icons.devices,
-                  color: Colors.purple,
-                  gradientColors: [Colors.purple, Colors.purpleAccent],
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
@@ -232,7 +235,7 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: theme.cardTheme.color,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: isDarkMode
             ? null
@@ -324,7 +327,7 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: isDarkMode
             ? null
@@ -466,11 +469,18 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildRecentActivity(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    final notificationProvider = context.watch<NotificationProvider>();
+    final notifications = notificationProvider.notifications;
+
+    final recentNotifications = [...notifications]
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+    final latest = recentNotifications.take(5).toList();
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: isDarkMode
             ? null
@@ -492,41 +502,25 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          _buildActivityItem(
-            context,
-            title: 'New student enrolled',
-            subtitle: 'John Doe joined Grade 10',
-            time: '2 hours ago',
-            icon: Icons.person_add,
-            color: Colors.blue,
-          ),
-          const SizedBox(height: 16),
-          _buildActivityItem(
-            context,
-            title: 'Attendance marked',
-            subtitle: '95% attendance for today',
-            time: '4 hours ago',
-            icon: Icons.check_circle,
-            color: Colors.green,
-          ),
-          const SizedBox(height: 16),
-          _buildActivityItem(
-            context,
-            title: 'Device connected',
-            subtitle: 'New device added to network',
-            time: '6 hours ago',
-            icon: Icons.device_hub,
-            color: Colors.orange,
-          ),
-          const SizedBox(height: 16),
-          _buildActivityItem(
-            context,
-            title: 'System updated',
-            subtitle: 'Security patch v2.1 installed',
-            time: '1 day ago',
-            icon: Icons.system_update,
-            color: Colors.purple,
-          ),
+          if (latest.isEmpty)
+            Text(
+              "No recent activity",
+              style: theme.textTheme.bodyMedium,
+            ),
+
+          ...latest.map((notification) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _buildActivityItem(
+                context,
+                title: notification.title,
+                subtitle: notification.body,
+                time: _formatTime(notification.timestamp),
+                icon: _getNotificationIcon(notification.type),
+                color: _getNotificationColor(notification.type)
+              ),
+            );
+          })
         ],
       ),
     );
@@ -541,12 +535,13 @@ class DashboardScreen extends StatelessWidget {
         required Color color,
       }) {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade50,
+        color: isDarkMode ? theme.appBarTheme.surfaceTintColor : Colors.white,
       ),
       child: Row(
         children: [
@@ -593,6 +588,42 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatTime(DateTime time) {
+    final difference = DateTime.now().difference(time);
+
+    if (difference.inMinutes < 1) return "just now";
+    if (difference.inMinutes < 60) return "${difference.inMinutes} min ago";
+    if (difference.inMinutes < 24) return "${difference.inMinutes} hr ago";
+
+    return "${difference.inDays} day ago";
+  }
+
+  IconData _getNotificationIcon(NotificationType type) {
+    switch (type) {
+      case NotificationType.Reminder:
+        return Icons.schedule;
+      case NotificationType.system:
+        return Icons.notifications;
+      case NotificationType.enrollment:
+        return Icons.add_circle;
+      default:
+        return Icons.info;
+    }
+  }
+
+  Color _getNotificationColor(NotificationType type) {
+    switch (type) {
+      case NotificationType.Reminder:
+        return Colors.orange.withOpacity(0.8);
+      case NotificationType.system:
+        return Colors.teal.withOpacity(0.8);
+      case NotificationType.enrollment:
+        return Colors.pinkAccent.withOpacity(0.8);
+      default:
+        return Colors.grey;
+    }
   }
 }
 

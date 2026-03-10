@@ -279,8 +279,8 @@ class SettingsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
-              ? [Colors.grey.shade800, Colors.grey.shade900]
-              : [Colors.white, Colors.grey.shade50],
+              ? [Theme.of(context).colorScheme.surface, Theme.of(context).colorScheme.primary.withOpacity(0.1)]
+              : [Theme.of(context).colorScheme.surface, Theme.of(context).colorScheme.primary.withOpacity(0.05)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -371,7 +371,7 @@ class SettingsScreen extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -518,7 +518,7 @@ class SettingsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Theme.of(context).colorScheme.background,
               borderRadius: BorderRadius.circular(10),
             ),
             child: DropdownButton<int>(
@@ -527,7 +527,7 @@ class SettingsScreen extends StatelessWidget {
               onChanged: onChanged,
               underline: const SizedBox(),
               icon: const Icon(Icons.arrow_drop_down),
-              style: const TextStyle(color: Colors.black),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(),
             ),
           ),
         ],

@@ -32,14 +32,6 @@ void main() async{
   final notificationProvider = NotificationProvider();
   await notificationProvider.init();
 
-  notificationProvider.scheduleReminder(
-    courseName: "Math",
-    teacherName: "Dr. Smith",
-    startTime: DateTime.now().add(const Duration(minutes: 1)),
-    reminderMinutes: 1, // triggers immediately
-  );
-  notificationProvider.checkDueNotifications();
-
   runApp(AttendanceApp(notificationProvider: notificationProvider));
 }
 
