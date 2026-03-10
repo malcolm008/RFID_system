@@ -202,6 +202,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                           Expanded(child: _TableHeader(text: 'Location')),
                           Expanded(child: _TableHeader(text: 'Status')),
                           Expanded(child: _TableHeader(text: 'Last Seen')),
+                          SizedBox(width: 60, child: _TableHeader(text: 'Edit')),
                         ],
                       ),
                     ),
@@ -397,6 +398,19 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                         ),
                                       ],
                                     )
+                                  ),
+                                  SizedBox(
+                                    width: 60,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      color: Colors.orange,
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => DeviceFormScreen(existingDevice: d,),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
