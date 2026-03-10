@@ -192,11 +192,15 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
                 ),
                 const SizedBox(height: 15),
                 DropdownButtonFormField<Program>(
+                  isExpanded: true,
                   value: _selectedProgram,
                   items: programs.map((program) {
                     return DropdownMenuItem<Program>(
                       value: program,
-                      child: Text(program.name),
+                      child: Text(
+                          program.name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     );
                   }).toList(),
                   onChanged: (value) {

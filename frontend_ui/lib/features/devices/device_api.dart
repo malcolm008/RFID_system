@@ -46,7 +46,7 @@ class DeviceApi {
 
   static Future<Device> updateDevice(Device device) async {
     final response = await http.post(
-      Uri.parse("$baseUrl/update/"),
+      Uri.parse("$baseUrl/update"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(device.toJson()),
     );
