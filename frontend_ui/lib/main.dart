@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/core/services/notification_provider.dart';
+import 'package:frontend_ui/features/dashboard/stats_provider.dart';
 import 'package:frontend_ui/features/programs/course_provider.dart';
 import 'package:frontend_ui/features/programs/program_provider.dart';
 import 'package:frontend_ui/features/programs/program_screen.dart';
@@ -55,6 +56,7 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DeviceProvider(notificationProvider: context.read<NotificationProvider>(),)),
         ChangeNotifierProvider(create: (_) => TimetableProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => StatsProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, child) {
