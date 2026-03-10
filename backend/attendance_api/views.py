@@ -579,3 +579,23 @@ class DeleteTimetableEntryView(DeleteBaseView):
 class BulkDeleteTimetableEntryView(BulkDeleteBaseView):
     model = TimetableEntry
     model_name = "TimetableEntry"
+
+class StatsView(CsrfExemptAPIView):
+    def get(self, request):
+        students = Student.objects.count()
+        teachers = Teacher.objects.count()
+        programs = Program.objects.count()
+        courses = Course.objects.count()
+
+        active_devices = Device.objects.filter(status=Device.DeviceStatus.ONLINE).count()
+
+        return Response({
+            "status": "success",
+            "data": {
+                "students": students,
+                "teachers": teachers,
+                "programs": programs,
+                "courses": courses,
+                "active_devices": active_devices
+            }
+        })

@@ -148,16 +148,16 @@ class DashboardScreen extends StatelessWidget {
 
 
                 _StatCard(
-                  title: 'Today Attendance',
-                  value: '92%',
-                  icon: Icons.calendar_today,
+                  title: 'Courses',
+                  value: '92',
+                  icon: Icons.book,
                   color:  theme.colorScheme.secondary,
                   gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AttendanceScreen(),
+                        builder: (_) => CoursesScreen(),
                       ),
                     );
                   },
@@ -174,6 +174,22 @@ class DashboardScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => DevicesScreen(),
+                      ),
+                    );
+                  },
+                ),
+
+                _StatCard(
+                  title: 'Today Attendance',
+                  value: '92%',
+                  icon: Icons.calendar_today,
+                  color:  theme.colorScheme.secondary,
+                  gradientColors: [theme.colorScheme.primary, theme.colorScheme.secondary.withOpacity(0.5)],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AttendanceScreen(),
                       ),
                     );
                   },

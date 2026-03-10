@@ -6,7 +6,7 @@ from .views import (
     CreateProgramView, UpdateProgramView, ProgramListView, DeleteProgramView, BulkDeleteProgramView,
     CourseListView, CreateCourseView, UpdateCourseView, DeleteCourseView, BulkDeleteCourseView,
     TimetableEntryListView, CreateTimetableEntryView, UpdateTimetableEntryView, DeleteTimetableEntryView,
-    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView,
+    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView
 )
 
 urlpatterns = [
@@ -55,4 +55,7 @@ urlpatterns = [
     path('timetable/delete/', DeleteTimetableEntryView.as_view(), name='timetable_delete'),
     path('timetable/bulk-delete/', BulkDeleteTimetableEntryView.as_view(), name='timetable-bulk-delete'),
     path('timetable/bulk-create/', BulkCreateTimetableEntryView.as_view(), name='timetable-bulk-create'),
+
+    #STATS
+    path('stats/', StatsView.as_view()),
 ]
