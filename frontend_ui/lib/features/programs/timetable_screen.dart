@@ -391,7 +391,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       onChanged: (val) => timetableProvider.setProgramFilter(val),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Theme.of(context).colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -422,7 +422,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       onChanged: (val) => timetableProvider.setYearFilter(val),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Theme.of(context).colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -454,7 +454,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       onChanged: (val) => timetableProvider.setTeacherFilter(val),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Theme.of(context).colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -486,7 +486,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       onChanged: (val) => timetableProvider.setDayFilter(val),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Theme.of(context).colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -502,7 +502,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     icon: const Icon(Icons.clear),
                     label: const Text('Clear'),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey.shade700,
+                      foregroundColor: isDark ? Colors.grey.shade500 : Colors.grey.shade700,
                     ),
                   ),
                 ],

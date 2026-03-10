@@ -164,7 +164,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                  color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: isDarkMode
                       ? null
@@ -184,7 +184,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                       decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade50,
+                        color: theme.colorScheme.surface,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),

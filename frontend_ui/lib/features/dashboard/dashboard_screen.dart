@@ -323,7 +323,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(

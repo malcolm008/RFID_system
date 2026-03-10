@@ -17,7 +17,7 @@ class StatsProvider extends ChangeNotifier {
     final data = jsonDecode(response.body);
 
     if (data['status'] == 'success') {
-      students = data['datat']['students'];
+      students = data['data']['students'];
       teachers = data['data']['teachers'];
       programs = data['data']['programs'];
       courses = data['data']['courses'];
