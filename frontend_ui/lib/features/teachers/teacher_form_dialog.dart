@@ -357,7 +357,7 @@ class _TeacherFormDialogState extends State<TeacherFormDialog> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
-        color: Colors.white,
+        color: theme.colorScheme.surface,
       ),
       child: CheckboxListTile(
         value: value,

@@ -378,8 +378,8 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
-            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade500),
+            color: theme.colorScheme.surface,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
@@ -414,8 +414,8 @@ class _StudentFormDialogState extends State<StudentFormDialog> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        color: Colors.white,
+        border: Border.all(color: Colors.grey.shade500),
+        color: theme.colorScheme.surface,
       ),
       child: CheckboxListTile(
         value: value,
