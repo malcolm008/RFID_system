@@ -110,7 +110,9 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                gradient: LinearGradient(
+                  colors: [theme.colorScheme.surface, theme.colorScheme.primary.withOpacity(0.4)]
+                ),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
@@ -121,17 +123,17 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: theme.colorScheme.primary.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.admin_panel_settings,
                       color: Colors.white,
                       size: 28,
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -178,12 +180,12 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.blue,
+                                color: theme.colorScheme.secondary,
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.blue.withOpacity(0.3),
+                                  color: theme.colorScheme.secondary.withOpacity(0.3),
                                   blurRadius: 10,
                                   spreadRadius: 2,
                                 ),
@@ -211,7 +213,7 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                             right: 0,
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: theme.colorScheme.secondary,
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: Colors.white,
@@ -358,10 +360,10 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+                        color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.grey.shade300,
+                          color: theme.colorScheme.surface,
                         ),
                       ),
                       child: Column(
@@ -382,7 +384,7 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                                   ? 'User can access the system'
                                   : 'Account is disabled',
                               style: TextStyle(
-                                color: _isActive ? Colors.green : Colors.red,
+                                color: _isActive ? Colors.teal : Colors.pinkAccent,
                                 fontSize: 12,
                               ),
                             ),
@@ -390,12 +392,12 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
                             secondary: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: (_isActive ? Colors.green : Colors.red).withOpacity(0.1),
+                                color: (_isActive ? Colors.teal : Colors.pinkAccent).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
                                 _isActive ? Icons.check_circle : Icons.cancel,
-                                color: _isActive ? Colors.green : Colors.red,
+                                color: _isActive ? Colors.teal : Colors.pinkAccent,
                               ),
                             ),
                           ),
@@ -504,16 +506,16 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
 
   Widget _buildPlaceholderAvatar() {
     return Container(
-      color: Colors.blue.shade100,
+      color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
       child: Center(
         child: Text(
           _nameController.text.isNotEmpty
               ? _nameController.text[0].toUpperCase()
               : 'A',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),
@@ -534,7 +536,7 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -558,7 +560,7 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
         color: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.grey.shade300,
+          color: Theme.of(context).colorScheme.surface,
         ),
       ),
       child: TextFormField(
@@ -568,13 +570,16 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: TextStyle(
+            color: Colors.white,
+          ),
           prefixIcon: Icon(icon, color: Colors.blue),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Colors.transparent,
+          fillColor: Theme.of(context).colorScheme.surface,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 12,
