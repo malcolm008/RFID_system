@@ -570,8 +570,8 @@ class _AdminEditDialogState extends State<AdminEditDialog> {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Colors.white,
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 14,
           ),
           prefixIcon: Icon(icon, color: Colors.blue),
           border: OutlineInputBorder(
