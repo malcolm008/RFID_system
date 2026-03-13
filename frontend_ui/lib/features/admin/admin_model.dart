@@ -17,7 +17,7 @@ extension AdminRoleExtension on AdminRole {
       case AdminRole.manager:
         return 'Manager';
       case AdminRole.viewer:
-        return 'viewer';
+        return 'Viewer';
     }
   }
 
@@ -39,11 +39,11 @@ extension AdminRoleExtension on AdminRole {
       case AdminRole.superAdmin:
         return Colors.purple;
       case AdminRole.admin:
-        return Colors.indigoAccent;
+        return Colors.blue;
       case AdminRole.manager:
-        return Colors.orangeAccent;
+        return Colors.orange;
       case AdminRole.viewer:
-        return Colors.teal;
+        return Colors.green;
     }
   }
 
@@ -88,7 +88,7 @@ class AdminModel {
     this.lastLogin,
     this.profileImageUrl,
     this.permissions,
-});
+  });
 
   factory AdminModel.fromJson(Map<String, dynamic> json) {
     return AdminModel(
@@ -158,7 +158,7 @@ class AdminModel {
     DateTime? lastLogin,
     String? profileImageUrl,
     Map<String, dynamic>? permissions,
-}) {
+  }) {
     return AdminModel(
       id: id ?? this.id,
       name: name ?? this.name,
