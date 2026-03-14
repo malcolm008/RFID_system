@@ -118,6 +118,13 @@ class Sidebar extends StatelessWidget {
                       icon: Icons.devices_other_outlined,
                       route: AppRoutes.devices,
                     ),
+
+                  const SizedBox(height: 8),
+                  _MenuItem(
+                    title: 'System Administrators',
+                    icon: Icons.admin_panel_settings_outlined,
+                    route: AppRoutes.admins,
+                  ),
                 ],
               ),
             ),

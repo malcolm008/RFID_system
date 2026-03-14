@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_ui/features/admin/admin_management_screen.dart';
 import 'package:frontend_ui/features/attendance/attendance_screen.dart';
 import 'package:frontend_ui/features/reports/report_screen.dart';
 import 'package:frontend_ui/features/settings/settings_screen.dart';
@@ -22,6 +23,7 @@ class AppRoutes {
   static const subjects = '/subjects';
   static const timetable = '/timetable';
   static const settings = '/settings';
+  static const admins = '/admins';
 
   static Map<String, WidgetBuilder> routes = {
     dashboard: (context) => const DashboardScreen(),
@@ -34,5 +36,6 @@ class AppRoutes {
     subjects: (context) => const CoursesScreen(),
     timetable: (context) => const TimetableScreen(),
     settings: (context) => const SettingsScreen(),
+    admins: (context) => const AdminManagementScreen(),
   };
 }
