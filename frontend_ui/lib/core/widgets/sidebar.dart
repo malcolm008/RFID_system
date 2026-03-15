@@ -104,13 +104,6 @@ class Sidebar extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 8),
-                  
-                  _MenuItem(
-                    title: 'Settings',
-                    icon: Icons.settings,
-                    route: AppRoutes.settings,
-                  ),
-                  const SizedBox(height: 8),
 
                   if (user?.role == UserRole.admin)
                     _MenuItem(
@@ -124,6 +117,13 @@ class Sidebar extends StatelessWidget {
                     title: 'System Administrators',
                     icon: Icons.admin_panel_settings_outlined,
                     route: AppRoutes.admins,
+                  ),
+
+                  const SizedBox(height: 8),
+                  _MenuItem(
+                    title: 'Settings',
+                    icon: Icons.settings,
+                    route: AppRoutes.settings,
                   ),
                 ],
               ),
