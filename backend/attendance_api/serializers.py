@@ -1,5 +1,7 @@
+from os import write
+
 from rest_framework import serializers
-from .models import Student, Teacher, Device, Program, Course, TimetableEntry
+from .models import Student, Teacher, Device, Program, Course, TimetableEntry, User
 
 
 class BulkDeleteSerializer(serializers.Serializer):
@@ -185,3 +187,44 @@ class TimetableEntrySerializer(serializers.ModelSerializer):
         return rep
     def to_internal_value(self, data):
         return super().to_internal_value(data)
+
+class UserSerializer(serializers.ModelSerializer):
+    role_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'email', 'phone', 'department', 'position', 'role', 'role_display', 'is_active', 'created_at', 'last_login', 'profile_image_url', 'permissions']
+        read_only_fields = ['id', 'created_at', 'last_login']
+
+    def get_role_display(self, obj):
+        return obj.get_role_display_name()
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['id'] = str(representation['id'])
+        return representation
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = User
+        fields = ['name', 'email', 'password', 'confirm_password', 'phone', 'department','position']
+
+    def validate(self,data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Password do not match")
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password')
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.role = 3
+        user.save()
+        return user
