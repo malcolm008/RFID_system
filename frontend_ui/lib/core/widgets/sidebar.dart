@@ -9,7 +9,7 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().user;
+    final user = context.watch<AuthProvider>().currentUser;
     final theme = Theme.of(context);
 
     return Container(
