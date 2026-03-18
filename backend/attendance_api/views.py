@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from .models import Student, Teacher, Device, Program, Course, TimetableEntry
 from .serializers import StudentSerializer, TeacherSerializer, DeviceSerializer, ProgramSerializer, \
     CourseSerializer, TimetableEntrySerializer
+from .views.auth_views import LoginView, RegisterView, GetCurrentUserView, LogoutView
 
 
 # Create a base class that explicitly disables CSRF

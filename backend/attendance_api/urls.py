@@ -6,7 +6,7 @@ from .views import (
     CreateProgramView, UpdateProgramView, ProgramListView, DeleteProgramView, BulkDeleteProgramView,
     CourseListView, CreateCourseView, UpdateCourseView, DeleteCourseView, BulkDeleteCourseView,
     TimetableEntryListView, CreateTimetableEntryView, UpdateTimetableEntryView, DeleteTimetableEntryView,
-    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView
+    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView, LogoutView, RegisterView, LoginView, GetCurrentUserView
 )
 
 urlpatterns = [
@@ -58,4 +58,10 @@ urlpatterns = [
 
     #STATS
     path('stats/', StatsView.as_view()),
+
+    #AUTHENTICATION
+    path('auth/login/', LoginView.as_view(), name='auth_login'),
+    path('auth/register/', RegisterView.as_view(), name='auth_register'),
+    path('auth/me/', GetCurrentUserView.as_view(), name='auth_me'),
+    path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
 ]

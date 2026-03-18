@@ -79,4 +79,50 @@ class RegisterView(APIView):
             'message': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
-@me
+@method_decorator(csrf_exempt, name='dispatch')
+class GetCurrentUserView(APIView):
+    def get(self, request):
+        auth_header = request.headers.get('Authorization', '')
+
+        if not auth_header.startswith('Bearer '):
+            return Response({
+                'status': 'error',
+                'message': 'Invalid authorization header'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        token = auth_header.replace('Bearer ', '')
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            user_id = payload.get('user_id')
+
+            user = User.objects.get(id=user_id, is_active=True)
+
+            return Response({
+                'status': 'success',
+                'data': UserSerializer(user).data
+            })
+        except jwt.ExpiredSignatureError:
+            return Response({
+                'status': 'error',
+                'message': 'Token has expired'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({
+                'status': 'error',
+                'message': 'Invalid token'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'User not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LogoutView(APIView):
+    def post(self, request):
+        # With JWT, logout is handled client-side
+        # You can implement token blacklist here if needed
+        return Response({
+            'status': 'success',
+            'message': 'Logged out successfully'
+        })
