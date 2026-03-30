@@ -27,6 +27,8 @@ import 'package:frontend_ui/features/programs/timetable_provider.dart';
 import 'core/services/notification_screen.dart';
 import 'core/services/notification_provider.dart';
 import 'core/services/notification_service.dart';
+import 'features/auth/auth_provider.dart';
+import 'features/auth/login_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,15 +62,30 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StatsProvider()),
         ChangeNotifierProvider(create: (context) => AdminProvider(notificationProvider: context.read<NotificationProvider>(),),),
       ],
-      child: Consumer<SettingsProvider>(
-        builder: (context, settings, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: settings.themeMode,
-            home: const LoginScreen(),
-            routes: AppRoutes.routes,
+      child: Consumer2<SettingsProvider, AuthProvider>(
+        builder: (context, settings, authProvider, child) {
+          return FutureBuilder(
+            future: authProvider.che,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  home: Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              }
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: settings.themeMode,
+                home: const LoginScreen(),
+                routes: AppRoutes.routes,
+              );
+            },
           );
         },
       ),

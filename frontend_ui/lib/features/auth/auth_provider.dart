@@ -27,15 +27,30 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final result = await _authService.login(email, password);
+      print('Login result: $result');
 
       if (result['success']) {
         final userData = result['user'];
+        print('User data received: $userData');
+
+        UserRole role;
+        final roleValue = userData['role'];
+        if (roleValue is int) {
+          switch (roleValue) {
+            case 0: role = UserRole.superAdmin; break;
+            case 1: role = UserRole.admin; break;
+            case 2: role = UserRole.manager; break;
+            default: role = UserRole.viewer;
+          }
+        } else {
+          role = UserRole.viewer;
+        }
 
         _currentUser = AuthUser(
           id: userData['id'].toString(),
           name: userData['name'] ?? '',
           email: userData['email'] ?? '',
-          role: _parseRole(userData['role']),
+          role: role,
           token: result['sessionId'], // Use session ID as token
           isAuthenticated: true,
           lastLogin: userData['lastLogin'] != null
@@ -53,6 +68,7 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
+      print('Login exception: $e');
       _error = e.toString();
       _isLoading = false;
       notifyListeners();
@@ -80,6 +96,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> refreshUser() async {
     if (_currentUser == null) return ;
+
     _isLoading = true;
     notifyListeners();
 
@@ -88,6 +105,19 @@ class AuthProvider extends ChangeNotifier {
 
       if (result['success']) {
         final userData = result['user'];
+
+        UserRole role;
+        final roleValue = userData['role'];
+        if (roleValue is int) {
+          switch (roleValue) {
+            case 0: role = UserRole.superAdmin; break;
+            case 1: role = UserRole.admin; break;
+            case 2: role = UserRole.manager; break;
+            default: role = UserRole.viewer;
+          }
+        } else {
+          role = UserRole.viewer;
+        }
 
         _currentUser = AuthUser(
           id: userData['id'].toString(),
@@ -100,11 +130,14 @@ class AuthProvider extends ChangeNotifier {
               ? DateTime.parse(userData['lastLogin'])
               : _currentUser?.lastLogin,
         );
+      } else {
+        _currentUser = null;
       }
 
       _isLoading = false;
       notifyListeners();
     } catch (e) {
+      print('Refresh user error: $e');
       _error = e.toString();
       _isLoading = false;
       notifyListeners();
@@ -135,6 +168,56 @@ class AuthProvider extends ChangeNotifier {
   bool hasAllRoles(List<UserRole> roles) {
     if (_currentUser == null) return false;
     return roles.every((role) => _currentUser!.role == role);
+  }
+
+  Future<bool> checkAuthStatus() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await _authService.getCurrentUser();
+
+      if (result['success']) {
+        final userData = result['user'];
+
+        UserRole role;
+        final roleValue = userData['role'];
+        if (roleValue is int) {
+          switch (roleValue) {
+            case 0: role = UserRole.superAdmin; break;
+            case 1: role = UserRole.admin; break;
+            case 2: role = UserRole.manager; break;
+            default: role = UserRole.viewer;
+          }
+        } else {
+          role = UserRole.viewer;
+        }
+
+        _currentUser = AuthUser(
+          id: userData['id'].toString(),
+          name: userData['name'] ?? '',
+          email: userData['email'] ?? '',
+          role: role,
+          isAuthenticated: true,
+          lastLogin: userData['lastLogin'] != null
+              ? DateTime.tryParse(userData['lastLogin'])
+              : DateTime.now(),
+        );
+
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      print('Check auth status error: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   @override
