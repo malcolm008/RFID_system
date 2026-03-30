@@ -9,15 +9,15 @@ from .old_views import (
     BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView
 )
 from .views.auth_views import (
-    LogoutView, LoginView, GetCurrentUserView, RegisterView
+    LogoutView, LoginView, GetCurrentUserView, CheckAuthView
 )
 
 urlpatterns = [
     #AUTHENTICATION
     path('auth/login/', LoginView.as_view(), name='auth_login'),
-    path('auth/register/', RegisterView.as_view(), name='auth_register'),
     path('auth/me/', GetCurrentUserView.as_view(), name='auth_me'),
     path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
+    path('auth/check/', CheckAuthView.as_view(), name='auth_check'),
 
     # STUDENTS
     path('students/list/', StudentListView.as_view(), name='student_list'),
@@ -66,5 +66,5 @@ urlpatterns = [
     path('timetable/bulk-create/', BulkCreateTimetableEntryView.as_view(), name='timetable-bulk-create'),
 
     #STATS
-    path('stats/', StatsView.as_view()),
+    path('stats/', StatsView.as_view())
 ]
