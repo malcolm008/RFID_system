@@ -49,6 +49,19 @@ REST_FRAMEWORK = {
     ],
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Database-backed sessions
+SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
+SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+CSRF_COOKIE_SECURE = False  # Set to True if using HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = True
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
