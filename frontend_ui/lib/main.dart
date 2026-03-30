@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_ui/core/services/notification_provider.dart';
 import 'package:frontend_ui/features/admin/admin_provider.dart';
+import 'package:frontend_ui/features/dashboard/dashboard_screen.dart';
 import 'package:frontend_ui/features/dashboard/stats_provider.dart';
 import 'package:frontend_ui/features/programs/course_provider.dart';
 import 'package:frontend_ui/features/programs/program_provider.dart';
@@ -62,33 +63,53 @@ class AttendanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StatsProvider()),
         ChangeNotifierProvider(create: (context) => AdminProvider(notificationProvider: context.read<NotificationProvider>(),),),
       ],
-      child: Consumer2<SettingsProvider, AuthProvider>(
-        builder: (context, settings, authProvider, child) {
-          return FutureBuilder(
-            future: authProvider.che,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  home: Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                );
-              }
-              return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                themeMode: settings.themeMode,
-                home: const LoginScreen(),
-                routes: AppRoutes.routes,
-              );
-            },
+      child: const AppRoot(),
+    );
+  }
+}
+
+class AppRoot extends StatefulWidget {
+  const AppRoot({super.key});
+
+  @override
+  State<AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends State<AppRoot> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthProvider>().checkAuthStatus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<SettingsProvider, AuthProvider>(
+      builder: (context, settings, authProvider, child) {
+        if (authProvider.isLoading) {
+          return const MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
-        },
-      ),
+        }
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settings.themeMode,
+          home: authProvider.isAuthenticated
+              ? const DashboardScreen()
+              : const LoginScreen(),
+          routes: AppRoutes.routes,
+        );
+      },
     );
   }
 }

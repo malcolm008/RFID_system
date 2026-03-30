@@ -21,6 +21,9 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
+        if request.session.session_key:
+            request.session.flush()
+
         if not email or not password:
             return Response({
                 'status': 'error',

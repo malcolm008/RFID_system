@@ -171,8 +171,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> checkAuthStatus() async {
+    if (_isLoading) return false;
+
     _isLoading = true;
-    notifyListeners();
 
     try {
       final result = await _authService.getCurrentUser();

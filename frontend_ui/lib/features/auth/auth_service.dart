@@ -14,9 +14,20 @@ class AuthService {
     _client = http.Client();
   }
 
+  Future<void> _clearSession() async {
+    try {
+      await _client.post(
+        Uri.parse('$baseUrl/auth/logout/'),
+      );
+    } catch (e) {
+
+    }
+  }
+
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       _initClient();
+      await _clearSession();
 
       final response = await _client.post(
         Uri.parse('$baseUrl/auth/login/'),
