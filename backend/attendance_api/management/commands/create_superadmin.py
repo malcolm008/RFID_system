@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from attendance_api.models import User
+from backend.attendance_api.models import User
 
 class Command(BaseCommand):
     help = 'Creates a superadmin for testing'

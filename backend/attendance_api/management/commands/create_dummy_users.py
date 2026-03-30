@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from attendance_api.models import User
+from backend.attendance_api.models import User
 
-class Command(BaseCommand)
+class Command(BaseCommand):
     help = 'Created dummy users for testing'
 
     def handle(self, *args, **options):

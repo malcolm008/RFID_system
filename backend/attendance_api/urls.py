@@ -1,12 +1,15 @@
 from django.urls import path
-from .views import (
+from .old_views import (
     StudentListView, CreateStudentView, UpdateStudentView, DeleteStudentView, BulkDeleteStudentView,
     TeacherListView, CreateTeacherView, UpdateTeacherView, DeleteTeacherView, BulkDeleteTeacherView,
     DeviceListView, CreateDeviceView, UpdateDeviceView, DeleteDeviceView, BulkDeleteDeviceView,
     CreateProgramView, UpdateProgramView, ProgramListView, DeleteProgramView, BulkDeleteProgramView,
     CourseListView, CreateCourseView, UpdateCourseView, DeleteCourseView, BulkDeleteCourseView,
     TimetableEntryListView, CreateTimetableEntryView, UpdateTimetableEntryView, DeleteTimetableEntryView,
-    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView, LogoutView, RegisterView, LoginView, GetCurrentUserView
+    BulkDeleteTimetableEntryView, BulkCreateTimetableEntryView, StatsView
+)
+from .views.auth_views import (
+    LogoutView, LoginView, GetCurrentUserView, RegisterView
 )
 
 urlpatterns = [
