@@ -8,10 +8,16 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
-  final http.Client _client = http.Client();
+  late final http.Client _client;
+
+  void _initClient() {
+    _client = http.Client();
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      _initClient();
+
       final response = await _client.post(
         Uri.parse('$baseUrl/auth/login/'),
         headers: {'Content-Type': 'application/json'},
@@ -19,6 +25,7 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
+      print('Login response: ${response.statusCode} - $data');
 
       if (response.statusCode == 200 && data['status'] == 'success') {
         return {
@@ -48,6 +55,7 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
+      print('Get current user response: ${response.statusCode} - $data');
 
       if (response.statusCode == 200 && data['status'] == 'success') {
         return {
@@ -71,10 +79,12 @@ class AuthService {
   Future<void> logout() async {
     try {
       await _client.post(
-        Uri.parse('$baseUrl/auth/logout'),
+        Uri.parse('$baseUrl/auth/logout/'),
       );
     } catch (e) {
-
+      print('Logout error: $e');
+    } finally {
+      _client.close();
     }
   }
 
