@@ -13,6 +13,12 @@ from .views.auth_views import (
 )
 
 urlpatterns = [
+    #AUTHENTICATION
+    path('auth/login/', LoginView.as_view(), name='auth_login'),
+    path('auth/register/', RegisterView.as_view(), name='auth_register'),
+    path('auth/me/', GetCurrentUserView.as_view(), name='auth_me'),
+    path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
+
     # STUDENTS
     path('students/list/', StudentListView.as_view(), name='student_list'),
     path('students/create/', CreateStudentView.as_view(), name='create_student'),
@@ -61,10 +67,4 @@ urlpatterns = [
 
     #STATS
     path('stats/', StatsView.as_view()),
-
-    #AUTHENTICATION
-    path('auth/login/', LoginView.as_view(), name='auth_login'),
-    path('auth/register/', RegisterView.as_view(), name='auth_register'),
-    path('auth/me/', GetCurrentUserView.as_view(), name='auth_me'),
-    path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
 ]
